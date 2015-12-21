@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.Model.ShelfItem;
+import com.example.student.gefriertruhapp.R;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class ShelfRecycleViewAdapter extends RecyclerView.Adapter<ShelfViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.cardview_event_item;
+        return R.layout.list_shelf_item;
     }
 
     @Override

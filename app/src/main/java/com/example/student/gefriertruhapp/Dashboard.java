@@ -2,16 +2,23 @@ package com.example.student.gefriertruhapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class Dashboard extends Activity {
+import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
+import com.example.student.gefriertruhapp.Notifications.BackgroundNotificationService;
+import com.example.student.gefriertruhapp.ViewPager.ViewPagerFragment;
+
+public class Dashboard extends ActionBarActivity {
     //Actions
     public static final String SCAN = "la.droid.qr.scan";
     public static final String ENCODE = "la.droid.qr.encode";
@@ -30,10 +37,8 @@ public class Dashboard extends Activity {
     public static final String RESULT = "la.droid.qr.result";
 
     private static final int ACTIVITY_RESULT_QR_DRDROID = 0;
+    private ViewPagerFragment _viewPagerFragment;
 
-    public Menu get_menu() {
-        return _menu;
-    }
 
     private Menu _menu;
     private MenuItem _add;
@@ -43,6 +48,8 @@ public class Dashboard extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_dashboard);
+
+        createPage();
     }
 
     @Override
@@ -110,11 +117,40 @@ public class Dashboard extends Activity {
         builder.create().show();
     }
 
+    public void changeFragment(Fragment fragment, boolean addToBackStack) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction().setCustomAnimations(
+                R.animator.slide_in_from_right, R.animator.slide_out_to_left, R.animator.slide_in_from_left, R.animator.slide_out_to_right
+        ).replace(R.id.main_layout, fragment);
+        if (addToBackStack) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0)
+            getFragmentManager().popBackStack();
+        else
+            super.onBackPressed();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String result = data.getExtras().getString(RESULT);
         Toast.makeText(Dashboard.this, result, Toast.LENGTH_SHORT).show();
+    }
+
+    public void createPage() {
+        DataBaseSingleton.getInstance().loadDataBase(getBaseContext());
+        _viewPagerFragment = new ViewPagerFragment();
+        _viewPagerFragment.setData(getBaseContext(), DataBaseSingleton.getInstance().get_shelfList(), DataBaseSingleton.getInstance().get_fridgeList());
+        getFragmentManager().beginTransaction().replace(R.id.main_layout, _viewPagerFragment).commit();
+        Intent intent = new Intent(this, BackgroundNotificationService.class);
+        startService(intent);
+    }
+    public Menu get_menu() {
+        return _menu;
     }
 }

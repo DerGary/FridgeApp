@@ -1,8 +1,19 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/material_deep_teal_200</item>
+        <item name="colorPrimaryDark">@color/material_deep_teal_500</item>
+        <!--<item name="android:colorAccent">@color/material_deep_teal</item>-->
+        <!--<item name="colorAccent">@color/material_deep_teal_200</item>-->
+
+        <!--<item name="android:navigationBarColor">@color/primaryDarkDef</item>-->
+        <!--<item name="android:activatedBackgroundIndicator">@color/green</item>-->
         <!-- Customize your theme here. -->
     </style>
-
+    <style name="PagerTabStripText">
+        <!--<item name="android:textSize">14sp</item>-->
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/material_deep_teal_500</item>
+    </style>
 </resources>

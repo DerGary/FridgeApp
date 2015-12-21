@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.ShelfItem;
+import com.example.student.gefriertruhapp.R;
 
 import java.util.ArrayList;
 import java.util.List;

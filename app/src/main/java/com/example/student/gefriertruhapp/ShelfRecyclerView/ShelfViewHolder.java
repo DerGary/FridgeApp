@@ -5,26 +5,27 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.student.gefriertruhapp.Model.ShelfItem;
+import com.example.student.gefriertruhapp.R;
 
 /**
  * Created by Stefan on 18-05-15.
  */
 public class ShelfViewHolder extends RecyclerView.ViewHolder {
-    private final TextView _name, _minQuantity, _quantity;
+//    private final TextView _name, _minQuantity, _quantity;
     private ShelfItem _data;
 
     public ShelfViewHolder(View itemView) {
         super(itemView);
-        _name = ((TextView) itemView.findViewById(R.id.event_lecture_name));
-        _minQuantity = ((TextView) itemView.findViewById(R.id.event_lecture_type));
-        _quantity = ((TextView) itemView.findViewById(R.id.event_docent));
+//        _name = ((TextView) itemView.findViewById(R.id.event_lecture_name));
+//        _minQuantity = ((TextView) itemView.findViewById(R.id.event_lecture_type));
+//        _quantity = ((TextView) itemView.findViewById(R.id.event_docent));
     }
 
     public void assignData(ShelfItem data) {
         _data = data;
-        this._name.setText(data.get_name());
-        this._minQuantity.setText(data.get_minQuantity());
-        this._quantity.setText(data.get_currentQuantity());
+//        this._name.setText(data.get_name());
+//        this._minQuantity.setText(data.get_minQuantity());
+//        this._quantity.setText(data.get_currentQuantity());
 
     }
 

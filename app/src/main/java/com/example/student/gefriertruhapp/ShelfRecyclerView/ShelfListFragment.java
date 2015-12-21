@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Model.ShelfItem;
+import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
 
 import org.joda.time.DateTime;
@@ -49,7 +50,7 @@ public class ShelfListFragment extends TitleFragment implements ItemClickListene
         super.onCreateOptionsMenu(menu, inflater);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(TITLE);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((Dashboard) getActivity()).getMenu().findItem(R.id.add).setVisible(true);
+        ((Dashboard) getActivity()).get_menu().findItem(R.id.add).setVisible(true);
     }
 
     public void setData(List<ShelfItem> items) {
@@ -80,11 +81,11 @@ public class ShelfListFragment extends TitleFragment implements ItemClickListene
 
     @Override
     public void onItemClick(Object data) {
-        EventDetailFragment detailFragment = new EventDetailFragment();
-        detailFragment.set_actualEvent(data);
-        getFragmentManager().beginTransaction().setCustomAnimations(
-                R.animator.slide_in_from_right, R.animator.slide_out_to_left, R.animator.slide_in_from_left, R.animator.slide_out_to_right
-        ).replace(R.id.main_layout, detailFragment).addToBackStack(null).commit();
+//        EventDetailFragment detailFragment = new EventDetailFragment();
+//        detailFragment.set_actualEvent(data);
+//        getFragmentManager().beginTransaction().setCustomAnimations(
+//                R.animator.slide_in_from_right, R.animator.slide_out_to_left, R.animator.slide_in_from_left, R.animator.slide_out_to_right
+//        ).replace(R.id.main_layout, detailFragment).addToBackStack(null).commit();
     }
 
     public String getTitle() {
