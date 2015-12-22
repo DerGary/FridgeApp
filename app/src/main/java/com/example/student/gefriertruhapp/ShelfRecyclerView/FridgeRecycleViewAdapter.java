@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.R;
 
@@ -13,23 +14,23 @@ import java.util.List;
 /**
  * Created by Stefan on 18-05-15.
  */
-public class ShelfRecycleViewAdapter extends RecyclerView.Adapter<ShelfViewHolder>{
-    private List<ShelfItem> _list;
+public class FridgeRecycleViewAdapter extends RecyclerView.Adapter<FridgeViewHolder>{
+    private List<FridgeItem> _list;
     private ItemClickListener _clickListener;
 
-    public ShelfRecycleViewAdapter(List<ShelfItem> list, ItemClickListener clickListener) {
+    public FridgeRecycleViewAdapter(List<FridgeItem> list, ItemClickListener clickListener) {
         _list = list;
         this._clickListener = clickListener;
     }
 
     @Override
-    public ShelfViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public FridgeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new ShelfViewHolder(v);
+        return new FridgeViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final ShelfViewHolder holder, int position) {
+    public void onBindViewHolder(final FridgeViewHolder holder, int position) {
         holder.assignData(_list.get(position));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,7 +42,7 @@ public class ShelfRecycleViewAdapter extends RecyclerView.Adapter<ShelfViewHolde
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.list_shelf_item;
+        return R.layout.list_item;
     }
 
     @Override

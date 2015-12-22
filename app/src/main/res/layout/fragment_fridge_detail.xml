@@ -15,7 +15,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/shelf_detail_name"
+        android:id="@+id/fridge_detail_name"
         android:clickable="false"
         android:paddingBottom="6dp"/>
 
@@ -30,21 +30,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="10"
-        android:id="@+id/shelf_detail_quantity"
-        android:paddingBottom="6dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="minimale Anzahl:"
-        android:paddingBottom="6dp"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/shelf_detail_minquantity"
+        android:id="@+id/fridge_detail_quantity"
         android:paddingBottom="6dp"/>
 
     <TextView
@@ -57,14 +43,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Keine Erinnerung gesetzt"
-        android:id="@+id/shelf_detail_notification_date"
+        android:id="@+id/fridge_detail_notification_date"
         android:paddingBottom="20dp"/>
 
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Erinnerung setzen"
-        android:id="@+id/shelf_detail_notification_button"
+        android:id="@+id/fridge_detail_notification_button"
         android:paddingBottom="6dp"/>
 
 </LinearLayout>

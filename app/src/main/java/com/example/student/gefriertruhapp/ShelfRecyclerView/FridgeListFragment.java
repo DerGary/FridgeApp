@@ -1,6 +1,5 @@
 package com.example.student.gefriertruhapp.ShelfRecyclerView;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -9,33 +8,27 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.Dashboard;
+import com.example.student.gefriertruhapp.DetailFragments.FridgeDetailFragment;
+import com.example.student.gefriertruhapp.DetailFragments.ShelfDetailFragment;
+import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeFieldType;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 
-public class ShelfListFragment extends TitleFragment implements ItemClickListener {
-    private static final String TAG = "EventListFragment";
-    private List<ShelfItem> _shelfItems;
-    private GregorianCalendar _calendar;
-    private Context _context;
-    private View _view;
-    private final String TITLE = "Lager";
+public class FridgeListFragment extends TitleFragment implements ItemClickListener {
+    private List<FridgeItem> fridgeItems;
+    private View view;
+    private String title = "Lager";
 
-    public ShelfListFragment() {
+    public FridgeListFragment() {
         // Required empty public constructor
     }
 
@@ -48,14 +41,14 @@ public class ShelfListFragment extends TitleFragment implements ItemClickListene
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(TITLE);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         ((Dashboard) getActivity()).get_menu().findItem(R.id.add).setVisible(true);
     }
 
-    public void setData(List<ShelfItem> items) {
-        _shelfItems = items;
-        if(_view != null){
+    public void setData(List<FridgeItem> items, String title) {
+        fridgeItems = items;
+        this.title = title;
+        if(view != null){
             setAdapter();
         }
     }
@@ -63,37 +56,35 @@ public class ShelfListFragment extends TitleFragment implements ItemClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
         RecyclerView listView = (RecyclerView) view.findViewById(R.id.recycler_view);
         listView.setHasFixedSize(true);
         listView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        _view = view;
+        this.view = view;
         setAdapter();
         return view;
     }
 
     private void setAdapter(){
-        RecyclerView listView = (RecyclerView) _view.findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = new ShelfRecycleViewAdapter(_shelfItems, this);
+        RecyclerView listView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        RecyclerView.Adapter adapter = new FridgeRecycleViewAdapter(fridgeItems, this);
         listView.setAdapter(adapter);
     }
 
     @Override
     public void onItemClick(Object data) {
-//        EventDetailFragment detailFragment = new EventDetailFragment();
-//        detailFragment.set_actualEvent(data);
-//        getFragmentManager().beginTransaction().setCustomAnimations(
-//                R.animator.slide_in_from_right, R.animator.slide_out_to_left, R.animator.slide_in_from_left, R.animator.slide_out_to_right
-//        ).replace(R.id.main_layout, detailFragment).addToBackStack(null).commit();
+        if(data instanceof ShelfItem) {
+            ShelfDetailFragment fragment = new ShelfDetailFragment();
+            fragment.setData((ShelfItem)data);
+            ((Dashboard) getActivity()).changeFragment(fragment, true);
+        }else{
+            FridgeDetailFragment fragment = new FridgeDetailFragment();
+            fragment.setData((FridgeItem) data);
+            ((Dashboard) getActivity()).changeFragment(fragment, true);
+        }
     }
 
     public String getTitle() {
-        return TITLE;
+        return title;
     }
-
-    public void set_context(Context _context) {
-        this._context = _context;
-    }
-
 }

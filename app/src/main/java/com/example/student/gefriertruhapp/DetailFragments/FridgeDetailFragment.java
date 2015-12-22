@@ -20,7 +20,7 @@ import android.widget.TimePicker;
 
 import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
-import com.example.student.gefriertruhapp.Model.ShelfItem;
+import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
 
@@ -33,13 +33,13 @@ import java.util.Calendar;
 /**
  * Created by student on 21.12.15.
  */
-public class ShelfDetailFragment extends TitleFragment {
-    private ShelfItem item;
-    private View rootView;
-    private Button notificationButton;
-    private EditText name, quantity, minquantity;
-    private TextView notificationDate;
-    DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm - dd.MM.yyyy");
+public class FridgeDetailFragment extends TitleFragment {
+    protected FridgeItem item;
+    protected View rootView;
+    protected Button notificationButton;
+    protected EditText name, quantity;
+    protected TextView notificationDate;
+    protected DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm - dd.MM.yyyy");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,12 +47,18 @@ public class ShelfDetailFragment extends TitleFragment {
         setHasOptionsMenu(true);
     }
 
+    protected void inflateRootView(LayoutInflater inflater, ViewGroup container){
+        if(rootView == null) {
+            rootView = inflater.inflate(R.layout.fragment_fridge_detail, container, false);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_shelf_detail, container, false);
+        inflateRootView(inflater, container);
 
-        notificationButton = (Button)rootView.findViewById(R.id.shelf_detail_notification_button);
+        notificationButton = (Button)rootView.findViewById(R.id.fridge_detail_notification_button);
         notificationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,10 +66,9 @@ public class ShelfDetailFragment extends TitleFragment {
             }
         });
 
-        name = (EditText) rootView.findViewById(R.id.shelf_detail_name);
-        quantity = (EditText)rootView.findViewById(R.id.shelf_detail_quantity);
-        notificationDate = (TextView) rootView.findViewById(R.id.shelf_detail_notification_date);
-        minquantity = (EditText)rootView.findViewById(R.id.shelf_detail_minquantity);
+        name = (EditText) rootView.findViewById(R.id.fridge_detail_name);
+        quantity = (EditText)rootView.findViewById(R.id.fridge_detail_quantity);
+        notificationDate = (TextView) rootView.findViewById(R.id.fridge_detail_notification_date);
 
         setViewData();
 
@@ -72,7 +77,6 @@ public class ShelfDetailFragment extends TitleFragment {
 
     private void setViewData(){
         quantity.setText(String.valueOf(item.getQuantity()));
-        minquantity.setText(String.valueOf(item.getMinQuantity()));
         name.setText(item.getName());
         if(item.getNotificationDate() != null) {
             notificationDate.setText(formatter.print(item.getNotificationDate()));
@@ -81,7 +85,6 @@ public class ShelfDetailFragment extends TitleFragment {
     private void getViewData(){
         item.setQuantity(Integer.parseInt(quantity.getText().toString()));
         item.setName(name.getText().toString());
-        item.setMinQuantity(Integer.parseInt(minquantity.getText().toString()));
     }
 
 
@@ -97,13 +100,13 @@ public class ShelfDetailFragment extends TitleFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.menu_item_delete){
-            DataBaseSingleton.getInstance().deleteShelfItem(this.item);
+            DataBaseSingleton.getInstance().deleteFridgeItem(this.item);
             DataBaseSingleton.getInstance().saveDataBase(getActivity().getBaseContext());
             //Todo: delete shelfitem and navigate Back
             ((Dashboard) getActivity()).onBackPressed();
         }else if(id == R.id.menu_item_save){
             getViewData();
-            DataBaseSingleton.getInstance().saveShelfItem(this.item);
+            DataBaseSingleton.getInstance().saveFridgeItem(this.item);
             DataBaseSingleton.getInstance().saveDataBase(getActivity().getBaseContext());
             //Todo: Save and navigate Back
             ((Dashboard) getActivity()).onBackPressed();
@@ -111,7 +114,7 @@ public class ShelfDetailFragment extends TitleFragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setData(ShelfItem item){
+    public void setData(FridgeItem item){
         this.item = item;
     }
 
@@ -133,7 +136,7 @@ public class ShelfDetailFragment extends TitleFragment {
 
                         item.setNotificationDate(notificationDateTime);
 
-                        TextView text = (TextView) rootView.findViewById(R.id.shelf_detail_notification_date);
+                        TextView text = (TextView) rootView.findViewById(R.id.fridge_detail_notification_date);
                         text.setText(formatter.print(notificationDateTime));
                     }
                 });

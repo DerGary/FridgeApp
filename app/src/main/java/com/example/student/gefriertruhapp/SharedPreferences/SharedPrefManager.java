@@ -21,8 +21,7 @@ import java.util.List;
 public class SharedPrefManager {
     private final static String LECTURE_TAG = "lecture";
     private final static String My_PREFS_NAME = "SHARED_USER_PREFERENCES";
-    private final static String FRIDGE_ITEMS= "FRIDGE_ITEMS";
-    private final static String SHELF_ITEMS = "SHELF_ITEMS";
+
     private final Context _context;
     private SharedPreferences _pref;
     private SharedPreferences.Editor _prefEditor;
@@ -33,40 +32,22 @@ public class SharedPrefManager {
         _prefEditor = _pref.edit();
     }
 
-    public boolean saveDataBase() {
-        List<FridgeItem> fridgeItems = DataBaseSingleton.getInstance().get_fridgeList();
-        List<ShelfItem> shelfItems = DataBaseSingleton.getInstance().get_shelfList();
-
+    public <T> boolean save(String item, T obj){
         Gson gson = ExtendedGson.getInstance();
-        String fridgeJson = gson.toJson(fridgeItems);
-        String shelfJson = gson.toJson(shelfItems);
+        String json = gson.toJson(obj);
 
-        _prefEditor.putString(FRIDGE_ITEMS, fridgeJson);
-        _prefEditor.putString(SHELF_ITEMS, shelfJson);
+        _prefEditor.putString(item, json);
         return _prefEditor.commit();
     }
 
-    public void loadDataBase() {
-        String fridgeJson = _pref.getString(FRIDGE_ITEMS, "").toString();
-        String shelfJson = _pref.getString(SHELF_ITEMS, "").toString();
+    public <T> T load(String item, Type type) {
+        String json = _pref.getString(item, "");
         Gson gson = ExtendedGson.getInstance();
 
-        if (!TextUtils.isEmpty(fridgeJson)) {
-            Type listType = new TypeToken<ArrayList<FridgeItem>>() {}.getType();
-            ArrayList<FridgeItem> fridgeItems = gson.fromJson(fridgeJson, listType);
-            if (fridgeItems != null) {
-                DataBaseSingleton.getInstance().set_fridgeList(fridgeItems);
-            }
+        if (!TextUtils.isEmpty(json)) {
+            return gson.fromJson(json, type);
         }
-
-        if (!TextUtils.isEmpty(shelfJson)) {
-            Type listType = new TypeToken<ArrayList<ShelfItem>>() {}.getType();
-
-            ArrayList<ShelfItem> shelfItems = gson.fromJson(shelfJson, listType);
-            if (shelfItems != null) {
-                DataBaseSingleton.getInstance().set_shelfList(shelfItems);
-            }
-        }
+        return null;
     }
 
     public void delete() {
@@ -74,12 +55,4 @@ public class SharedPrefManager {
         _prefEditor.commit();
     }
 
-    public void saveNote(int lectureID, String note) {
-        _prefEditor.putString(LECTURE_TAG + lectureID, note);
-        _prefEditor.commit();
-    }
-
-    public String getNote(int lectureID) {
-        return _pref.getString(LECTURE_TAG + lectureID, "");
-    }
 }
