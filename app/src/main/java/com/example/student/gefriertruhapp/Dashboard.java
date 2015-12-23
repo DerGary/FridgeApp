@@ -20,6 +20,7 @@ import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.Notifications.BackgroundNotificationService;
+import com.example.student.gefriertruhapp.ViewPager.PageType;
 import com.example.student.gefriertruhapp.ViewPager.ViewPagerFragment;
 
 import java.sql.DatabaseMetaData;
@@ -42,7 +43,8 @@ public class Dashboard extends ActionBarActivity {
     //Result
     public static final String RESULT = "la.droid.qr.result";
 
-    private static final int ACTIVITY_RESULT_QR_DRDROID = 500;
+    private static final int ACTIVITY_RESULT_QRDROID_ADD = 500;
+    private static final int ACTIVITY_RESULT_QRDROID_DEL = 600;
     private ViewPagerFragment _viewPagerFragment;
 
 
@@ -74,22 +76,25 @@ public class Dashboard extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if(id == R.id.add){
-            openQRDroid();
+//        if (id == R.id.action_settings) {
+//            return true;
+//        } else
+        if(id == R.id.add){
+            openQRDroid(ACTIVITY_RESULT_QRDROID_ADD);
+        } else if(id == R.id.delete){
+            openQRDroid(ACTIVITY_RESULT_QRDROID_DEL);
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void openQRDroid(){
+    private void openQRDroid(int requestCode){
         //Create a new Intent to send to QR Droid
         Intent qrDroid = new Intent( SCAN ); //Set action "la.droid.qr.scan"
 
         //Send intent and wait result
         try {
-            startActivityForResult(qrDroid, ACTIVITY_RESULT_QR_DRDROID);
+            startActivityForResult(qrDroid, requestCode);
         } catch (ActivityNotFoundException activity) {
             qrDroidRequired(this);
         }
@@ -144,47 +149,70 @@ public class Dashboard extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(data != null && data.getExtras() != null) {
-            String result = data.getExtras().getString(RESULT);
-            showItemDialog(result);
+            String barCode = data.getExtras().getString(RESULT);
+
+            if(requestCode == ACTIVITY_RESULT_QRDROID_ADD){
+                addElement(barCode);
+            }
+            else if(requestCode == ACTIVITY_RESULT_QRDROID_DEL){
+                delElement(barCode);
+            }
+
         }
     }
-    private int type = 0;
-    private  void showItemDialog(final String barCode){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setSingleChoiceItems(new String[]{"Gefriertruhe", "Lager"}, 0, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                type = which;
+    public void addElement(String barCode){
+        int i = _viewPagerFragment.currentView();
+        if(i == PageType.FridgeList.getI()){
+            FridgeItem item = DataBaseSingleton.getInstance().getFridgeItem(barCode);
+            if (item != null) {
+                item.setQuantity(item.getQuantity() + 1);
+                Toast.makeText(Dashboard.this, PageType.FridgeList.toString() + ": " + item.getName() + " um 1 erhöht", Toast.LENGTH_SHORT).show();
+                _viewPagerFragment.setData();
+            } else {
+                item = new FridgeItem(barCode, 1, null, barCode);
+                FridgeDetailFragment fragment = new FridgeDetailFragment();
+                fragment.setData(item);
+                changeFragment(fragment, true);
             }
-        });
-        builder.setTitle("Art wählen");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(type == 0){
-                    FridgeItem item = DataBaseSingleton.getInstance().getFridgeItem(barCode);
-                    if(item == null) {
-                        item = new FridgeItem(barCode, 1, null, barCode);
-                    }
-                    FridgeDetailFragment fragment = new FridgeDetailFragment();
-                    fragment.setData(item);
-                    changeFragment(fragment, true);
-                } else {
-                    ShelfItem item = DataBaseSingleton.getInstance().getShelfItem(barCode);
-                    if(item == null){
-                        item = new ShelfItem(barCode, 1, null, barCode, 1);
-                    }
-                    ShelfDetailFragment fragment = new ShelfDetailFragment();
-                    fragment.setData(item);
-                    changeFragment(fragment, true);
-                }
+        } else {
+            ShelfItem item = DataBaseSingleton.getInstance().getShelfItem(barCode);
+            if (item != null) {
+                item.setQuantity(item.getQuantity()+1);
+                Toast.makeText(Dashboard.this, PageType.ShelfList.toString() + ": " + item.getName() + " um 1 erhöht", Toast.LENGTH_SHORT).show();
+                _viewPagerFragment.setData();
+            } else {
+                item = new ShelfItem(barCode, 1, null, barCode, 1);
+                ShelfDetailFragment fragment = new ShelfDetailFragment();
+                fragment.setData(item);
+                changeFragment(fragment, true);
             }
-        });
-        builder.setNegativeButton("Cancel", null);
-        builder.create().show();
+        }
     }
 
+    public void delElement(String barCode){
+        int i = _viewPagerFragment.currentView();
+        if(i == PageType.FridgeList.getI()) {
+            FridgeItem item = DataBaseSingleton.getInstance().getFridgeItem(barCode);
+            if(item != null){
+                item.setQuantity(item.getQuantity() - 1);
+                Toast.makeText(Dashboard.this, PageType.FridgeList.toString()+": "+item.getName() + " um 1 verringert", Toast.LENGTH_SHORT).show();
+                _viewPagerFragment.setData();
+            }
+            else{
+                Toast.makeText(Dashboard.this, "Item nicht gefunden", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            ShelfItem item = DataBaseSingleton.getInstance().getShelfItem(barCode);
+            if(item != null){
+                item.setQuantity(item.getQuantity() - 1);
+                Toast.makeText(Dashboard.this, PageType.ShelfList.toString()+": "+item.getName() + " um 1 verringert", Toast.LENGTH_SHORT).show();
+                _viewPagerFragment.setData();
+            }else{
+                Toast.makeText(Dashboard.this, "Item nicht gefunden", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
     public void createPage() {
         DataBaseSingleton.getInstance().loadDataBase(getBaseContext());

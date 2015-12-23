@@ -7,50 +7,46 @@
     android:background="@android:color/white">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Titel:"
-        android:paddingBottom="6dp"/>
+        style="@style/TextViewBaseStyle"
+        android:text="Titel:" />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/fridge_detail_name"
-        android:clickable="false"
-        android:paddingBottom="6dp"/>
+        style="@style/EditTextBaseStyle"
+        android:id="@+id/fridge_detail_name"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Anzahl:"
-        android:paddingBottom="6dp"/>
+        style="@style/TextViewBaseStyle"
+        android:text="Anzahl:"/>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/fridge_detail_quantity"
-        android:paddingBottom="6dp"/>
+    <NumberPicker
+        style="@style/NumberPickerBase"
+        android:id="@+id/fridge_detail_numberPicker"/>
+
+    <!--<EditText-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:inputType="number"-->
+        <!--android:ems="10"-->
+        <!--android:id="@+id/fridge_detail_quantity"-->
+        <!--android:paddingBottom="6dp"/>-->
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/TextViewBaseStyle"
         android:text="Erinnerung:"
         android:paddingBottom="20dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/TextViewBaseStyle"
         android:text="Keine Erinnerung gesetzt"
         android:id="@+id/fridge_detail_notification_date"
+        android:paddingLeft="10dp"
+        android:textSize="23sp"
+        android:textStyle="normal"
         android:paddingBottom="20dp"/>
 
     <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        style="@style/ButtonBaseStyle"
         android:text="Erinnerung setzen"
-        android:id="@+id/fridge_detail_notification_button"
-        android:paddingBottom="6dp"/>
+        android:id="@+id/fridge_detail_notification_button"/>
 
 </LinearLayout>

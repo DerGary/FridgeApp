@@ -2,6 +2,8 @@ package com.example.student.gefriertruhapp.DetailFragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
@@ -15,10 +17,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.student.gefriertruhapp.Dashboard;
+import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.R;
@@ -40,6 +44,7 @@ public class FridgeDetailFragment extends TitleFragment {
     protected EditText name, quantity;
     protected TextView notificationDate;
     protected DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm - dd.MM.yyyy");
+    protected NumberPicker numberPicker;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,29 +72,37 @@ public class FridgeDetailFragment extends TitleFragment {
         });
 
         name = (EditText) rootView.findViewById(R.id.fridge_detail_name);
-        quantity = (EditText)rootView.findViewById(R.id.fridge_detail_quantity);
+        //quantity = (EditText)rootView.findViewById(R.id.fridge_detail_quantity);
         notificationDate = (TextView) rootView.findViewById(R.id.fridge_detail_notification_date);
+        numberPicker = (NumberPicker)rootView.findViewById(R.id.fridge_detail_numberPicker);
+        numberPicker.setMaxValue(100);
+        numberPicker.setMinValue(0);
 
+        NumberPickerHelper.setDividerColor(numberPicker, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
         setViewData();
 
         return rootView;
     }
 
     private void setViewData(){
-        quantity.setText(String.valueOf(item.getQuantity()));
+        //quantity.setText(String.valueOf(item.getQuantity()));
         name.setText(item.getName());
         if(item.getNotificationDate() != null) {
             notificationDate.setText(formatter.print(item.getNotificationDate()));
         }
+        numberPicker.setValue(item.getQuantity());
     }
     private void getViewData(){
-        item.setQuantity(Integer.parseInt(quantity.getText().toString()));
+        //item.setQuantity(Integer.parseInt(quantity.getText().toString()));
         item.setName(name.getText().toString());
+        item.setQuantity(numberPicker.getValue());
     }
 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
         getActivity().getMenuInflater().inflate(R.menu.menu_detail, menu);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(getTitle());
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -104,12 +117,17 @@ public class FridgeDetailFragment extends TitleFragment {
             DataBaseSingleton.getInstance().saveDataBase(getActivity().getBaseContext());
             //Todo: delete shelfitem and navigate Back
             ((Dashboard) getActivity()).onBackPressed();
+            return true;
         }else if(id == R.id.menu_item_save){
             getViewData();
             DataBaseSingleton.getInstance().saveFridgeItem(this.item);
             DataBaseSingleton.getInstance().saveDataBase(getActivity().getBaseContext());
             //Todo: Save and navigate Back
             ((Dashboard) getActivity()).onBackPressed();
+            return true;
+        } else if(id == android.R.id.home){
+            getActivity().onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -120,7 +138,7 @@ public class FridgeDetailFragment extends TitleFragment {
 
     @Override
     public String getTitle() {
-        return "Lager";
+        return "Gefriertruhe";
     }
 
     private void onSetNotificationClicked() {

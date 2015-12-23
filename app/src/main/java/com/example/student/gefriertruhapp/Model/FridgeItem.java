@@ -32,7 +32,11 @@ public class FridgeItem implements Comparable<FridgeItem> {
     }
 
     public void setQuantity(int quantity) {
-        this.quantity = quantity;
+        if(quantity < 0){
+            this.quantity = 0;
+        }else {
+            this.quantity = quantity;
+        }
     }
 
     public DateTime getNotificationDate() {

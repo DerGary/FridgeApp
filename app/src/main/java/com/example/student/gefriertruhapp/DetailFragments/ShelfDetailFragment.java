@@ -2,6 +2,7 @@ package com.example.student.gefriertruhapp.DetailFragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
@@ -15,10 +16,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.student.gefriertruhapp.Dashboard;
+import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.R;
@@ -37,7 +40,8 @@ public class ShelfDetailFragment extends TitleFragment {
     private ShelfItem item;
     private View rootView;
     private Button notificationButton;
-    private EditText name, quantity, minquantity;
+    private EditText name;
+    private NumberPicker quantity, minquantity;
     private TextView notificationDate;
     DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm - dd.MM.yyyy");
 
@@ -61,32 +65,40 @@ public class ShelfDetailFragment extends TitleFragment {
         });
 
         name = (EditText) rootView.findViewById(R.id.shelf_detail_name);
-        quantity = (EditText)rootView.findViewById(R.id.shelf_detail_quantity);
+        quantity = (NumberPicker)rootView.findViewById(R.id.shelf_detail_quantity);
         notificationDate = (TextView) rootView.findViewById(R.id.shelf_detail_notification_date);
-        minquantity = (EditText)rootView.findViewById(R.id.shelf_detail_minquantity);
+        minquantity = (NumberPicker)rootView.findViewById(R.id.shelf_detail_min_quantity);
+        quantity.setMaxValue(100);
+        quantity.setMinValue(0);
+        minquantity.setMaxValue(100);
+        minquantity.setMinValue(0);
 
+        NumberPickerHelper.setDividerColor(quantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
+        NumberPickerHelper.setDividerColor(minquantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
         setViewData();
 
         return rootView;
     }
 
     private void setViewData(){
-        quantity.setText(String.valueOf(item.getQuantity()));
-        minquantity.setText(String.valueOf(item.getMinQuantity()));
+        quantity.setValue(item.getQuantity());
+        minquantity.setValue(item.getMinQuantity());
         name.setText(item.getName());
         if(item.getNotificationDate() != null) {
             notificationDate.setText(formatter.print(item.getNotificationDate()));
         }
     }
     private void getViewData(){
-        item.setQuantity(Integer.parseInt(quantity.getText().toString()));
+        item.setMinQuantity(minquantity.getValue());
+        item.setQuantity(quantity.getValue());
         item.setName(name.getText().toString());
-        item.setMinQuantity(Integer.parseInt(minquantity.getText().toString()));
     }
 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
         getActivity().getMenuInflater().inflate(R.menu.menu_detail, menu);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(getTitle());
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -107,6 +119,9 @@ public class ShelfDetailFragment extends TitleFragment {
             DataBaseSingleton.getInstance().saveDataBase(getActivity().getBaseContext());
             //Todo: Save and navigate Back
             ((Dashboard) getActivity()).onBackPressed();
+        } else if (id == android.R.id.home){
+            getActivity().onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

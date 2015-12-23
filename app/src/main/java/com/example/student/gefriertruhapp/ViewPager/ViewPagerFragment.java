@@ -50,9 +50,9 @@ public class ViewPagerFragment extends Fragment {
             }
         }
 
-        list.get(0).setData(fridgeItems, "Gefriertruhe");
-        list.get(1).setData((List<FridgeItem>) (List<?>) items, "Lager");
-        list.get(2).setData((List<FridgeItem>) (List<?>) shoppingList, "Einkaufsliste");
+        list.get(PageType.FridgeList.getI()).setData(fridgeItems, PageType.FridgeList.toString());
+        list.get(PageType.ShelfList.getI()).setData((List<FridgeItem>) (List<?>) items, PageType.ShelfList.toString());
+        list.get(PageType.ShoppingList.getI()).setData((List<FridgeItem>) (List<?>) shoppingList, PageType.ShoppingList.toString());
     }
 
     @Nullable
@@ -70,8 +70,10 @@ public class ViewPagerFragment extends Fragment {
             pagerAdapter = new ViewPagerAdapter(getFragmentManager(), (List<TitleFragment>) (List<?>) list);
             pager.setAdapter(pagerAdapter);
         }
-
         return view;
     }
 
+    public int currentView(){
+        return pager.getCurrentItem();
+    }
 }

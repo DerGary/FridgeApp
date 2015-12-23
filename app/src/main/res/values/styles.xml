@@ -16,4 +16,45 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/material_deep_teal_500</item>
     </style>
+
+    <style name="TextViewBaseStyle">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+    <style name="NumberPickerBase">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">20dp</item>
+        <item name="android:layout_marginRight">20dp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+        <item name="android:scaleY">1.1</item>
+        <item name="android:scaleX">1.1</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+    </style>
+    <style name="EditTextBaseStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:clickable">false</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+
+    <style name="ButtonBaseStyle">
+        <item name="android:height">60dp</item>
+
+        <item name="android:background">@color/material_deep_teal_200</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+    </style>
+
+
+
+
+
+
 </resources>

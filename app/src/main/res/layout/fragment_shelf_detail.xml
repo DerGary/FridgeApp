@@ -7,64 +7,64 @@
     android:background="@android:color/white">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Titel:"
-        android:paddingBottom="6dp"/>
+        style="@style/TextViewBaseStyle"
+        android:text="Titel:"/>
 
     <EditText
+        style="@style/EditTextBaseStyle"
+        android:id="@+id/shelf_detail_name"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/shelf_detail_name"
-        android:clickable="false"
-        android:paddingBottom="6dp"/>
+        android:weightSum="2">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <TextView
+                style="@style/TextViewBaseStyle"
+                android:text="Anzahl:"/>
+            <NumberPicker
+                android:id="@+id/shelf_detail_quantity"
+                style="@style/NumberPickerBase"/>
+        </LinearLayout>
 
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                style="@style/TextViewBaseStyle"
+                android:text="minimale Anzahl:"/>
+            <NumberPicker
+                android:id="@+id/shelf_detail_min_quantity"
+                style="@style/NumberPickerBase"/>
+        </LinearLayout>
+    </LinearLayout>
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Anzahl:"
-        android:paddingBottom="6dp"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/shelf_detail_quantity"
-        android:paddingBottom="6dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="minimale Anzahl:"
-        android:paddingBottom="6dp"/>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="number"
-        android:ems="10"
-        android:id="@+id/shelf_detail_minquantity"
-        android:paddingBottom="6dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/TextViewBaseStyle"
         android:text="Erinnerung:"
         android:paddingBottom="20dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/TextViewBaseStyle"
         android:text="Keine Erinnerung gesetzt"
         android:id="@+id/shelf_detail_notification_date"
+        android:textStyle="normal"
+        android:textColor="@android:color/black"
+        android:layout_marginLeft="10dp"
         android:paddingBottom="20dp"/>
 
     <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        style="@style/ButtonBaseStyle"
         android:text="Erinnerung setzen"
-        android:id="@+id/shelf_detail_notification_button"
-        android:paddingBottom="6dp"/>
+
+        android:id="@+id/shelf_detail_notification_button"/>
 
 </LinearLayout>
