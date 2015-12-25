@@ -1,52 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="15dp"
-    android:background="@android:color/white">
+    android:layout_height="wrap_content">
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="15dp"
+        android:background="@android:color/white">
 
-    <TextView
-        style="@style/TextViewBaseStyle"
-        android:text="Titel:" />
+        <TextView
+            style="@style/TextViewBaseStyle"
+            android:text="Titel:" />
 
-    <EditText
-        style="@style/EditTextBaseStyle"
-        android:id="@+id/fridge_detail_name"/>
+        <EditText
+            style="@style/EditTextBaseStyle"
+            android:id="@+id/fridge_detail_name"/>
 
-    <TextView
-        style="@style/TextViewBaseStyle"
-        android:text="Anzahl:"/>
+        <TextView
+            style="@style/TextViewBaseStyle"
+            android:text="Anzahl:"/>
 
-    <NumberPicker
-        style="@style/NumberPickerBase"
-        android:id="@+id/fridge_detail_numberPicker"/>
+        <NumberPicker
+            style="@style/NumberPickerBase"
+            android:id="@+id/fridge_detail_numberPicker"/>
 
-    <!--<EditText-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:inputType="number"-->
-        <!--android:ems="10"-->
-        <!--android:id="@+id/fridge_detail_quantity"-->
-        <!--android:paddingBottom="6dp"/>-->
+        <TextView
+            style="@style/TextViewBaseStyle"
+            android:text="Erinnerung:"
+            android:paddingBottom="20dp"/>
 
-    <TextView
-        style="@style/TextViewBaseStyle"
-        android:text="Erinnerung:"
-        android:paddingBottom="20dp"/>
+        <TextView
+            style="@style/TextViewBaseStyle"
+            android:text="Keine Erinnerung gesetzt"
+            android:id="@+id/fridge_detail_notification_date"
+            android:paddingLeft="10dp"
+            android:textSize="23sp"
+            android:textStyle="normal"
+            android:paddingBottom="20dp"/>
 
-    <TextView
-        style="@style/TextViewBaseStyle"
-        android:text="Keine Erinnerung gesetzt"
-        android:id="@+id/fridge_detail_notification_date"
-        android:paddingLeft="10dp"
-        android:textSize="23sp"
-        android:textStyle="normal"
-        android:paddingBottom="20dp"/>
+        <Button
+            style="@style/ButtonBaseStyle"
+            android:text="Erinnerung setzen"
+            android:id="@+id/fridge_detail_notification_button"
+            android:layout_marginBottom="20dp"/>
 
-    <Button
-        style="@style/ButtonBaseStyle"
-        android:text="Erinnerung setzen"
-        android:id="@+id/fridge_detail_notification_button"/>
+        <TextView
+            style="@style/TextViewBaseStyle"
+            android:text="Notizen:"/>
 
-</LinearLayout>
+        <EditText
+            style="@style/EditTextBaseStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:ems="10"
+            android:id="@+id/fridge_detail_note"
+            android:lines="10" />
+    </LinearLayout>
+</ScrollView>

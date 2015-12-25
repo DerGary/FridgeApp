@@ -19,17 +19,22 @@ import java.util.List;
  * Created by Stefan on 09-04-15.
  */
 public class SharedPrefManager {
-    private final static String LECTURE_TAG = "lecture";
     private final static String My_PREFS_NAME = "SHARED_USER_PREFERENCES";
+    private final static String ITEM_ID = "ITEM_ID";
 
-    private final Context _context;
     private SharedPreferences _pref;
     private SharedPreferences.Editor _prefEditor;
 
     public SharedPrefManager(Context context) {
-        this._context = context;
         _pref = context.getSharedPreferences(My_PREFS_NAME, Context.MODE_PRIVATE);
         _prefEditor = _pref.edit();
+    }
+
+    public int getNewID(){
+        int id = _pref.getInt(ITEM_ID, 0);
+        _prefEditor.putInt(ITEM_ID, id+1);
+        _prefEditor.commit();
+        return id;
     }
 
     public <T> boolean save(String item, T obj){

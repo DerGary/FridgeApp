@@ -8,8 +8,8 @@ import org.joda.time.DateTime;
 public class ShelfItem extends FridgeItem {
     private int minQuantity;
 
-    public ShelfItem(String _name, int _quantity, DateTime _notificationDate, String barCode, int minQuantity) {
-        super(_name, _quantity, _notificationDate, barCode);
+    public ShelfItem(int id, String name, int quantity, DateTime notificationDate, String barCode, String notes, int minQuantity) {
+        super(id, name, quantity, notificationDate, barCode, notes);
         this.minQuantity = minQuantity;
     }
 

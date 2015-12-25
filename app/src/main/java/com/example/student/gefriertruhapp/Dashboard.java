@@ -19,11 +19,11 @@ import com.example.student.gefriertruhapp.DetailFragments.ShelfDetailFragment;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.ShelfItem;
-import com.example.student.gefriertruhapp.Notifications.BackgroundNotificationService;
+import com.example.student.gefriertruhapp.Notifications.NotificationBroadCastReceiver;
+import com.example.student.gefriertruhapp.Notifications.Notifier;
+import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.example.student.gefriertruhapp.ViewPager.PageType;
 import com.example.student.gefriertruhapp.ViewPager.ViewPagerFragment;
-
-import java.sql.DatabaseMetaData;
 
 public class Dashboard extends ActionBarActivity {
     //Actions
@@ -46,7 +46,7 @@ public class Dashboard extends ActionBarActivity {
     private static final int ACTIVITY_RESULT_QRDROID_ADD = 500;
     private static final int ACTIVITY_RESULT_QRDROID_DEL = 600;
     private ViewPagerFragment _viewPagerFragment;
-
+    private SharedPrefManager sharedPrefManager;
 
     private Menu _menu;
 
@@ -170,7 +170,7 @@ public class Dashboard extends ActionBarActivity {
                 Toast.makeText(Dashboard.this, PageType.FridgeList.toString() + ": " + item.getName() + " um 1 erhöht", Toast.LENGTH_SHORT).show();
                 _viewPagerFragment.setData();
             } else {
-                item = new FridgeItem(barCode, 1, null, barCode);
+                item = new FridgeItem(sharedPrefManager.getNewID(), barCode, 1, null, barCode, null);
                 FridgeDetailFragment fragment = new FridgeDetailFragment();
                 fragment.setData(item);
                 changeFragment(fragment, true);
@@ -182,7 +182,7 @@ public class Dashboard extends ActionBarActivity {
                 Toast.makeText(Dashboard.this, PageType.ShelfList.toString() + ": " + item.getName() + " um 1 erhöht", Toast.LENGTH_SHORT).show();
                 _viewPagerFragment.setData();
             } else {
-                item = new ShelfItem(barCode, 1, null, barCode, 1);
+                item = new ShelfItem(sharedPrefManager.getNewID(), barCode, 1, null, barCode, null, 1);
                 ShelfDetailFragment fragment = new ShelfDetailFragment();
                 fragment.setData(item);
                 changeFragment(fragment, true);
@@ -215,11 +215,32 @@ public class Dashboard extends ActionBarActivity {
     }
 
     public void createPage() {
-        DataBaseSingleton.getInstance().loadDataBase(getBaseContext());
+
+        sharedPrefManager = new SharedPrefManager(getBaseContext());
+        DataBaseSingleton.init(getBaseContext());
+        DataBaseSingleton.getInstance().loadDataBase();
         _viewPagerFragment = new ViewPagerFragment();
         getFragmentManager().beginTransaction().replace(R.id.main_layout, _viewPagerFragment).commit();
-        Intent intent = new Intent(this, BackgroundNotificationService.class);
-        startService(intent);
+        checkIntentForID();
+    }
+    public void checkIntentForID(){
+        Intent callingIntent = getIntent();
+        int itemID = -1;
+        if (callingIntent != null) {
+            itemID = callingIntent.getIntExtra(Notifier.ITEM_ID, -1);
+        }
+        if (itemID > -1) {
+            Fragment fragment;
+            FridgeItem item = DataBaseSingleton.getInstance().getItemByID(itemID);
+            if(item instanceof ShelfItem){
+                fragment = new ShelfDetailFragment();
+                ((ShelfDetailFragment)fragment).setData((ShelfItem) item);
+            }else{
+                fragment = new FridgeDetailFragment();
+                ((FridgeDetailFragment)fragment).setData(item);
+            }
+            changeFragment(fragment, true);
+        }
     }
     public Menu get_menu() {
         return _menu;

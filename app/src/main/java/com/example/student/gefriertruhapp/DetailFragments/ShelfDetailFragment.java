@@ -40,7 +40,7 @@ public class ShelfDetailFragment extends TitleFragment {
     private ShelfItem item;
     private View rootView;
     private Button notificationButton;
-    private EditText name;
+    private EditText name, notes;
     private NumberPicker quantity, minquantity;
     private TextView notificationDate;
     DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm - dd.MM.yyyy");
@@ -72,6 +72,7 @@ public class ShelfDetailFragment extends TitleFragment {
         quantity.setMinValue(0);
         minquantity.setMaxValue(100);
         minquantity.setMinValue(0);
+        notes = (EditText) rootView.findViewById(R.id.shelf_detail_note);
 
         NumberPickerHelper.setDividerColor(quantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
         NumberPickerHelper.setDividerColor(minquantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
@@ -87,11 +88,14 @@ public class ShelfDetailFragment extends TitleFragment {
         if(item.getNotificationDate() != null) {
             notificationDate.setText(formatter.print(item.getNotificationDate()));
         }
+        notes.setText(item.getNotes());
     }
+
     private void getViewData(){
         item.setMinQuantity(minquantity.getValue());
         item.setQuantity(quantity.getValue());
         item.setName(name.getText().toString());
+        item.setNotes(notes.getText().toString());
     }
 
 
@@ -110,14 +114,12 @@ public class ShelfDetailFragment extends TitleFragment {
         int id = item.getItemId();
         if(id == R.id.menu_item_delete){
             DataBaseSingleton.getInstance().deleteShelfItem(this.item);
-            DataBaseSingleton.getInstance().saveDataBase(getActivity().getBaseContext());
-            //Todo: delete shelfitem and navigate Back
+            DataBaseSingleton.getInstance().saveDataBase();
             ((Dashboard) getActivity()).onBackPressed();
         }else if(id == R.id.menu_item_save){
             getViewData();
             DataBaseSingleton.getInstance().saveShelfItem(this.item);
-            DataBaseSingleton.getInstance().saveDataBase(getActivity().getBaseContext());
-            //Todo: Save and navigate Back
+            DataBaseSingleton.getInstance().saveDataBase();
             ((Dashboard) getActivity()).onBackPressed();
         } else if (id == android.R.id.home){
             getActivity().onBackPressed();

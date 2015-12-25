@@ -1,7 +1,6 @@
 package com.example.student.gefriertruhapp.ViewPager;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -39,9 +38,9 @@ public class ViewPagerFragment extends Fragment {
             list.add(new FridgeListFragment());
             list.add(new FridgeListFragment());
         }
-        ArrayList<FridgeItem> fridgeItems = DataBaseSingleton.getInstance().get_fridgeList();
+        ArrayList<FridgeItem> fridgeItems = DataBaseSingleton.getInstance().getFridgeList();
         Collections.sort(fridgeItems);
-        ArrayList<ShelfItem> items = DataBaseSingleton.getInstance().get_shelfList();
+        ArrayList<ShelfItem> items = DataBaseSingleton.getInstance().getShelfList();
         Collections.sort(items);
         ArrayList<ShelfItem> shoppingList = new ArrayList<>();
         for(ShelfItem item : items){

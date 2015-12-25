@@ -29,7 +29,11 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder{
     public void assignData(FridgeItem data) {
         _data = data;
         this.name.setText(data.getName());
-        this.date.setText(formatter.print(data.getNotificationDate()));
+        if(data.getNotificationDate() != null) {
+            this.date.setText(formatter.print(data.getNotificationDate()));
+        }else{
+            this.date.setText("");
+        }
         if(data instanceof ShelfItem){
             ShelfItem casted = (ShelfItem)data;
             this.quantity.setText(data.getQuantity() + " / " + casted.getMinQuantity());

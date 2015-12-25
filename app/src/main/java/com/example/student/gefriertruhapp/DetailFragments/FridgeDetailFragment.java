@@ -2,7 +2,6 @@ package com.example.student.gefriertruhapp.DetailFragments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -41,10 +40,10 @@ public class FridgeDetailFragment extends TitleFragment {
     protected FridgeItem item;
     protected View rootView;
     protected Button notificationButton;
-    protected EditText name, quantity;
+    protected EditText name, notes;
     protected TextView notificationDate;
     protected DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm - dd.MM.yyyy");
-    protected NumberPicker numberPicker;
+    protected NumberPicker quantity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,28 +73,30 @@ public class FridgeDetailFragment extends TitleFragment {
         name = (EditText) rootView.findViewById(R.id.fridge_detail_name);
         //quantity = (EditText)rootView.findViewById(R.id.fridge_detail_quantity);
         notificationDate = (TextView) rootView.findViewById(R.id.fridge_detail_notification_date);
-        numberPicker = (NumberPicker)rootView.findViewById(R.id.fridge_detail_numberPicker);
-        numberPicker.setMaxValue(100);
-        numberPicker.setMinValue(0);
+        quantity = (NumberPicker)rootView.findViewById(R.id.fridge_detail_numberPicker);
+        quantity.setMaxValue(100);
+        quantity.setMinValue(0);
+        notes = (EditText)rootView.findViewById(R.id.fridge_detail_note);
 
-        NumberPickerHelper.setDividerColor(numberPicker, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
+        NumberPickerHelper.setDividerColor(quantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
         setViewData();
 
         return rootView;
     }
 
     private void setViewData(){
-        //quantity.setText(String.valueOf(item.getQuantity()));
         name.setText(item.getName());
         if(item.getNotificationDate() != null) {
             notificationDate.setText(formatter.print(item.getNotificationDate()));
         }
-        numberPicker.setValue(item.getQuantity());
+        quantity.setValue(item.getQuantity());
+        notes.setText(item.getNotes());
     }
+
     private void getViewData(){
-        //item.setQuantity(Integer.parseInt(quantity.getText().toString()));
         item.setName(name.getText().toString());
-        item.setQuantity(numberPicker.getValue());
+        item.setQuantity(quantity.getValue());
+        item.setNotes(notes.getText().toString());
     }
 
 
@@ -114,16 +115,14 @@ public class FridgeDetailFragment extends TitleFragment {
         int id = item.getItemId();
         if(id == R.id.menu_item_delete){
             DataBaseSingleton.getInstance().deleteFridgeItem(this.item);
-            DataBaseSingleton.getInstance().saveDataBase(getActivity().getBaseContext());
-            //Todo: delete shelfitem and navigate Back
-            ((Dashboard) getActivity()).onBackPressed();
+            DataBaseSingleton.getInstance().saveDataBase();
+            getActivity().onBackPressed();
             return true;
         }else if(id == R.id.menu_item_save){
             getViewData();
             DataBaseSingleton.getInstance().saveFridgeItem(this.item);
-            DataBaseSingleton.getInstance().saveDataBase(getActivity().getBaseContext());
-            //Todo: Save and navigate Back
-            ((Dashboard) getActivity()).onBackPressed();
+            DataBaseSingleton.getInstance().saveDataBase();
+            getActivity().onBackPressed();
             return true;
         } else if(id == android.R.id.home){
             getActivity().onBackPressed();

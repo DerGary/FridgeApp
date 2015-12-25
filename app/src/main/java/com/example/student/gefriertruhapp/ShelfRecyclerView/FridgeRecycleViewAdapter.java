@@ -47,6 +47,9 @@ public class FridgeRecycleViewAdapter extends RecyclerView.Adapter<FridgeViewHol
 
     @Override
     public int getItemCount() {
+        if(_list == null){
+            return 0;
+        }
         return _list.size();
     }
 
