@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.SystemClock;
 
@@ -12,6 +14,7 @@ import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.ShelfItem;
+import com.example.student.gefriertruhapp.R;
 
 /**
  * Created by student on 25.12.15.
@@ -40,8 +43,10 @@ public abstract class Notifier {
         }
 
         long[] vibrate = new long[] {1000,500,1000,500,1000,500};
+        Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_freezer_blue);
         Notification.Builder mBuilder = new Notification.Builder(context)
-                .setSmallIcon(android.R.drawable.ic_menu_recent_history)
+                .setSmallIcon(R.drawable.icon_freezer_blue)
+                .setLargeIcon(bm)
                 .setContentTitle(item.getName())
                 .setContentText(shelf + "Erinnerung an: " + item.getName())
                 .setContentIntent(pendingIntent)
