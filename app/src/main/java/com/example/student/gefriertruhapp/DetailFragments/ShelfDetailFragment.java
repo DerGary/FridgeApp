@@ -76,6 +76,9 @@ public class ShelfDetailFragment extends TitleFragment {
 
         NumberPickerHelper.setDividerColor(quantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
         NumberPickerHelper.setDividerColor(minquantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
+        NumberPickerHelper.setClickAvoid(quantity);
+        NumberPickerHelper.setClickAvoid(minquantity);
+
         setViewData();
 
         return rootView;

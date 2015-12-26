@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.SystemClock;
 
 import com.example.student.gefriertruhapp.Dashboard;
@@ -53,7 +54,12 @@ public abstract class Notifier {
                 .setAutoCancel(true)
                 .setVibrate(vibrate)
                 .setLights(Color.CYAN, 1000, 1000);
-        Notification n = mBuilder.build();
+        Notification n;
+        if (Build.VERSION.SDK_INT < 16) {
+            n = mBuilder.getNotification();
+        } else {
+            n = mBuilder.build();
+        }
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         manager.notify(item.getId(), n);

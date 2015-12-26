@@ -83,6 +83,8 @@ public class Dashboard extends ActionBarActivity {
             openQRDroid(ACTIVITY_RESULT_QRDROID_ADD);
         } else if(id == R.id.delete){
             openQRDroid(ACTIVITY_RESULT_QRDROID_DEL);
+        } else if(id == R.id.new_item){
+            showAddDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -98,6 +100,36 @@ public class Dashboard extends ActionBarActivity {
         } catch (ActivityNotFoundException activity) {
             qrDroidRequired(this);
         }
+    }
+    int type;
+    private void showAddDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setSingleChoiceItems(new String[]{PageType.FridgeList.toString(), PageType.ShelfList.toString()}, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                type = which;
+            }
+        });
+        builder.setTitle("Art wählen");
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(type == PageType.FridgeList.getI()){
+                    FridgeItem item = new FridgeItem(sharedPrefManager.getNewID(), "", 1, null, null, "");
+                    FridgeDetailFragment fragment = new FridgeDetailFragment();
+                    fragment.setData(item);
+                    changeFragment(fragment, true);
+                } else {
+                    ShelfItem item = new ShelfItem(sharedPrefManager.getNewID(), "", 1, null, null, "", 1);
+                    ShelfDetailFragment fragment = new ShelfDetailFragment();
+                    fragment.setData(item);
+                    changeFragment(fragment, true);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.create().show();
     }
 
     /**

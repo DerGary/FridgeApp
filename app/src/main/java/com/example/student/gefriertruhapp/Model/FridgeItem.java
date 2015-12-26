@@ -62,7 +62,11 @@ public class FridgeItem implements Comparable<FridgeItem> {
 
     @Override
     public int compareTo(FridgeItem another) {
-        return notificationDate.compareTo(another.getNotificationDate());
+        if(notificationDate != null) {
+            return notificationDate.compareTo(another.getNotificationDate());
+        }else {
+            return 0;
+        }
     }
 
     public String getNotes() {

@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -79,6 +80,8 @@ public class FridgeDetailFragment extends TitleFragment {
         notes = (EditText)rootView.findViewById(R.id.fridge_detail_note);
 
         NumberPickerHelper.setDividerColor(quantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
+        NumberPickerHelper.setClickAvoid(quantity);
+
         setViewData();
 
         return rootView;

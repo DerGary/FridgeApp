@@ -8,9 +8,11 @@ import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.google.gson.reflect.TypeToken;
 
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Julius on 25.06.2015.
@@ -26,11 +28,23 @@ public class DataBaseSingleton {
     private final static String SHELF_ITEMS = "SHELF_ITEMS";
 
     public ArrayList<FridgeItem> getFridgeList() {
-        return new ArrayList<>(fridgeItems.values());
+        ArrayList<FridgeItem> list = new ArrayList<>();
+        for (Map.Entry<Integer, FridgeItem> kv : itemIDs.entrySet()) {
+            if (!(kv.getValue() instanceof ShelfItem)) {
+                list.add(kv.getValue());
+            }
+        }
+        return list;
     }
 
     public ArrayList<ShelfItem> getShelfList() {
-        return new ArrayList<>(shelfItems.values());
+        ArrayList<ShelfItem> list = new ArrayList<>();
+        for (Map.Entry<Integer, FridgeItem> kv : itemIDs.entrySet()) {
+            if (kv.getValue() instanceof ShelfItem) {
+                list.add((ShelfItem)kv.getValue());
+            }
+        }
+        return list;
     }
     public static void init(Context context){
         if(ourInstance != null){
@@ -67,7 +81,9 @@ public class DataBaseSingleton {
     }
 
     public void saveFridgeItem(FridgeItem item){
-        this.fridgeItems.put(item.getBarCode(), item);
+        if(item.getBarCode() != null) {
+            this.fridgeItems.put(item.getBarCode(), item);
+        }
         this.itemIDs.put(item.getId(), item);
         if(item.getNotificationDate() != null && item.getNotificationDate().getMillis() > SystemClock.elapsedRealtime()){
             item.setNotified(false);
@@ -76,19 +92,25 @@ public class DataBaseSingleton {
     }
 
     public void deleteShelfItem(ShelfItem item){
-        this.shelfItems.remove(item.getBarCode());
+        if(item.getBarCode() != null) {
+            this.shelfItems.remove(item.getBarCode());
+        }
         this.itemIDs.remove(item.getId());
         NotificationBroadCastReceiver.unregisterAlarm(context, item);
     }
 
     public void deleteFridgeItem(FridgeItem item){
-        this.fridgeItems.remove(item.getBarCode());
+        if(item.getBarCode() != null) {
+            this.fridgeItems.remove(item.getBarCode());
+        }
         this.itemIDs.remove(item.getId());
         NotificationBroadCastReceiver.unregisterAlarm(context, item);
     }
 
     public void saveShelfItem(ShelfItem item){
-        this.shelfItems.put(item.getBarCode(), item);
+        if(item.getBarCode() != null) {
+            this.shelfItems.put(item.getBarCode(), item);
+        }
         this.itemIDs.put(item.getId(), item);
         if(item.getNotificationDate() != null && item.getNotificationDate().getMillis() > SystemClock.elapsedRealtime()){
             item.setNotified(false);
@@ -117,13 +139,17 @@ public class DataBaseSingleton {
         this.itemIDs.clear();
         if(fridgeItems != null) {
             for (FridgeItem item : fridgeItems) {
-                this.fridgeItems.put(item.getBarCode(), item);
+                if(item.getBarCode() != null) {
+                    this.fridgeItems.put(item.getBarCode(), item);
+                }
                 this.itemIDs.put(item.getId(), item);
             }
         }
         if(shelfItems != null) {
             for (ShelfItem item : shelfItems) {
-                this.shelfItems.put(item.getBarCode(), item);
+                if(item.getBarCode() != null) {
+                    this.shelfItems.put(item.getBarCode(), item);
+                }
                 this.itemIDs.put(item.getId(), item);
             }
         }

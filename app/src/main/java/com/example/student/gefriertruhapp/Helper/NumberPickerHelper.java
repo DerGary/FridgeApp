@@ -3,6 +3,8 @@ package com.example.student.gefriertruhapp.Helper;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.NumberPicker;
 
 /**
@@ -30,4 +32,23 @@ public class NumberPickerHelper {
             }
         }
     }
+
+    public static void setClickAvoid(NumberPicker picker){
+        picker.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(final View v, final MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_MOVE && v.getParent() != null) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                }
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    v.performClick();
+                }
+
+                v.onTouchEvent(event);
+                return true;
+            }
+        });
+    }
+
 }
