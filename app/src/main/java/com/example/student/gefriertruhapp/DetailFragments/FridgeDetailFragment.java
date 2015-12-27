@@ -11,21 +11,27 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
+import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.R;
+import com.example.student.gefriertruhapp.UPC.GetAsyncTask;
+import com.example.student.gefriertruhapp.UPC.JsonResult;
+import com.example.student.gefriertruhapp.ViewPager.PageType;
 import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
 
 import org.joda.time.DateTime;
@@ -44,7 +50,11 @@ public class FridgeDetailFragment extends TitleFragment {
     protected EditText name, notes;
     protected TextView notificationDate;
     protected DateTimeFormatter formatter = DateTimeFormat.forPattern("HH:mm - dd.MM.yyyy");
-    protected NumberPicker quantity;
+    protected NumberPicker quantity, minQuantity;
+    protected ImageButton searchButton;
+    protected ProgressBar progressBar;
+    protected ImageView deleteMark, checkMark;
+    protected LinearLayout minQuantityLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,13 +84,35 @@ public class FridgeDetailFragment extends TitleFragment {
         name = (EditText) rootView.findViewById(R.id.fridge_detail_name);
         //quantity = (EditText)rootView.findViewById(R.id.fridge_detail_quantity);
         notificationDate = (TextView) rootView.findViewById(R.id.fridge_detail_notification_date);
-        quantity = (NumberPicker)rootView.findViewById(R.id.fridge_detail_numberPicker);
+        quantity = (NumberPicker)rootView.findViewById(R.id.fridge_detail_quantity);
         quantity.setMaxValue(100);
         quantity.setMinValue(0);
+        minQuantity = (NumberPicker)rootView.findViewById(R.id.fridge_detail_min_quantity);
+        minQuantityLayout = (LinearLayout) rootView.findViewById(R.id.fridge_detail_min_quantity_container);
+
+        minQuantity.setMaxValue(100);
+        minQuantity.setMinValue(0);
+        if(item instanceof ShelfItem){
+            minQuantityLayout.setVisibility(View.VISIBLE);
+        }
         notes = (EditText)rootView.findViewById(R.id.fridge_detail_note);
 
         NumberPickerHelper.setDividerColor(quantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
-        NumberPickerHelper.setClickAvoid(quantity);
+        NumberPickerHelper.setDividerColor(minQuantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
+        //NumberPickerHelper.setClickAvoid(quantity);
+        //NumberPickerHelper.setClickAvoid(minQuantity);
+
+        searchButton = (ImageButton) rootView.findViewById(R.id.fridge_detail_search_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadUPC();
+            }
+        });
+
+        progressBar = (ProgressBar) rootView.findViewById(R.id.fridge_detail_progressbar);
+        deleteMark = (ImageView) rootView.findViewById(R.id.fridge_detail_delete);
+        checkMark = (ImageView) rootView.findViewById(R.id.fridge_detail_check_mark);
 
         setViewData();
 
@@ -94,12 +126,18 @@ public class FridgeDetailFragment extends TitleFragment {
         }
         quantity.setValue(item.getQuantity());
         notes.setText(item.getNotes());
+        if(item instanceof ShelfItem){
+            minQuantity.setValue(((ShelfItem) item).getMinQuantity());
+        }
     }
 
     private void getViewData(){
         item.setName(name.getText().toString());
         item.setQuantity(quantity.getValue());
         item.setNotes(notes.getText().toString());
+        if(item instanceof ShelfItem) {
+            ((ShelfItem) item).setMinQuantity(minQuantity.getValue());
+        }
     }
 
 
@@ -140,7 +178,10 @@ public class FridgeDetailFragment extends TitleFragment {
 
     @Override
     public String getTitle() {
-        return "Gefriertruhe";
+        if(item instanceof ShelfItem){
+            return PageType.ShelfList.toString();
+        }
+        return PageType.FridgeList.toString();
     }
 
     private void onSetNotificationClicked() {
@@ -181,5 +222,39 @@ public class FridgeDetailFragment extends TitleFragment {
 
         TimePickerDialog dialog = new TimePickerDialog(getActivity(), listener, hour, minute, DateFormat.is24HourFormat(getActivity()));
         dialog.show();
+    }
+
+    private void loadUPC(){
+        GetAsyncTask<JsonResult> loadUPCs = new GetAsyncTask<JsonResult>(getActivity()) {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                deleteMark.setVisibility(View.GONE);
+                checkMark.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            protected void onPostExecute(JsonResult result) {
+                super.onPostExecute(result);
+                progressBar.setVisibility(View.GONE);
+                if(result == null || result.getValid().equals("false")){
+                    deleteMark.setVisibility(View.VISIBLE);
+
+                } else {
+                    checkMark.setVisibility(View.VISIBLE);
+                    name.setText(result.getItemname());
+                    notes.setText(result.getAlias()+ "\r" + result.getDescription());
+                }
+            }
+
+            @Override
+            protected void onCancelled() {
+                super.onCancelled();
+                progressBar.setVisibility(View.GONE);
+                deleteMark.setVisibility(View.VISIBLE);
+            }
+        };
+        loadUPCs.execute(item.getBarCode());
     }
 }

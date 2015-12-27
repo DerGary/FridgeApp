@@ -1,6 +1,5 @@
 package com.example.student.gefriertruhapp.ShelfRecyclerView;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,15 +7,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.DetailFragments.FridgeDetailFragment;
-import com.example.student.gefriertruhapp.DetailFragments.ShelfDetailFragment;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
-import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
 
@@ -73,15 +69,9 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
 
     @Override
     public void onItemClick(Object data) {
-        if(data instanceof ShelfItem) {
-            ShelfDetailFragment fragment = new ShelfDetailFragment();
-            fragment.setData((ShelfItem)data);
-            ((Dashboard) getActivity()).changeFragment(fragment, true);
-        }else{
-            FridgeDetailFragment fragment = new FridgeDetailFragment();
-            fragment.setData((FridgeItem) data);
-            ((Dashboard) getActivity()).changeFragment(fragment, true);
-        }
+        FridgeDetailFragment fragment = new FridgeDetailFragment();
+        fragment.setData((FridgeItem)data);
+        ((Dashboard) getActivity()).changeFragment(fragment, true);
     }
 
     public String getTitle() {

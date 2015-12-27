@@ -1,8 +1,5 @@
 package com.example.student.gefriertruhapp.ViewPager;
 
-import com.example.student.gefriertruhapp.DetailFragments.ShelfDetailFragment;
-import com.example.student.gefriertruhapp.ShelfRecyclerView.FridgeListFragment;
-
 /**
  * Created by student on 23.12.15.
  */

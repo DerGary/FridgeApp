@@ -12,17 +12,84 @@
             style="@style/TextViewBaseStyle"
             android:text="Titel:" />
 
-        <EditText
-            style="@style/EditTextBaseStyle"
-            android:id="@+id/fridge_detail_name"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            style="@style/TextViewBaseStyle"
-            android:text="Anzahl:"/>
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                style="@style/EditTextBaseStyle"
+                android:id="@+id/fridge_detail_name"/>
+            <LinearLayout
+                android:id="@+id/fridge_detail_search_button_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/fridge_detail_delete"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/delete"
+                    android:visibility="gone"/>
+                <ImageView
+                    android:id="@+id/fridge_detail_check_mark"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/check_mark"
+                    android:visibility="gone"/>
+                <ProgressBar
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/fridge_detail_progressbar"
+                    android:indeterminate="true"
+                    android:visibility="invisible"/>
+                <ImageButton
+                    android:id="@+id/fridge_detail_search_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@android:drawable/ic_menu_search"/>
+            </LinearLayout>
 
-        <NumberPicker
-            style="@style/NumberPickerBase"
-            android:id="@+id/fridge_detail_numberPicker"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2">
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+                <TextView
+                    style="@style/TextViewBaseStyle"
+                    android:text="Anzahl:"/>
+                <NumberPicker
+                    android:id="@+id/fridge_detail_quantity"
+                    style="@style/NumberPickerBase"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/fridge_detail_min_quantity_container"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/TextViewBaseStyle"
+                    android:text="minimale Anzahl:"/>
+                <NumberPicker
+                    android:id="@+id/fridge_detail_min_quantity"
+                    style="@style/NumberPickerBase"/>
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
             style="@style/TextViewBaseStyle"

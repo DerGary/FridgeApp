@@ -15,11 +15,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.student.gefriertruhapp.DetailFragments.FridgeDetailFragment;
-import com.example.student.gefriertruhapp.DetailFragments.ShelfDetailFragment;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.ShelfItem;
-import com.example.student.gefriertruhapp.Notifications.NotificationBroadCastReceiver;
 import com.example.student.gefriertruhapp.Notifications.Notifier;
 import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.example.student.gefriertruhapp.ViewPager.PageType;
@@ -84,7 +82,7 @@ public class Dashboard extends ActionBarActivity {
         } else if(id == R.id.delete){
             openQRDroid(ACTIVITY_RESULT_QRDROID_DEL);
         } else if(id == R.id.new_item){
-            showAddDialog();
+            addItemWithoutQRCode();
         }
 
         return super.onOptionsItemSelected(item);
@@ -101,35 +99,15 @@ public class Dashboard extends ActionBarActivity {
             qrDroidRequired(this);
         }
     }
-    int type;
-    private void showAddDialog(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setSingleChoiceItems(new String[]{PageType.FridgeList.toString(), PageType.ShelfList.toString()}, 0, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                type = which;
-            }
-        });
-        builder.setTitle("Art wählen");
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if(type == PageType.FridgeList.getI()){
-                    FridgeItem item = new FridgeItem(sharedPrefManager.getNewID(), "", 1, null, null, "");
-                    FridgeDetailFragment fragment = new FridgeDetailFragment();
-                    fragment.setData(item);
-                    changeFragment(fragment, true);
-                } else {
-                    ShelfItem item = new ShelfItem(sharedPrefManager.getNewID(), "", 1, null, null, "", 1);
-                    ShelfDetailFragment fragment = new ShelfDetailFragment();
-                    fragment.setData(item);
-                    changeFragment(fragment, true);
-                }
-            }
-        });
-        builder.setNegativeButton("Cancel", null);
-        builder.create().show();
+    private void addItemWithoutQRCode(){
+        FridgeItem item;
+        if(_viewPagerFragment.currentView() == PageType.FridgeList.getI()){
+            item = new FridgeItem(sharedPrefManager.getNewID(), "", 1, null, null, "");
+        } else {
+            item = new ShelfItem(sharedPrefManager.getNewID(), "", 1, null, null, "", 1);
+        }
+        navigateToDetailFragment(item);
     }
 
     /**
@@ -203,9 +181,7 @@ public class Dashboard extends ActionBarActivity {
                 _viewPagerFragment.setData();
             } else {
                 item = new FridgeItem(sharedPrefManager.getNewID(), barCode, 1, null, barCode, null);
-                FridgeDetailFragment fragment = new FridgeDetailFragment();
-                fragment.setData(item);
-                changeFragment(fragment, true);
+                navigateToDetailFragment(item);
             }
         } else {
             ShelfItem item = DataBaseSingleton.getInstance().getShelfItem(barCode);
@@ -215,9 +191,7 @@ public class Dashboard extends ActionBarActivity {
                 _viewPagerFragment.setData();
             } else {
                 item = new ShelfItem(sharedPrefManager.getNewID(), barCode, 1, null, barCode, null, 1);
-                ShelfDetailFragment fragment = new ShelfDetailFragment();
-                fragment.setData(item);
-                changeFragment(fragment, true);
+                navigateToDetailFragment(item);
             }
         }
     }
@@ -262,19 +236,17 @@ public class Dashboard extends ActionBarActivity {
             itemID = callingIntent.getIntExtra(Notifier.ITEM_ID, -1);
         }
         if (itemID > -1) {
-            Fragment fragment;
             FridgeItem item = DataBaseSingleton.getInstance().getItemByID(itemID);
-            if(item instanceof ShelfItem){
-                fragment = new ShelfDetailFragment();
-                ((ShelfDetailFragment)fragment).setData((ShelfItem) item);
-            }else{
-                fragment = new FridgeDetailFragment();
-                ((FridgeDetailFragment)fragment).setData(item);
-            }
-            changeFragment(fragment, true);
+            navigateToDetailFragment(item);
         }
     }
     public Menu get_menu() {
         return _menu;
+    }
+
+    private void navigateToDetailFragment(FridgeItem item){
+        FridgeDetailFragment fragment = new FridgeDetailFragment();
+        fragment.setData(item);
+        changeFragment(fragment, true);
     }
 }
