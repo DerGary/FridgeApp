@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
 
@@ -45,6 +47,8 @@ public abstract class Notifier {
 
         long[] vibrate = new long[] {1000,500,1000,500,1000,500};
         Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_freezer_blue);
+
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Notification.Builder mBuilder = new Notification.Builder(context)
                 .setSmallIcon(R.drawable.icon_freezer_blue)
                 .setLargeIcon(bm)
@@ -52,8 +56,8 @@ public abstract class Notifier {
                 .setContentText(shelf + "Erinnerung an: " + item.getName())
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
-                .setVibrate(vibrate)
-                .setLights(Color.CYAN, 1000, 1000);
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setLights(Color.argb(255,0, 150, 136), 1000, 1000);
         Notification n;
         if (Build.VERSION.SDK_INT < 16) {
             n = mBuilder.getNotification();
