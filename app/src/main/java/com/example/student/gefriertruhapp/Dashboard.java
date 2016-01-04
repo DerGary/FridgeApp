@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.example.student.gefriertruhapp.DetailFragments.FridgeDetailFragment;
@@ -22,6 +23,9 @@ import com.example.student.gefriertruhapp.Notifications.Notifier;
 import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.example.student.gefriertruhapp.ViewPager.PageType;
 import com.example.student.gefriertruhapp.ViewPager.ViewPagerFragment;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Dashboard extends ActionBarActivity {
     //Actions
@@ -54,6 +58,7 @@ public class Dashboard extends ActionBarActivity {
 
         setContentView(R.layout.activity_dashboard);
 
+
         createPage();
     }
 
@@ -65,6 +70,8 @@ public class Dashboard extends ActionBarActivity {
         getSupportActionBar().setTitle("Gefriertruhen App");
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -103,7 +110,7 @@ public class Dashboard extends ActionBarActivity {
     private void addItemWithoutQRCode(){
         FridgeItem item;
         if(_viewPagerFragment.currentView() == PageType.FridgeList.getI()){
-            item = new FridgeItem(sharedPrefManager.getNewID(), "", 1, null, null, "");
+            item = new FridgeItem(sharedPrefManager.getNewID(), "", 1, null, null, "", 1);
         } else {
             item = new ShelfItem(sharedPrefManager.getNewID(), "", 1, null, null, "", 1);
         }
@@ -171,52 +178,129 @@ public class Dashboard extends ActionBarActivity {
         }
     }
 
+    int itemPos;
     public void addElement(String barCode){
         int i = _viewPagerFragment.currentView();
+
         if(i == PageType.FridgeList.getI()){
-            FridgeItem item = DataBaseSingleton.getInstance().getFridgeItem(barCode);
+            List<FridgeItem> item = DataBaseSingleton.getInstance().getFridgeItems(barCode);
             if (item != null) {
-                item.setQuantity(item.getQuantity() + 1);
-                Toast.makeText(Dashboard.this, PageType.FridgeList.toString() + ": " + item.getName() + " um 1 erhöht", Toast.LENGTH_SHORT).show();
-                _viewPagerFragment.setData();
+                showChooseArticleDialog(true, item, barCode);
+
             } else {
-                item = new FridgeItem(sharedPrefManager.getNewID(), barCode, 1, null, barCode, null);
-                navigateToDetailFragment(item);
+                FridgeItem fridgeItem = new FridgeItem(sharedPrefManager.getNewID(), barCode, 1, null, barCode, null, 1);
+                navigateToDetailFragment(fridgeItem);
             }
         } else {
-            ShelfItem item = DataBaseSingleton.getInstance().getShelfItem(barCode);
+            List<FridgeItem> item = (List<FridgeItem>)(List<?>)DataBaseSingleton.getInstance().getShelfItems(barCode);
             if (item != null) {
-                item.setQuantity(item.getQuantity()+1);
-                Toast.makeText(Dashboard.this, PageType.ShelfList.toString() + ": " + item.getName() + " um 1 erhöht", Toast.LENGTH_SHORT).show();
-                _viewPagerFragment.setData();
+                showChooseArticleDialog(true, item, barCode);
             } else {
-                item = new ShelfItem(sharedPrefManager.getNewID(), barCode, 1, null, barCode, null, 1);
-                navigateToDetailFragment(item);
+                ShelfItem shelfItem = new ShelfItem(sharedPrefManager.getNewID(), barCode, 1, null, barCode, null, 1);
+                navigateToDetailFragment(shelfItem);
             }
         }
     }
 
+    public void showChooseArticleDialog(final boolean add, final List<FridgeItem> items, final String barcode){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Artikel wählen");
+        List<String> strings = new ArrayList<>();
+        for(FridgeItem fridgeItem : items){
+            strings.add(fridgeItem.getNotificationDateString());
+        }
+        if(add) {
+            strings.add("Neu");
+        }
+        itemPos = 0;
+        builder.setSingleChoiceItems(strings.toArray(new String[strings.size()]), 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                itemPos = which;
+            }
+        });
+        builder.setNegativeButton("Abbrechen", null);
+        builder.setPositiveButton("Weiter", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(itemPos >= items.size()){
+                    FridgeDetailFragment fragment = new FridgeDetailFragment();
+                    FridgeItem item;
+                    int i = _viewPagerFragment.currentView();
+                    if(i == PageType.FridgeList.getI()){
+                        item = new FridgeItem(sharedPrefManager.getNewID(), barcode, 1, null, barcode, null, 1);
+                    }else{
+                        item = new ShelfItem(sharedPrefManager.getNewID(), barcode, 1, null, barcode, null, 1);
+                    }
+                    fragment.setData(item);
+                    changeFragment(fragment, true);
+                }else {
+                    showChooseQuantity(add, items, itemPos);
+                }
+            }
+        });
+        builder.create().show();
+    }
+    int numberPickerValue;
+    public void showChooseQuantity(final boolean add, final List<FridgeItem> items,final int itemPosition){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setView(R.layout.dialog_number_picker);
+        b.setTitle("Anzahl wählen");
+        b.setNegativeButton("Abbrechen", null);
+        b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FridgeItem item = items.get(itemPosition);
+                if (add) {
+                    item.setQuantity(item.getQuantity() + numberPickerValue);
+                } else {
+                    item.setQuantity(item.getQuantity() - numberPickerValue);
+                }
+
+                int i = _viewPagerFragment.currentView();
+                if (i == PageType.FridgeList.getI()) {
+                    DataBaseSingleton.getInstance().saveFridgeItem(item);
+                } else {
+                    DataBaseSingleton.getInstance().saveShelfItem((ShelfItem) item);
+                }
+                DataBaseSingleton.getInstance().saveDataBase();
+                _viewPagerFragment.setData();
+
+            }
+        });
+        AlertDialog dialog = b.create();
+        dialog.show();
+
+        NumberPicker picker = (NumberPicker)dialog.findViewById(R.id.dialog_number_picker_picker);
+        picker.setMaxValue(100);
+        picker.setMinValue(1);
+        numberPickerValue = 1;
+        picker.setValue(1);
+        picker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                numberPickerValue = newVal;
+            }
+        });
+    }
+
+
     public void delElement(String barCode){
+        List<FridgeItem> items;
         int i = _viewPagerFragment.currentView();
         if(i == PageType.FridgeList.getI()) {
-            FridgeItem item = DataBaseSingleton.getInstance().getFridgeItem(barCode);
-            if(item != null){
-                item.setQuantity(item.getQuantity() - 1);
-                Toast.makeText(Dashboard.this, PageType.FridgeList.toString()+": "+item.getName() + " um 1 verringert", Toast.LENGTH_SHORT).show();
-                _viewPagerFragment.setData();
-            }
-            else{
-                Toast.makeText(Dashboard.this, "Item nicht gefunden", Toast.LENGTH_SHORT).show();
+            items = DataBaseSingleton.getInstance().getFridgeItems(barCode);
+        }else{
+            items = (List<FridgeItem>)(List<?>)DataBaseSingleton.getInstance().getShelfItems(barCode);
+        }
+        if(items != null && items.size() > 0){
+            if(items.size() == 1) {
+                showChooseQuantity(false, items, 0);
+            }else {
+                showChooseArticleDialog(false, items, barCode);
             }
         }else{
-            ShelfItem item = DataBaseSingleton.getInstance().getShelfItem(barCode);
-            if(item != null){
-                item.setQuantity(item.getQuantity() - 1);
-                Toast.makeText(Dashboard.this, PageType.ShelfList.toString()+": "+item.getName() + " um 1 verringert", Toast.LENGTH_SHORT).show();
-                _viewPagerFragment.setData();
-            }else{
-                Toast.makeText(Dashboard.this, "Item nicht gefunden", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(Dashboard.this, "Artikel nicht gefunden", Toast.LENGTH_SHORT).show();
         }
     }
 

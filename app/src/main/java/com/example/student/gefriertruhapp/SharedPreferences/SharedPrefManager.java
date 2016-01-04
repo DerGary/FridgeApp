@@ -37,6 +37,11 @@ public class SharedPrefManager {
         return id;
     }
 
+    public void saveNewID(int id){
+        _prefEditor.putInt(ITEM_ID, id+1);
+        _prefEditor.commit();
+    }
+
     public <T> boolean save(String item, T obj){
         Gson gson = ExtendedGson.getInstance();
         String json = gson.toJson(obj);

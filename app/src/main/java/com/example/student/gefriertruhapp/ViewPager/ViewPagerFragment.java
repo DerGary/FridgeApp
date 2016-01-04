@@ -42,8 +42,13 @@ public class ViewPagerFragment extends Fragment {
         Collections.sort(fridgeItems);
         ArrayList<ShelfItem> items = DataBaseSingleton.getInstance().getShelfList();
         Collections.sort(items);
-        ArrayList<ShelfItem> shoppingList = new ArrayList<>();
+        ArrayList<FridgeItem> shoppingList = new ArrayList<>();
         for(ShelfItem item : items){
+            if(item.getQuantity() < item.getMinQuantity()){
+                shoppingList.add(item);
+            }
+        }
+        for(FridgeItem item : fridgeItems){
             if(item.getQuantity() < item.getMinQuantity()){
                 shoppingList.add(item);
             }

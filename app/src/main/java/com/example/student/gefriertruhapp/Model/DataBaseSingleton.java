@@ -1,10 +1,17 @@
 package com.example.student.gefriertruhapp.Model;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.SystemClock;
+import android.text.TextUtils;
 
+import com.example.student.gefriertruhapp.Helper.ExtendedGson;
+import com.example.student.gefriertruhapp.Helper.FileAccess;
+import com.example.student.gefriertruhapp.Helper.StorageException;
 import com.example.student.gefriertruhapp.Notifications.NotificationBroadCastReceiver;
 import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 
@@ -12,6 +19,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,8 +27,8 @@ import java.util.Map;
  */
 public class DataBaseSingleton {
     private static DataBaseSingleton ourInstance;
-    private HashMap<String, FridgeItem> fridgeItems;
-    private HashMap<String, ShelfItem> shelfItems;
+    private HashMap<String, List<FridgeItem>> fridgeItems;
+    private HashMap<String, List<ShelfItem>> shelfItems;
     private HashMap<Integer, FridgeItem> itemIDs;
     private boolean loaded = false;
     private Context context;
@@ -63,7 +71,7 @@ public class DataBaseSingleton {
         this.itemIDs = new HashMap<>();
     }
 
-    public ShelfItem getShelfItem(String barCode){
+    public List<ShelfItem> getShelfItems(String barCode){
         return shelfItems.get(barCode);
     }
 
@@ -76,13 +84,35 @@ public class DataBaseSingleton {
         return item;
     }
 
-    public FridgeItem getFridgeItem(String barCode){
+    public List<FridgeItem> getFridgeItems(String barCode){
         return fridgeItems.get(barCode);
+    }
+
+    public void saveItem(FridgeItem item){
+        if(item instanceof ShelfItem){
+            saveShelfItem((ShelfItem) item);
+        }else{
+            saveFridgeItem(item);
+        }
+    }
+
+    public void deleteItem(FridgeItem item){
+        if(item instanceof ShelfItem){
+            deleteShelfItem((ShelfItem)item);
+        }else{
+            deleteFridgeItem(item);
+        }
     }
 
     public void saveFridgeItem(FridgeItem item){
         if(item.getBarCode() != null) {
-            this.fridgeItems.put(item.getBarCode(), item);
+            List<FridgeItem> list = this.fridgeItems.get(item.getBarCode());
+            if(list == null){
+                list = new ArrayList<FridgeItem>();
+            }
+            list.remove(item);
+            list.add(item);
+            this.fridgeItems.put(item.getBarCode(), list);
         }
         this.itemIDs.put(item.getId(), item);
         if(item.getNotificationDate() != null && item.getNotificationDate().getMillis() > SystemClock.elapsedRealtime()){
@@ -93,7 +123,10 @@ public class DataBaseSingleton {
 
     public void deleteShelfItem(ShelfItem item){
         if(item.getBarCode() != null) {
-            this.shelfItems.remove(item.getBarCode());
+            List<ShelfItem> list = this.shelfItems.get(item.getBarCode());
+            if(list != null){
+                list.remove(item);
+            }
         }
         this.itemIDs.remove(item.getId());
         NotificationBroadCastReceiver.unregisterAlarm(context, item);
@@ -101,7 +134,10 @@ public class DataBaseSingleton {
 
     public void deleteFridgeItem(FridgeItem item){
         if(item.getBarCode() != null) {
-            this.fridgeItems.remove(item.getBarCode());
+            List<FridgeItem> list = this.fridgeItems.get(item.getBarCode());
+            if(list != null){
+                list.remove(item);
+            }
         }
         this.itemIDs.remove(item.getId());
         NotificationBroadCastReceiver.unregisterAlarm(context, item);
@@ -109,7 +145,13 @@ public class DataBaseSingleton {
 
     public void saveShelfItem(ShelfItem item){
         if(item.getBarCode() != null) {
-            this.shelfItems.put(item.getBarCode(), item);
+            List<ShelfItem> list = this.shelfItems.get(item.getBarCode());
+            if(list == null){
+                list = new ArrayList<ShelfItem>();
+            }
+            list.remove(item);
+            list.add(item);
+            this.shelfItems.put(item.getBarCode(), list);
         }
         this.itemIDs.put(item.getId(), item);
         if(item.getNotificationDate() != null && item.getNotificationDate().getMillis() > SystemClock.elapsedRealtime()){
@@ -119,40 +161,96 @@ public class DataBaseSingleton {
     }
 
     public void saveDataBase() {
-        SharedPrefManager manager = new SharedPrefManager(context);
-        manager.save(FRIDGE_ITEMS, getFridgeList());
-        manager.save(SHELF_ITEMS, getShelfList());
+        Gson gson = ExtendedGson.getInstance();
+        String json = gson.toJson(getShelfList());
+        try {
+            FileAccess.writeToStorage(json, SHELF_ITEMS);
+            json = gson.toJson(getFridgeList());
+            FileAccess.writeToStorage(json, FRIDGE_ITEMS);
+        }
+        catch (StorageException ex){
+            showStorageError();
+        }
     }
+
+
 
     public void loadDataBase() {
         if (loaded)
             return;
 
-        SharedPrefManager manager = new SharedPrefManager(context);
-
-        Type listType = new TypeToken<ArrayList<FridgeItem>>() {}.getType();
-        ArrayList<FridgeItem> fridgeItems = manager.load(FRIDGE_ITEMS, listType);
-        listType = new TypeToken<ArrayList<ShelfItem>>() {}.getType();
-        ArrayList<ShelfItem> shelfItems = manager.load(SHELF_ITEMS, listType);
         this.shelfItems.clear();
         this.fridgeItems.clear();
         this.itemIDs.clear();
-        if(fridgeItems != null) {
-            for (FridgeItem item : fridgeItems) {
-                if(item.getBarCode() != null) {
-                    this.fridgeItems.put(item.getBarCode(), item);
+
+        int biggestID = -1;
+
+        try {
+            Gson gson = ExtendedGson.getInstance();
+            String json = FileAccess.readFromStorage(FRIDGE_ITEMS);
+            ArrayList<FridgeItem> fridgeItems = null;
+            ArrayList<ShelfItem> shelfItems = null;
+            if (json != null) {
+                Type listType = new TypeToken<ArrayList<FridgeItem>>() {
+                }.getType();
+                fridgeItems = gson.fromJson(json, listType);
+                if (fridgeItems != null) {
+                    for (FridgeItem item : fridgeItems) {
+                        if (item.getBarCode() != null) {
+                            List<FridgeItem> list = this.fridgeItems.get(item.getBarCode());
+                            if(list == null){
+                                list = new ArrayList<>();
+                            }
+                            list.add(item);
+                            this.fridgeItems.put(item.getBarCode(), list);
+                        }
+                        this.itemIDs.put(item.getId(), item);
+                        if(item.getId() > biggestID){
+                            biggestID = item.getId();
+                        }
+                    }
                 }
-                this.itemIDs.put(item.getId(), item);
+            }
+            json = FileAccess.readFromStorage(SHELF_ITEMS);
+            if (json != null) {
+                Type listType = new TypeToken<ArrayList<ShelfItem>>() {
+                }.getType();
+                shelfItems = gson.fromJson(json, listType);
+                if (shelfItems != null) {
+                    for (ShelfItem item : shelfItems) {
+                        if (item.getBarCode() != null) {
+                            List<ShelfItem> list = this.shelfItems.get(item.getBarCode());
+                            if(list == null){
+                                list = new ArrayList<>();
+                            }
+                            list.add(item);
+                            this.shelfItems.put(item.getBarCode(), list);
+                        }
+                        this.itemIDs.put(item.getId(), item);
+                        if(item.getId() > biggestID){
+                            biggestID = item.getId();
+                        }
+                    }
+                }
             }
         }
-        if(shelfItems != null) {
-            for (ShelfItem item : shelfItems) {
-                if(item.getBarCode() != null) {
-                    this.shelfItems.put(item.getBarCode(), item);
-                }
-                this.itemIDs.put(item.getId(), item);
-            }
+        catch (StorageException ex){
+            showStorageError();
         }
+        SharedPrefManager manager =  new SharedPrefManager(context);
+        manager.saveNewID(biggestID);
         loaded = true;
+    }
+    public void showStorageError(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Speicher fehlt");
+        builder.setMessage("Der Speicher konnte nicht gefunden werden. Wenn das Handy an den Computer angesteckt ist, muss es abgesteckt werden, oder eine Speicherkarte eingelegt werden, damit die App auf die gespeicherten Daten zugreifen kann.");
+        builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                System.exit(-1);
+            }
+        });
+        builder.create();
     }
 }

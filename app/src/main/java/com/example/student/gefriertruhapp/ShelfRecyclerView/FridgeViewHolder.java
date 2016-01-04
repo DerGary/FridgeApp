@@ -34,12 +34,7 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder{
         }else{
             this.date.setText("");
         }
-        if(data instanceof ShelfItem){
-            ShelfItem casted = (ShelfItem)data;
-            this.quantity.setText(data.getQuantity() + " / " + casted.getMinQuantity());
-        }else {
-            this.quantity.setText(String.valueOf(data.getQuantity()));
-        }
+        this.quantity.setText(data.getQuantity() + " / " + data.getMinQuantity());
     }
     public FridgeItem get_data() {
         return _data;

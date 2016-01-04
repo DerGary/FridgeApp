@@ -1,11 +1,16 @@
 package com.example.student.gefriertruhapp.Model;
 
+import android.support.annotation.NonNull;
+
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * Created by student on 21.12.15.
  */
 public class FridgeItem implements Comparable<FridgeItem> {
+    private static DateTimeFormatter formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
     private int id;
     private String name;
     private int quantity;
@@ -13,14 +18,16 @@ public class FridgeItem implements Comparable<FridgeItem> {
     private String barCode;
     private String notes;
     private boolean notified = false;
+    private int minQuantity;
 
-    public FridgeItem(int id, String name, int quantity, DateTime notificationDate, String barCode, String notes) {
+    public FridgeItem(int id, String name, int quantity, DateTime notificationDate, String barCode, String notes, int minQuantity) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.notificationDate = notificationDate;
         this.barCode = barCode;
         this.notes = notes;
+        this.minQuantity = minQuantity;
     }
 
 
@@ -61,10 +68,12 @@ public class FridgeItem implements Comparable<FridgeItem> {
     }
 
     @Override
-    public int compareTo(FridgeItem another) {
-        if(notificationDate != null) {
+    public int compareTo(@NonNull FridgeItem another) {
+        if(notificationDate != null && another.getNotificationDate() != null) {
             return notificationDate.compareTo(another.getNotificationDate());
-        }else {
+        }else if(notificationDate != null){
+            return -1;
+        } else {
             return 0;
         }
     }
@@ -91,5 +100,20 @@ public class FridgeItem implements Comparable<FridgeItem> {
 
     public void setNotified(boolean notified) {
         this.notified = notified;
+    }
+
+    public int getMinQuantity() {
+        return minQuantity;
+    }
+
+    public void setMinQuantity(int minQuantity) {
+        this.minQuantity = minQuantity;
+    }
+
+    public String getNotificationDateString(){
+        if(getNotificationDate() == null){
+            return "Kein Datum";
+        }
+        return formatter.print(getNotificationDate());
     }
 }

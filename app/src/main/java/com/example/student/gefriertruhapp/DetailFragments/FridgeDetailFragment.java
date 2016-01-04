@@ -92,9 +92,8 @@ public class FridgeDetailFragment extends TitleFragment {
 
         minQuantity.setMaxValue(100);
         minQuantity.setMinValue(0);
-        if(item instanceof ShelfItem){
-            minQuantityLayout.setVisibility(View.VISIBLE);
-        }
+        minQuantityLayout.setVisibility(View.VISIBLE);
+
         notes = (EditText)rootView.findViewById(R.id.fridge_detail_note);
 
         NumberPickerHelper.setDividerColor(quantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
@@ -126,18 +125,16 @@ public class FridgeDetailFragment extends TitleFragment {
         }
         quantity.setValue(item.getQuantity());
         notes.setText(item.getNotes());
-        if(item instanceof ShelfItem){
-            minQuantity.setValue(((ShelfItem) item).getMinQuantity());
-        }
+        minQuantity.setValue(item.getMinQuantity());
+
     }
 
     private void getViewData(){
         item.setName(name.getText().toString());
         item.setQuantity(quantity.getValue());
         item.setNotes(notes.getText().toString());
-        if(item instanceof ShelfItem) {
-            ((ShelfItem) item).setMinQuantity(minQuantity.getValue());
-        }
+        item.setMinQuantity(minQuantity.getValue());
+
     }
 
 
@@ -155,13 +152,14 @@ public class FridgeDetailFragment extends TitleFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if(id == R.id.menu_item_delete){
-            DataBaseSingleton.getInstance().deleteFridgeItem(this.item);
+            DataBaseSingleton.getInstance().deleteItem(this.item);
             DataBaseSingleton.getInstance().saveDataBase();
             getActivity().onBackPressed();
             return true;
         }else if(id == R.id.menu_item_save){
             getViewData();
-            DataBaseSingleton.getInstance().saveFridgeItem(this.item);
+
+            DataBaseSingleton.getInstance().saveItem(this.item);
             DataBaseSingleton.getInstance().saveDataBase();
             getActivity().onBackPressed();
             return true;
@@ -211,7 +209,7 @@ public class FridgeDetailFragment extends TitleFragment {
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog dialog = new DatePickerDialog(getActivity(), listener, year, month, day);
+        DatePickerDialog dialog = new DatePickerDialog(getActivity(), listener, year+1, month, day);
         dialog.show();
     }
 

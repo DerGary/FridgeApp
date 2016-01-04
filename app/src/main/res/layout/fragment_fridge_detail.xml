@@ -108,6 +108,7 @@
         <Button
             style="@style/ButtonBaseStyle"
             android:text="Erinnerung setzen"
+            android:background="@drawable/button_shape"
             android:id="@+id/fridge_detail_notification_button"
             android:layout_marginBottom="20dp"/>
 
