@@ -34,13 +34,6 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
         setHasOptionsMenu(true);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        ((Dashboard) getActivity()).get_menu().findItem(R.id.add).setVisible(true);
-    }
-
     public void setData(List<FridgeItem> items, String title) {
         fridgeItems = items;
         this.title = title;

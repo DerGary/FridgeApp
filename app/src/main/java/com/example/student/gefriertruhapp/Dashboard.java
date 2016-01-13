@@ -9,7 +9,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.NumberPicker;
@@ -27,7 +29,7 @@ import com.example.student.gefriertruhapp.ViewPager.ViewPagerFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Dashboard extends ActionBarActivity {
+public class Dashboard extends ActionBarActivity implements SearchView.OnQueryTextListener {
     //Actions
     public static final String SCAN = "la.droid.qr.scan";
     public static final String ENCODE = "la.droid.qr.encode";
@@ -51,6 +53,8 @@ public class Dashboard extends ActionBarActivity {
     private SharedPrefManager sharedPrefManager;
 
     private Menu _menu;
+    private SearchView mSearchView;
+    private MenuItem searchItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +71,11 @@ public class Dashboard extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_dashboard, menu);
         _menu = menu;
+
+        searchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        mSearchView.setOnQueryTextListener(this);
+
         getSupportActionBar().setTitle("Gefriertruhen App");
         return true;
     }
@@ -90,6 +99,11 @@ public class Dashboard extends ActionBarActivity {
             openQRDroid(ACTIVITY_RESULT_QRDROID_DEL);
         } else if(id == R.id.new_item){
             addItemWithoutQRCode();
+        } else if(id == R.id.action_search){
+            mSearchView.setIconified(false);
+            return true;
+        }else{
+            return false;
         }
 
         return super.onOptionsItemSelected(item);
@@ -332,5 +346,17 @@ public class Dashboard extends ActionBarActivity {
         FridgeDetailFragment fragment = new FridgeDetailFragment();
         fragment.setData(item);
         changeFragment(fragment, true);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        _viewPagerFragment.setSearchQuery(s);
+        MenuItemCompat.collapseActionView(searchItem);
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
     }
 }

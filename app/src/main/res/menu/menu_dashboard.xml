@@ -4,10 +4,17 @@
     <!--<item android:id="@+id/action_settings" android:title="@string/action_settings"-->
         <!--android:orderInCategory="100" app:showAsAction="never" />-->
     <item android:id="@+id/add" android:title="Hinzufügen"
-        android:orderInCategory="100" app:showAsAction="always" android:icon="@drawable/plus"/>
+        android:orderInCategory="100" app:showAsAction="ifRoom" android:icon="@drawable/plus"/>
 
     <item android:id="@+id/delete" android:title="Entnehmen"
         android:orderInCategory="100" app:showAsAction="ifRoom" android:icon="@drawable/minus"/>
     <item android:id="@+id/new_item" android:title="Neu"
-        android:orderInCategory="100" app:showAsAction="ifRoom"/>
+        android:orderInCategory="101" app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/action_search"
+        android:title="Suche"
+        android:orderInCategory="100"
+        android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="ifRoom|collapseActionView" />
 </menu>
