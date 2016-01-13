@@ -74,7 +74,7 @@ public class FridgeItem implements Comparable<FridgeItem> {
         }else if(notificationDate != null){
             return -1;
         } else {
-            return 0;
+            return 1;
         }
     }
 
