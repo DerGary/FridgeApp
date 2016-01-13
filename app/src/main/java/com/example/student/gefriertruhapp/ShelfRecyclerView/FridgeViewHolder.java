@@ -1,5 +1,6 @@
 package com.example.student.gefriertruhapp.ShelfRecyclerView;
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -30,6 +31,11 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder{
         _data = data;
         this.name.setText(data.getName());
         if(data.getNotificationDate() != null) {
+            if(data.getNotificationDate().isBeforeNow()){
+                this.date.setTextColor(Color.RED);
+            }else{
+                this.date.setTextColor(Color.BLACK);
+            }
             this.date.setText(formatter.print(data.getNotificationDate()));
         }else{
             this.date.setText("");
