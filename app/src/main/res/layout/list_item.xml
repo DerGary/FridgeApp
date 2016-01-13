@@ -16,21 +16,24 @@
             android:gravity="fill_horizontal"
             android:paddingBottom="6dp">
             <TextView
-                android:id="@+id/item_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="Name"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
                 android:id="@+id/item_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="15.01.2015"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"/>
+
+            <TextView
+                android:id="@+id/item_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/item_date"
+                android:layout_alignParentLeft="true"
+                android:text="Name das ist jetzt ein ganz langer name der über mehrere Zeilen geht"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+
 
         </RelativeLayout>
         <LinearLayout
