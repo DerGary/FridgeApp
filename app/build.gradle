@@ -8,8 +8,8 @@ android {
         applicationId "com.example.student.gefriertruhapp"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 9
-        versionName "1.9"
+        versionCode 10
+        versionName "2.0"
     }
     buildTypes {
         release {

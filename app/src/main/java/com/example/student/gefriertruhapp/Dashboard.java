@@ -172,7 +172,7 @@ public class Dashboard extends ActionBarActivity implements SearchView.OnQueryTe
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0)
             getFragmentManager().popBackStack();
-        else
+        else if(!_viewPagerFragment.onBackPressed())
             super.onBackPressed();
     }
 

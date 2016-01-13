@@ -53,6 +53,14 @@ public class ViewPagerFragment extends Fragment {
         setActionBar();
     }
 
+    public boolean onBackPressed(){
+        if(query == null){
+            return false;
+        }
+        setSearchQuery(null);
+        return true;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home){
