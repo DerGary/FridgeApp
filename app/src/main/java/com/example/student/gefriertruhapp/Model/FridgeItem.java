@@ -1,6 +1,7 @@
 package com.example.student.gefriertruhapp.Model;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -69,12 +70,22 @@ public class FridgeItem implements Comparable<FridgeItem> {
 
     @Override
     public int compareTo(@NonNull FridgeItem another) {
+        if(this == another) {
+            return 0;
+        }
+
         if(notificationDate != null && another.getNotificationDate() != null) {
-            return notificationDate.compareTo(another.getNotificationDate());
-        }else if(notificationDate != null){
+            int compare = notificationDate.compareTo(another.getNotificationDate());
+            if (compare == 0) {
+                return name.compareTo(another.name);
+            }
+            return compare;
+        } else if(notificationDate != null) {
             return -1;
-        } else {
+        } else if(another.notificationDate != null) {
             return 1;
+        } else {
+            return name.compareTo(another.name);
         }
     }
 
