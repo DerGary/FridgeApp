@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.ShelfRecyclerView;
+package com.example.student.gefriertruhapp.Settings;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,34 +7,32 @@ import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.R;
+import com.example.student.gefriertruhapp.ShelfRecyclerView.FridgeViewHolder;
+import com.example.student.gefriertruhapp.ShelfRecyclerView.ItemClickListener;
 
 import java.util.List;
 
 /**
- * Created by Stefan on 18-05-15.
+ * Created by Stefan on 22-07-16.
  */
-public class FridgeRecycleViewAdapter extends RecyclerView.Adapter<FridgeViewHolder>{
-    private List<FridgeItem> _list;
+public class StoreRecycleViewAdapter extends RecyclerView.Adapter<StoreViewHolder> {
+    private List<Store> _list;
     private ItemClickListener _clickListener;
 
-    public FridgeRecycleViewAdapter(List<FridgeItem> list, ItemClickListener clickListener) {
+    public StoreRecycleViewAdapter(List<Store> list, ItemClickListener clickListener) {
         _list = list;
         this._clickListener = clickListener;
     }
 
-    public void setData(List<FridgeItem> list, ItemClickListener clickListener){
-        _list = list;
-        _clickListener = clickListener;
-    }
 
     @Override
-    public FridgeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StoreViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new FridgeViewHolder(v);
+        return new StoreViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(final FridgeViewHolder holder, int position) {
+    public void onBindViewHolder(final StoreViewHolder holder, int position) {
         holder.assignData(_list.get(position));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +44,7 @@ public class FridgeRecycleViewAdapter extends RecyclerView.Adapter<FridgeViewHol
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.list_item;
+        return R.layout.store_item;
     }
 
     @Override
@@ -61,5 +59,4 @@ public class FridgeRecycleViewAdapter extends RecyclerView.Adapter<FridgeViewHol
     public long getItemId(int position) {
         return position;
     }
-
 }

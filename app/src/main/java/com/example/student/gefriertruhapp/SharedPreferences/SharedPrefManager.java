@@ -5,15 +5,9 @@ import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.example.student.gefriertruhapp.Helper.ExtendedGson;
-import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
-import com.example.student.gefriertruhapp.Model.FridgeItem;
-import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Stefan on 09-04-15.

@@ -3,6 +3,8 @@ package com.example.student.gefriertruhapp.Model;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.student.gefriertruhapp.Settings.Store;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -20,8 +22,10 @@ public class FridgeItem implements Comparable<FridgeItem> {
     private String notes;
     private boolean notified = false;
     private int minQuantity;
+    private boolean isInactive;
+    private transient Store store;
 
-    public FridgeItem(int id, String name, int quantity, DateTime notificationDate, String barCode, String notes, int minQuantity) {
+    public FridgeItem(int id, String name, int quantity, DateTime notificationDate, String barCode, String notes, int minQuantity, Store store) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
@@ -29,6 +33,7 @@ public class FridgeItem implements Comparable<FridgeItem> {
         this.barCode = barCode;
         this.notes = notes;
         this.minQuantity = minQuantity;
+        this.store = store;
     }
 
 
@@ -126,5 +131,21 @@ public class FridgeItem implements Comparable<FridgeItem> {
             return "Kein Datum";
         }
         return formatter.print(getNotificationDate());
+    }
+
+    public boolean isInactive() {
+        return isInactive;
+    }
+
+    public void setInactive(boolean inactive) {
+        isInactive = inactive;
+    }
+
+    public Store getStore() {
+        return store;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
     }
 }

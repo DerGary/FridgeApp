@@ -16,8 +16,8 @@ import android.os.SystemClock;
 import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
-import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.R;
+import com.example.student.gefriertruhapp.Settings.Store;
 
 /**
  * Created by student on 25.12.15.
@@ -39,11 +39,7 @@ public abstract class Notifier {
 
         PendingIntent pendingIntent = PendingIntent.getActivity(context, item.getId(), startIntent, PendingIntent.FLAG_ONE_SHOT);
 
-        String shelf = "Gefriertruhe: ";
-
-        if(item instanceof ShelfItem){
-            shelf = "Lager: ";
-        }
+        String shelf = item.getStore().getName() + ": ";
 
         long[] vibrate = new long[] {1000,500,1000,500,1000,500};
         Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_freezer_blue);
@@ -72,14 +68,11 @@ public abstract class Notifier {
     public static void sendNotificationsNotSendYet(Context context){
         DataBaseSingleton.init(context);
         DataBaseSingleton.getInstance().loadDataBase();
-        for(ShelfItem item : DataBaseSingleton.getInstance().getShelfList()) {
-            if(item.getNotificationDate() != null && !item.isNotified() && item.getNotificationDate().getMillis() < SystemClock.elapsedRealtime()){
-                sendNotification(context, item.getId());
-            }
-        }
-        for(FridgeItem item : DataBaseSingleton.getInstance().getFridgeList()){
-            if(item.getNotificationDate() != null && !item.isNotified() && item.getNotificationDate().getMillis() < SystemClock.elapsedRealtime()){
-                sendNotification(context, item.getId());
+        for(Store store : DataBaseSingleton.getInstance().getStores()) {
+            for(FridgeItem item : store.getItems()){
+                if(item.getNotificationDate() != null && !item.isNotified() && item.getNotificationDate().getMillis() < SystemClock.elapsedRealtime()){
+                    sendNotification(context, item.getId());
+                }
             }
         }
     }

@@ -4,56 +4,35 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.SystemClock;
-import android.text.TextUtils;
 
 import com.example.student.gefriertruhapp.Helper.ExtendedGson;
 import com.example.student.gefriertruhapp.Helper.FileAccess;
 import com.example.student.gefriertruhapp.Helper.StorageException;
 import com.example.student.gefriertruhapp.Notifications.NotificationBroadCastReceiver;
+import com.example.student.gefriertruhapp.Settings.Settings;
+import com.example.student.gefriertruhapp.Settings.Store;
 import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Julius on 25.06.2015.
  */
 public class DataBaseSingleton {
     private static DataBaseSingleton ourInstance;
-    private HashMap<String, List<FridgeItem>> fridgeItems;
-    private HashMap<String, List<ShelfItem>> shelfItems;
-    private HashMap<Integer, FridgeItem> itemIDs;
+    private HashMap<String, List<FridgeItem>> itemsByBarcode;
+    private HashMap<Integer, FridgeItem> itemsById;
     private boolean loaded = false;
     private Context context;
-    private final static String FRIDGE_ITEMS= "FRIDGE_ITEMS";
-    private final static String SHELF_ITEMS = "SHELF_ITEMS";
+    private final static String SETTINGS_FILE = "SETTINGS";
+    private Settings settings;
 
-    public ArrayList<FridgeItem> getFridgeList() {
-        ArrayList<FridgeItem> list = new ArrayList<>();
-        for (Map.Entry<Integer, FridgeItem> kv : itemIDs.entrySet()) {
-            if (!(kv.getValue() instanceof ShelfItem)) {
-                list.add(kv.getValue());
-            }
-        }
-        return list;
-    }
-
-    public ArrayList<ShelfItem> getShelfList() {
-        ArrayList<ShelfItem> list = new ArrayList<>();
-        for (Map.Entry<Integer, FridgeItem> kv : itemIDs.entrySet()) {
-            if (kv.getValue() instanceof ShelfItem) {
-                list.add((ShelfItem)kv.getValue());
-            }
-        }
-        return list;
-    }
     public static void init(Context context){
         if(ourInstance != null){
             return;
@@ -66,107 +45,66 @@ public class DataBaseSingleton {
     }
 
     private DataBaseSingleton() {
-        this.shelfItems = new HashMap<>();
-        this.fridgeItems = new HashMap<>();
-        this.itemIDs = new HashMap<>();
+        this.itemsByBarcode = new HashMap<>();
+        this.itemsById = new HashMap<>();
     }
-
-    public List<ShelfItem> getShelfItems(String barCode){
-        return shelfItems.get(barCode);
-    }
-
 
     public FridgeItem getItemByID(int id){
-        FridgeItem item = itemIDs.get(id);
+        FridgeItem item = itemsById.get(id);
         if(item == null){
-            item = itemIDs.get(id);
+            item = itemsById.get(id);
         }
         return item;
     }
 
     public List<FridgeItem> getFridgeItems(String barCode){
-        return fridgeItems.get(barCode);
+        return itemsByBarcode.get(barCode);
     }
 
     public void saveItem(FridgeItem item){
-        if(item instanceof ShelfItem){
-            saveShelfItem((ShelfItem) item);
-        }else{
-            saveFridgeItem(item);
+        if(!item.getStore().getItems().contains(item)){
+            item.getStore().getItems().add(item);
         }
+        if(item.getBarCode() != null) {
+            List<FridgeItem> list = this.itemsByBarcode.get(item.getBarCode());
+            if(list == null){
+                list = new ArrayList<FridgeItem>();
+                this.itemsByBarcode.put(item.getBarCode(), list);
+            }
+            if(!list.contains(item)){
+                list.add(item);
+            }
+        }
+        this.itemsById.put(item.getId(), item);
+        if(item.getNotificationDate() != null && item.getNotificationDate().getMillis() > SystemClock.elapsedRealtime()){
+            item.setNotified(false);
+        }
+        NotificationBroadCastReceiver.registerAlarm(context, item);
     }
 
     public void deleteItem(FridgeItem item){
-        if(item instanceof ShelfItem){
-            deleteShelfItem((ShelfItem)item);
-        }else{
-            deleteFridgeItem(item);
-        }
-    }
+        item.getStore().getItems().remove(item);
 
-    public void saveFridgeItem(FridgeItem item){
         if(item.getBarCode() != null) {
-            List<FridgeItem> list = this.fridgeItems.get(item.getBarCode());
-            if(list == null){
-                list = new ArrayList<FridgeItem>();
-            }
-            list.remove(item);
-            list.add(item);
-            this.fridgeItems.put(item.getBarCode(), list);
-        }
-        this.itemIDs.put(item.getId(), item);
-        if(item.getNotificationDate() != null && item.getNotificationDate().getMillis() > SystemClock.elapsedRealtime()){
-            item.setNotified(false);
-        }
-        NotificationBroadCastReceiver.registerAlarm(context, item);
-    }
-
-    public void deleteShelfItem(ShelfItem item){
-        if(item.getBarCode() != null) {
-            List<ShelfItem> list = this.shelfItems.get(item.getBarCode());
+            List<FridgeItem> list = this.itemsByBarcode.get(item.getBarCode());
             if(list != null){
                 list.remove(item);
             }
         }
-        this.itemIDs.remove(item.getId());
+        this.itemsById.remove(item.getId());
         NotificationBroadCastReceiver.unregisterAlarm(context, item);
-    }
-
-    public void deleteFridgeItem(FridgeItem item){
-        if(item.getBarCode() != null) {
-            List<FridgeItem> list = this.fridgeItems.get(item.getBarCode());
-            if(list != null){
-                list.remove(item);
-            }
-        }
-        this.itemIDs.remove(item.getId());
-        NotificationBroadCastReceiver.unregisterAlarm(context, item);
-    }
-
-    public void saveShelfItem(ShelfItem item){
-        if(item.getBarCode() != null) {
-            List<ShelfItem> list = this.shelfItems.get(item.getBarCode());
-            if(list == null){
-                list = new ArrayList<ShelfItem>();
-            }
-            list.remove(item);
-            list.add(item);
-            this.shelfItems.put(item.getBarCode(), list);
-        }
-        this.itemIDs.put(item.getId(), item);
-        if(item.getNotificationDate() != null && item.getNotificationDate().getMillis() > SystemClock.elapsedRealtime()){
-            item.setNotified(false);
-        }
-        NotificationBroadCastReceiver.registerAlarm(context, item);
     }
 
     public void saveDataBase() {
         Gson gson = ExtendedGson.getInstance();
-        String json = gson.toJson(getShelfList());
+        String json = gson.toJson(settings);
         try {
-            FileAccess.writeToStorage(json, SHELF_ITEMS);
-            json = gson.toJson(getFridgeList());
-            FileAccess.writeToStorage(json, FRIDGE_ITEMS);
+            FileAccess.writeToStorage(json, SETTINGS_FILE);
+            for(Store store : settings.getStores()){
+                ArrayList<FridgeItem> toSave = new ArrayList<>(store.getItems());
+                json = gson.toJson(toSave);
+                FileAccess.writeToStorage(json, store.getName());
+            }
         }
         catch (StorageException ex){
             showStorageError();
@@ -179,68 +117,52 @@ public class DataBaseSingleton {
         if (loaded)
             return;
 
-        this.shelfItems.clear();
-        this.fridgeItems.clear();
-        this.itemIDs.clear();
+        this.itemsByBarcode.clear();
+        this.itemsById.clear();
 
         int biggestID = -1;
 
         try {
             Gson gson = ExtendedGson.getInstance();
-            String json = FileAccess.readFromStorage(FRIDGE_ITEMS);
-            ArrayList<FridgeItem> fridgeItems = null;
-            ArrayList<ShelfItem> shelfItems = null;
-            if (json != null) {
-                Type listType = new TypeToken<ArrayList<FridgeItem>>() {
-                }.getType();
-                fridgeItems = gson.fromJson(json, listType);
-                if (fridgeItems != null) {
-                    for (FridgeItem item : fridgeItems) {
-                        if (item.getBarCode() != null) {
-                            List<FridgeItem> list = this.fridgeItems.get(item.getBarCode());
-                            if(list == null){
-                                list = new ArrayList<>();
+
+            String json = FileAccess.readFromStorage(SETTINGS_FILE);
+            if(json != null){
+                settings = gson.fromJson(json, Settings.class);
+                for(Store store : settings.getStores()){
+                    json = FileAccess.readFromStorage(store.getName());
+                    if(json != null){
+                        Type listType = new TypeToken<ArrayList<FridgeItem>>() {}.getType();
+                        ArrayList<FridgeItem> items = gson.fromJson(json, listType);
+                        for(FridgeItem item : items){
+                            item.setStore(store);
+                            if (item.getBarCode() != null) {
+                                List<FridgeItem> list = this.itemsByBarcode.get(item.getBarCode());
+                                if(list == null){
+                                    list = new ArrayList<>();
+                                    this.itemsByBarcode.put(item.getBarCode(), list);
+                                }
+                                list.add(item);
                             }
-                            list.add(item);
-                            this.fridgeItems.put(item.getBarCode(), list);
+                            this.itemsById.put(item.getId(), item);
+                            if(item.getId() > biggestID){
+                                biggestID = item.getId();
+                            }
                         }
-                        this.itemIDs.put(item.getId(), item);
-                        if(item.getId() > biggestID){
-                            biggestID = item.getId();
-                        }
+                        store.setItems(items);
                     }
                 }
+            }else{
+                settings = new Settings();
+                settings.setStores(new ArrayList<Store>());
             }
-            json = FileAccess.readFromStorage(SHELF_ITEMS);
-            if (json != null) {
-                Type listType = new TypeToken<ArrayList<ShelfItem>>() {
-                }.getType();
-                shelfItems = gson.fromJson(json, listType);
-                if (shelfItems != null) {
-                    for (ShelfItem item : shelfItems) {
-                        if (item.getBarCode() != null) {
-                            List<ShelfItem> list = this.shelfItems.get(item.getBarCode());
-                            if(list == null){
-                                list = new ArrayList<>();
-                            }
-                            list.add(item);
-                            this.shelfItems.put(item.getBarCode(), list);
-                        }
-                        this.itemIDs.put(item.getId(), item);
-                        if(item.getId() > biggestID){
-                            biggestID = item.getId();
-                        }
-                    }
-                }
-            }
-        }
-        catch (StorageException ex){
+        } catch (StorageException ex){
             showStorageError();
         }
         SharedPrefManager manager =  new SharedPrefManager(context);
         manager.saveNewID(biggestID);
         loaded = true;
     }
+
     public void showStorageError(){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Speicher fehlt");
@@ -252,5 +174,15 @@ public class DataBaseSingleton {
             }
         });
         builder.create();
+    }
+
+    public List<Store> getStores() {
+        return settings.getStores();
+    }
+    public void saveStore(Store store){
+        settings.getStores().add(store);
+    }
+    public void deleteStore(Store store){
+        settings.getStores().remove(store);
     }
 }

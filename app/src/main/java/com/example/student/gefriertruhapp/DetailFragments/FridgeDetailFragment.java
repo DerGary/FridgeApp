@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -21,24 +22,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
-import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.R;
+import com.example.student.gefriertruhapp.Settings.Store;
 import com.example.student.gefriertruhapp.UPC.GetAsyncTask;
 import com.example.student.gefriertruhapp.UPC.JsonResult;
-import com.example.student.gefriertruhapp.ViewPager.PageType;
 import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by student on 21.12.15.
@@ -55,6 +58,8 @@ public class FridgeDetailFragment extends TitleFragment {
     protected ProgressBar progressBar;
     protected ImageView deleteMark, checkMark;
     protected LinearLayout minQuantityLayout;
+    protected Spinner storeSpinner;
+    private DateTime notificationDateTime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -113,6 +118,8 @@ public class FridgeDetailFragment extends TitleFragment {
         deleteMark = (ImageView) rootView.findViewById(R.id.fridge_detail_delete);
         checkMark = (ImageView) rootView.findViewById(R.id.fridge_detail_check_mark);
 
+        storeSpinner = (Spinner) rootView.findViewById(R.id.fridge_detail_store_spinner);
+
         setViewData();
 
         return rootView;
@@ -121,20 +128,38 @@ public class FridgeDetailFragment extends TitleFragment {
     private void setViewData(){
         name.setText(item.getName());
         if(item.getNotificationDate() != null) {
+            notificationDateTime = item.getNotificationDate();
             notificationDate.setText(formatter.print(item.getNotificationDate()));
         }
         quantity.setValue(item.getQuantity());
         notes.setText(item.getNotes());
         minQuantity.setValue(item.getMinQuantity());
 
+
+        List<Store> stores = DataBaseSingleton.getInstance().getStores();
+        ArrayList<String> listStores = new ArrayList<>();
+        for(Store store : stores){
+            listStores.add(store.getName());
+        }
+// Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity().getBaseContext(), android.R.layout.simple_spinner_item, listStores);
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+        storeSpinner.setAdapter(adapter);
+        if(item.getStore() != null){
+            storeSpinner.setSelection(listStores.indexOf(item.getStore().getName()));
+        }
     }
 
     private void getViewData(){
         item.setName(name.getText().toString());
         item.setQuantity(quantity.getValue());
+        item.setNotificationDate(notificationDateTime);
         item.setNotes(notes.getText().toString());
         item.setMinQuantity(minQuantity.getValue());
-
+        long storeId = storeSpinner.getSelectedItemId();
+        item.setStore(DataBaseSingleton.getInstance().getStores().get((int)storeId));
     }
 
 
@@ -157,8 +182,8 @@ public class FridgeDetailFragment extends TitleFragment {
             getActivity().onBackPressed();
             return true;
         }else if(id == R.id.menu_item_save){
+            DataBaseSingleton.getInstance().deleteItem(this.item);
             getViewData();
-
             DataBaseSingleton.getInstance().saveItem(this.item);
             DataBaseSingleton.getInstance().saveDataBase();
             getActivity().onBackPressed();
@@ -176,12 +201,8 @@ public class FridgeDetailFragment extends TitleFragment {
 
     @Override
     public String getTitle() {
-        if(item instanceof ShelfItem){
-            return PageType.ShelfList.toString();
-        }
-        return PageType.FridgeList.toString();
+        return "Details";
     }
-
     private void onSetNotificationClicked() {
         showDatePicker(new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -190,11 +211,7 @@ public class FridgeDetailFragment extends TitleFragment {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
-                        DateTime notificationDateTime = new DateTime(year, monthOfYear + 1, dayOfMonth, hourOfDay, minute);
-
-
-                        item.setNotificationDate(notificationDateTime);
-
+                        notificationDateTime = new DateTime(year, monthOfYear + 1, dayOfMonth, hourOfDay, minute);
                         TextView text = (TextView) rootView.findViewById(R.id.fridge_detail_notification_date);
                         text.setText(formatter.print(notificationDateTime));
                     }

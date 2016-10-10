@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.student.gefriertruhapp.Model.FridgeItem;
-import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.R;
 
 import org.joda.time.format.DateTimeFormat;

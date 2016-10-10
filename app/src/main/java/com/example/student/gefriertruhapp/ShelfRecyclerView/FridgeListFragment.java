@@ -14,6 +14,7 @@ import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.DetailFragments.FridgeDetailFragment;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.R;
+import com.example.student.gefriertruhapp.Settings.Store;
 import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
 
 import java.util.List;
@@ -23,6 +24,9 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
     private List<FridgeItem> fridgeItems;
     private View view;
     private String title = "Lager";
+    private Store store;
+    private FridgeRecycleViewAdapter adapter;
+    private RecyclerView listView;
 
     public FridgeListFragment() {
         // Required empty public constructor
@@ -34,30 +38,35 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
         setHasOptionsMenu(true);
     }
 
-    public void setData(List<FridgeItem> items, String title) {
+    public void setData(List<FridgeItem> items, Store store) {
         fridgeItems = items;
-        this.title = title;
-        if(view != null){
-            setAdapter();
+        this.title = store.getName();
+        this.store = store;
+        if(adapter != null){
+            setDataForAdapter();
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
-        RecyclerView listView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        listView.setHasFixedSize(true);
-        listView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        this.view = view;
-        setAdapter();
+        if(view == null){
+            View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
+            listView = (RecyclerView) view.findViewById(R.id.recycler_view);
+            listView.setHasFixedSize(true);
+            listView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+            adapter = new FridgeRecycleViewAdapter(fridgeItems, this);
+            listView.setAdapter(adapter);
+            this.view = view;
+        } else {
+            setDataForAdapter();
+        }
         return view;
     }
 
-    private void setAdapter(){
-        RecyclerView listView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        RecyclerView.Adapter adapter = new FridgeRecycleViewAdapter(fridgeItems, this);
-        listView.setAdapter(adapter);
+    private void setDataForAdapter(){
+        adapter.setData(fridgeItems, this);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -69,5 +78,9 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
 
     public String getTitle() {
         return title;
+    }
+
+    public Store getStore() {
+        return store;
     }
 }

@@ -12,16 +12,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
-import com.example.student.gefriertruhapp.Model.ShelfItem;
 import com.example.student.gefriertruhapp.R;
+import com.example.student.gefriertruhapp.Settings.Store;
 import com.example.student.gefriertruhapp.ShelfRecyclerView.FridgeListFragment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 /**
  * Created by Stefan on 21-05-15.
@@ -30,8 +32,10 @@ public class ViewPagerFragment extends Fragment {
     private ViewPager pager;
     private ViewPagerAdapter pagerAdapter;
     private View view;
-    private List<FridgeListFragment> list = new ArrayList<FridgeListFragment>();
+    private List<FridgeListFragment> fragmentList = new ArrayList<FridgeListFragment>();
     private String query;
+    private Queue<FridgeListFragment> fragmentQueue = new LinkedList<>();
+
 
     public ViewPagerFragment() {
         // Required empty public constructor
@@ -88,48 +92,72 @@ public class ViewPagerFragment extends Fragment {
 
     @SuppressWarnings("unchecked")
     public void setData() {
-        if(list.size() == 0) {
-            list.add(new FridgeListFragment());
-            list.add(new FridgeListFragment());
-            list.add(new FridgeListFragment());
-        }
-        ArrayList<FridgeItem> fridgeItems = DataBaseSingleton.getInstance().getFridgeList();
-        Collections.sort(fridgeItems);
-        ArrayList<ShelfItem> shelfItems = DataBaseSingleton.getInstance().getShelfList();
-        Collections.sort(shelfItems);
-        ArrayList<FridgeItem> shoppingList = new ArrayList<>();
-        for(ShelfItem item : shelfItems){
-            if(item.getQuantity() < item.getMinQuantity()){
-                shoppingList.add(item);
+        ArrayList<Store> stores = new ArrayList<>(DataBaseSingleton.getInstance().getStores());
+        Store buyStore = new Store("Einkaufsliste", "");
+        Store inactiveStore = new Store("Inaktiv", "");
+
+        while(fragmentList.size() < stores.size() + 2){
+            if(fragmentQueue.size() > 0){
+                fragmentList.add(fragmentQueue.poll());
+            } else {
+                fragmentList.add(new FridgeListFragment());
             }
         }
-        for(FridgeItem item : fridgeItems){
-            if(item.getQuantity() < item.getMinQuantity()){
-                shoppingList.add(item);
-            }
+        while(fragmentList.size() > stores.size() + 2){
+            FridgeListFragment fragment = fragmentList.remove(stores.size() + 2 );
+            fragmentQueue.add(fragment);
         }
 
-        if(query != null && query.length() > 0){
+
+        for(int i = 0 ; i < stores.size(); i++){
+            ArrayList<FridgeItem> fridgeItems = new ArrayList<>(stores.get(i).getItems());
+
             List<FridgeItem> toDelete = new ArrayList<>();
             for(FridgeItem item : fridgeItems){
-                if(!item.getName().toLowerCase().contains(query)){
+                if(item.isInactive() || item.getQuantity() == 0){
+                    toDelete.add(item);
+                }
+                if(item.isInactive()){
+                    inactiveStore.getItems().add(item);
+                }else if(item.getQuantity() < item.getMinQuantity()){
+                    buyStore.getItems().add(item);
+                }
+            }
+
+            fridgeItems.removeAll(toDelete);
+
+            addStoreFragment(stores.get(i), fridgeItems, i);
+        }
+
+        addStoreFragment(buyStore, buyStore.getItems(), stores.size() );
+        addStoreFragment(inactiveStore, inactiveStore.getItems(), stores.size() + 1);
+
+        if(pagerAdapter != null) {
+            try {
+                pagerAdapter.notifyDataSetChanged();
+            } catch (Exception e){
+              e.printStackTrace();
+            }
+        }
+    }
+
+    public void addStoreFragment(Store store, List<FridgeItem> items, int position){
+        ArrayList<FridgeItem> fridgeItems = new ArrayList<>(items);
+
+        List<FridgeItem> toDelete = new ArrayList<>();
+        if (query != null && query.length() > 0) {
+            for (FridgeItem item : fridgeItems) {
+                if (!item.getName().toLowerCase().contains(query)) {
                     toDelete.add(item);
                 }
             }
-            fridgeItems.removeAll(toDelete);
-            List<ShelfItem> toDeleteShelf = new ArrayList<>();
-            for(ShelfItem item : shelfItems){
-                if(!item.getName().toLowerCase().contains(query)){
-                    toDeleteShelf.add(item);
-                }
-            }
-            shelfItems.removeAll(toDeleteShelf);
-            shoppingList.removeAll(toDeleteShelf);
         }
 
-        list.get(PageType.FridgeList.getI()).setData(fridgeItems, PageType.FridgeList.toString());
-        list.get(PageType.ShelfList.getI()).setData((List<FridgeItem>) (List<?>) shelfItems, PageType.ShelfList.toString());
-        list.get(PageType.ShoppingList.getI()).setData((List<FridgeItem>) (List<?>) shoppingList, PageType.ShoppingList.toString());
+        fridgeItems.removeAll(toDelete);
+
+        Collections.sort(fridgeItems);
+
+        fragmentList.get(position).setData(fridgeItems, store);
     }
 
     @Nullable
@@ -143,8 +171,9 @@ public class ViewPagerFragment extends Fragment {
             pager = (ViewPager) view.findViewById(R.id.pager);
         }
         setData();
+
         if(pagerAdapter == null) {
-            pagerAdapter = new ViewPagerAdapter(getFragmentManager(), (List<TitleFragment>) (List<?>) list);
+            pagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), (List<TitleFragment>) (List<?>) fragmentList);
             pager.setAdapter(pagerAdapter);
         }
         return view;
