@@ -2,11 +2,14 @@ package com.example.student.gefriertruhapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -117,5 +120,13 @@ public class DashboardBase extends ActionBarActivity {
         FridgeDetailFragment fragment = new FridgeDetailFragment();
         fragment.setData(item);
         changeFragment(fragment, true);
+    }
+
+    protected void colorDialog(Dialog dialog, boolean add){
+        if(add){
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(255, 223, 255, 233)));
+        }else{
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(255, 255, 200, 200)));
+        }
     }
 }

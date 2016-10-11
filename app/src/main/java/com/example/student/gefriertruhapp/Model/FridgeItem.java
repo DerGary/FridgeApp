@@ -34,6 +34,9 @@ public class FridgeItem implements Comparable<FridgeItem> {
         this.minQuantity = minQuantity;
         this.store = store;
     }
+    public FridgeItem(FridgeItem item){
+        this(item.id, item.name, item.quantity, item.notificationDate, item.barCode, item.notes, item.minQuantity, item.store);
+    }
 
 
     public String getName() {

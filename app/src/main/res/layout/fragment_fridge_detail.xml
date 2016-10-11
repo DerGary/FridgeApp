@@ -60,6 +60,7 @@
             android:text="Lager:"/>
 
         <Spinner
+            android:minHeight="60dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/fridge_detail_store_spinner" />

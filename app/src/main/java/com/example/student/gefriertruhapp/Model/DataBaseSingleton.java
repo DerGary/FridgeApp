@@ -77,6 +77,9 @@ public class DataBaseSingleton {
             List<FridgeItem> list = itemsByBarcode.get(item.getBarCode());
             if(list != null && list.size() > 0){
                 if(item.getQuantity() == 0){
+                    list.remove(item);
+                    itemsById.remove(item.getId());
+                    item.getStore().getItems().remove(item);
                     return; // delete current item because another item with the same barcode is present and the current one has no amount
                 }
             }
@@ -152,6 +155,10 @@ public class DataBaseSingleton {
             Type type = new TypeToken<HashMap<String, String>>() {
             }.getType();
             namesByBarcode = gson.fromJson(json, type);
+
+            if(namesByBarcode == null){
+                namesByBarcode = new HashMap<>();
+            }
         } catch (StorageException ex) {
             showStorageError();
         }

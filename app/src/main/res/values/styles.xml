@@ -25,6 +25,7 @@
         <item name="android:paddingBottom">6dp</item>
     </style>
     <style name="NumberPickerBase">
+        <item name="android:textColor">#ff757575</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginLeft">20dp</item>
@@ -35,6 +36,7 @@
         <item name="android:layout_gravity">center_horizontal</item>
     </style>
     <style name="EditTextBaseStyle">
+        <item name="android:textColor">#ff757575</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:clickable">false</item>

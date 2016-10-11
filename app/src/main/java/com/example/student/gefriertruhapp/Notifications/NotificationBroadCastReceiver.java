@@ -21,20 +21,12 @@ public class NotificationBroadCastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         int id = intent.getIntExtra(Notifier.ITEM_ID, -1);
-
-
         if(id == -1){
             return;
         }
 
-
         Notifier.sendNotification(context, id);
     }
-
-
-
-
-
 
     public static void registerAllAlarms(Context context) {
         DataBaseSingleton.init(context);

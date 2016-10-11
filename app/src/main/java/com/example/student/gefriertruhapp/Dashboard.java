@@ -11,6 +11,8 @@ import android.view.MenuItem;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.example.student.gefriertruhapp.History.HistoryHelper;
+import com.example.student.gefriertruhapp.History.HistoryViewPagerFragment;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Notifications.Notifier;
@@ -109,6 +111,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         } else if(id == R.id.settings){
             changeFragment(new StoresListFragment(), true);
             return true;
+        } else if(id == R.id.history){
+            changeFragment(new HistoryViewPagerFragment(), true);
         }
 
         return super.onOptionsItemSelected(item);
@@ -144,7 +148,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
             if(DataBaseSingleton.getInstance().getStores().size() > i){
                 store = DataBaseSingleton.getInstance().getStores().get(i);
             }
-            FridgeItem item = new FridgeItem(sharedPrefManager.getNewID(), barCode, 1, null, barCode, "", 1, store);
+            FridgeItem item = new FridgeItem(-1, barCode, 1, null, barCode, "", 1, store);
             navigateToDetailFragment(item);
         }
     }
@@ -165,7 +169,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         builder.setTitle("Artikel wählen");
         List<String> strings = new ArrayList<>();
         for(FridgeItem fridgeItem : items){
-            strings.add(fridgeItem.getNotificationDateString());
+            strings.add(fridgeItem.getNotificationDateString() + " Anzahl: " + fridgeItem.getQuantity());
         }
         if(add) {
             strings.add("Neu");
@@ -188,7 +192,9 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                 }
             }
         });
-        builder.create().show();
+        AlertDialog dialog = builder.create();
+        colorDialog(dialog, add);
+        dialog.show();
     }
 
     int numberPickerValue;
@@ -201,6 +207,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FridgeItem item = items.get(itemPosition);
+                FridgeItem oldItem = new FridgeItem(item);
                 if (add) {
                     item.setQuantity(item.getQuantity() + numberPickerValue);
                 } else {
@@ -210,10 +217,12 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                 int i = _viewPagerFragment.currentView();
                 DataBaseSingleton.getInstance().saveItem(item);
                 DataBaseSingleton.getInstance().saveDataBase();
+                HistoryHelper.changeItem(oldItem, item);
                 _viewPagerFragment.setData();
             }
         });
         AlertDialog dialog = b.create();
+        colorDialog(dialog, add);
         dialog.show();
 
         NumberPicker picker = (NumberPicker)dialog.findViewById(R.id.dialog_number_picker_picker);

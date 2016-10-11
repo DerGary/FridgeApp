@@ -19,5 +19,6 @@
         android:orderInCategory="101" app:showAsAction="never"/>
     <item android:id="@+id/settings" android:title="Einstellungen"
         android:orderInCategory="102" app:showAsAction="never"/>
-
+    <item android:id="@+id/history" android:title="Verlauf"
+        android:orderInCategory="103" app:showAsAction="never"/>
 </menu>

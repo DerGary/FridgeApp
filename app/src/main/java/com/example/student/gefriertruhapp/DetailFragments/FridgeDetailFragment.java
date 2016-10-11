@@ -26,11 +26,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.Settings.Store;
+import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.example.student.gefriertruhapp.UPC.GetAsyncTask;
 import com.example.student.gefriertruhapp.UPC.JsonResult;
 import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
@@ -67,8 +69,8 @@ public class FridgeDetailFragment extends TitleFragment {
         setHasOptionsMenu(true);
     }
 
-    protected void inflateRootView(LayoutInflater inflater, ViewGroup container){
-        if(rootView == null) {
+    protected void inflateRootView(LayoutInflater inflater, ViewGroup container) {
+        if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_fridge_detail, container, false);
         }
     }
@@ -78,7 +80,7 @@ public class FridgeDetailFragment extends TitleFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         inflateRootView(inflater, container);
 
-        notificationButton = (Button)rootView.findViewById(R.id.fridge_detail_notification_button);
+        notificationButton = (Button) rootView.findViewById(R.id.fridge_detail_notification_button);
         notificationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -89,17 +91,17 @@ public class FridgeDetailFragment extends TitleFragment {
         name = (EditText) rootView.findViewById(R.id.fridge_detail_name);
         //quantity = (EditText)rootView.findViewById(R.id.fridge_detail_quantity);
         notificationDate = (TextView) rootView.findViewById(R.id.fridge_detail_notification_date);
-        quantity = (NumberPicker)rootView.findViewById(R.id.fridge_detail_quantity);
+        quantity = (NumberPicker) rootView.findViewById(R.id.fridge_detail_quantity);
         quantity.setMaxValue(100);
         quantity.setMinValue(0);
-        minQuantity = (NumberPicker)rootView.findViewById(R.id.fridge_detail_min_quantity);
+        minQuantity = (NumberPicker) rootView.findViewById(R.id.fridge_detail_min_quantity);
         minQuantityLayout = (LinearLayout) rootView.findViewById(R.id.fridge_detail_min_quantity_container);
 
         minQuantity.setMaxValue(100);
         minQuantity.setMinValue(0);
         minQuantityLayout.setVisibility(View.VISIBLE);
 
-        notes = (EditText)rootView.findViewById(R.id.fridge_detail_note);
+        notes = (EditText) rootView.findViewById(R.id.fridge_detail_note);
 
         NumberPickerHelper.setDividerColor(quantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
         NumberPickerHelper.setDividerColor(minQuantity, new ColorDrawable(getResources().getColor(R.color.material_deep_teal_200)));
@@ -125,9 +127,9 @@ public class FridgeDetailFragment extends TitleFragment {
         return rootView;
     }
 
-    private void setViewData(){
+    private void setViewData() {
         name.setText(item.getName());
-        if(item.getNotificationDate() != null) {
+        if (item.getNotificationDate() != null) {
             notificationDateTime = item.getNotificationDate();
             notificationDate.setText(formatter.print(item.getNotificationDate()));
         }
@@ -138,28 +140,28 @@ public class FridgeDetailFragment extends TitleFragment {
 
         List<Store> stores = DataBaseSingleton.getInstance().getStores();
         ArrayList<String> listStores = new ArrayList<>();
-        for(Store store : stores){
+        for (Store store : stores) {
             listStores.add(store.getName());
         }
 // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity().getBaseContext(), android.R.layout.simple_spinner_item, listStores);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity().getBaseContext(), R.layout.spinner_text_item, listStores);
 // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
         storeSpinner.setAdapter(adapter);
-        if(item.getStore() != null){
+        if (item.getStore() != null) {
             storeSpinner.setSelection(listStores.indexOf(item.getStore().getName()));
         }
     }
 
-    private void getViewData(){
+    private void getViewData() {
         item.setName(name.getText().toString());
         item.setQuantity(quantity.getValue());
         item.setNotificationDate(notificationDateTime);
         item.setNotes(notes.getText().toString());
         item.setMinQuantity(minQuantity.getValue());
         long storeId = storeSpinner.getSelectedItemId();
-        item.setStore(DataBaseSingleton.getInstance().getStores().get((int)storeId));
+        item.setStore(DataBaseSingleton.getInstance().getStores().get((int) storeId));
     }
 
 
@@ -176,26 +178,45 @@ public class FridgeDetailFragment extends TitleFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if(id == R.id.menu_item_delete){
-            DataBaseSingleton.getInstance().deleteItem(this.item);
-            DataBaseSingleton.getInstance().saveDataBase();
+        if (id == R.id.menu_item_delete) {
+            deleteItem();
             getActivity().onBackPressed();
             return true;
-        }else if(id == R.id.menu_item_save){
-            DataBaseSingleton.getInstance().deleteItem(this.item);
-            getViewData();
-            DataBaseSingleton.getInstance().saveItem(this.item);
-            DataBaseSingleton.getInstance().saveDataBase();
+        } else if (id == R.id.menu_item_save) {
+            saveItem();
             getActivity().onBackPressed();
             return true;
-        } else if(id == android.R.id.home){
+        } else if (id == android.R.id.home) {
             getActivity().onBackPressed();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void setData(FridgeItem item){
+    private void deleteItem() {
+        DataBaseSingleton.getInstance().deleteItem(this.item);
+        DataBaseSingleton.getInstance().saveDataBase();
+        HistoryHelper.deleteItem(this.item);
+    }
+
+    private void saveItem() {
+        if(item.getId() != -1) {
+            DataBaseSingleton.getInstance().deleteItem(this.item);
+        }
+        FridgeItem oldItem = new FridgeItem(this.item);
+        getViewData();
+        item.setId(new SharedPrefManager(getActivity().getBaseContext()).getNewID());
+        DataBaseSingleton.getInstance().saveItem(this.item);
+        DataBaseSingleton.getInstance().saveDataBase();
+        FridgeItem newItem = item;
+        if(oldItem.getId() == -1){
+            HistoryHelper.newItem(newItem);
+        } else {
+            HistoryHelper.changeItem(oldItem, newItem);
+        }
+    }
+
+    public void setData(FridgeItem item) {
         this.item = item;
     }
 
@@ -203,6 +224,7 @@ public class FridgeDetailFragment extends TitleFragment {
     public String getTitle() {
         return "Details";
     }
+
     private void onSetNotificationClicked() {
         showDatePicker(new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -226,7 +248,7 @@ public class FridgeDetailFragment extends TitleFragment {
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog dialog = new DatePickerDialog(getActivity(), listener, year+1, month, day);
+        DatePickerDialog dialog = new DatePickerDialog(getActivity(), listener, year + 1, month, day);
         dialog.show();
     }
 
@@ -239,14 +261,14 @@ public class FridgeDetailFragment extends TitleFragment {
         dialog.show();
     }
 
-    private void loadUPC(){
-        if(item.getBarCode() == null){
+    private void loadUPC() {
+        if (item.getBarCode() == null) {
             deleteMark.setVisibility(View.VISIBLE);
             return;
         }
 
         String savedName = DataBaseSingleton.getInstance().getNameByBarcode(item.getBarCode());
-        if(savedName != null){
+        if (savedName != null) {
             name.setText(savedName);
         }
         GetAsyncTask<JsonResult> loadUPCs = new GetAsyncTask<JsonResult>(getActivity()) {
@@ -262,20 +284,20 @@ public class FridgeDetailFragment extends TitleFragment {
             protected void onPostExecute(JsonResult result) {
                 super.onPostExecute(result);
                 progressBar.setVisibility(View.GONE);
-                if(result == null || result.getValid().equals("false")){
+                if (result == null || result.getValid().equals("false")) {
                     deleteMark.setVisibility(View.VISIBLE);
                 } else {
                     checkMark.setVisibility(View.VISIBLE);
                     String upcName = result.getItemname();
                     String upcAlias = result.getAlias();
                     String upcDescription = result.getDescription();
-                    if(upcName != null && !upcName.isEmpty()){
+                    if (upcName != null && !upcName.isEmpty()) {
                         name.setText(upcName);
                         notes.setText(upcAlias + "\r" + upcDescription);
-                    }else if(upcAlias != null && !upcAlias.isEmpty()){
+                    } else if (upcAlias != null && !upcAlias.isEmpty()) {
                         name.setText(upcAlias);
                         notes.setText(upcDescription);
-                    }else{
+                    } else {
                         name.setText(upcDescription);
                     }
                 }
