@@ -13,8 +13,8 @@ public class HistoryHelper {
                 "Lager: "+item.getStore().getName()+"\r\n" +
                 "Anzahl: " + item.getQuantity() + "\r\n" +
                 "MinAnzahl: " + item.getMinQuantity()+ "\r\n" +
-                "Notiz: " + item.getNotes() + "\r\n" +
-                "Erinnerungsdatum:" + item.getNotificationDateString()+ "\r\n");
+                "Notiz: " + item.getNotesOrPlaceholderIfEmpty() + "\r\n" +
+                "Erinnerungsdatum: " + item.getNotificationDateString()+ "\r\n");
     }
 
     public static void deleteItem(FridgeItem item) {
@@ -41,7 +41,7 @@ public class HistoryHelper {
             text += "Erinnerungsdatum: " + oldItem.getNotificationDateString() + " -> " + newItem.getNotificationDateString() + "\r\n";
         }
         if (!oldItem.getNotes().equals(newItem.getNotes())) {
-            text += "Notizen: " + oldItem.getNotes() + " -> " + newItem.getNotes() + "\r\n";
+            text += "Notizen: " + oldItem.getNotesOrPlaceholderIfEmpty() + " -> " + newItem.getNotesOrPlaceholderIfEmpty() + "\r\n";
         }
 
         FileAccess.writeHistory(text);

@@ -99,6 +99,12 @@ public class FridgeItem implements Comparable<FridgeItem> {
     public String getNotes() {
         return notes;
     }
+    public String getNotesOrPlaceholderIfEmpty(){
+        if(notes == null || notes.isEmpty()){
+            return "Keine Notiz";
+        }
+        return notes;
+    }
 
     public void setNotes(String notes) {
         this.notes = notes;
