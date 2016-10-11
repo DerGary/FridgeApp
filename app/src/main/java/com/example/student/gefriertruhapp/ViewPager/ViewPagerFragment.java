@@ -94,17 +94,16 @@ public class ViewPagerFragment extends Fragment {
     public void setData() {
         ArrayList<Store> stores = new ArrayList<>(DataBaseSingleton.getInstance().getStores());
         Store buyStore = new Store("Einkaufsliste", "");
-        Store inactiveStore = new Store("Inaktiv", "");
 
-        while(fragmentList.size() < stores.size() + 2){
+        while(fragmentList.size() < stores.size() + 1){
             if(fragmentQueue.size() > 0){
                 fragmentList.add(fragmentQueue.poll());
             } else {
                 fragmentList.add(new FridgeListFragment());
             }
         }
-        while(fragmentList.size() > stores.size() + 2){
-            FridgeListFragment fragment = fragmentList.remove(stores.size() + 2 );
+        while(fragmentList.size() > stores.size() + 1){
+            FridgeListFragment fragment = fragmentList.remove(stores.size() + 1 );
             fragmentQueue.add(fragment);
         }
 
@@ -114,12 +113,10 @@ public class ViewPagerFragment extends Fragment {
 
             List<FridgeItem> toDelete = new ArrayList<>();
             for(FridgeItem item : fridgeItems){
-                if(item.isInactive() || item.getQuantity() == 0){
+                if(item.getQuantity() == 0){
                     toDelete.add(item);
                 }
-                if(item.isInactive()){
-                    inactiveStore.getItems().add(item);
-                }else if(item.getQuantity() < item.getMinQuantity()){
+                if(item.getQuantity() < item.getMinQuantity()){
                     buyStore.getItems().add(item);
                 }
             }
@@ -129,8 +126,7 @@ public class ViewPagerFragment extends Fragment {
             addStoreFragment(stores.get(i), fridgeItems, i);
         }
 
-        addStoreFragment(buyStore, buyStore.getItems(), stores.size() );
-        addStoreFragment(inactiveStore, inactiveStore.getItems(), stores.size() + 1);
+        addStoreFragment(buyStore, buyStore.getItems(), stores.size());
 
         if(pagerAdapter != null) {
             try {

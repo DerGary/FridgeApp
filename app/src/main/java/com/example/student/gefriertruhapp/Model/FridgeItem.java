@@ -22,7 +22,6 @@ public class FridgeItem implements Comparable<FridgeItem> {
     private String notes;
     private boolean notified = false;
     private int minQuantity;
-    private boolean isInactive;
     private transient Store store;
 
     public FridgeItem(int id, String name, int quantity, DateTime notificationDate, String barCode, String notes, int minQuantity, Store store) {
@@ -131,14 +130,6 @@ public class FridgeItem implements Comparable<FridgeItem> {
             return "Kein Datum";
         }
         return formatter.print(getNotificationDate());
-    }
-
-    public boolean isInactive() {
-        return isInactive;
-    }
-
-    public void setInactive(boolean inactive) {
-        isInactive = inactive;
     }
 
     public Store getStore() {

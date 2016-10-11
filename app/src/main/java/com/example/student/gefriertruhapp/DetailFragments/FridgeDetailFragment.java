@@ -240,6 +240,15 @@ public class FridgeDetailFragment extends TitleFragment {
     }
 
     private void loadUPC(){
+        if(item.getBarCode() == null){
+            deleteMark.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        String savedName = DataBaseSingleton.getInstance().getNameByBarcode(item.getBarCode());
+        if(savedName != null){
+            name.setText(savedName);
+        }
         GetAsyncTask<JsonResult> loadUPCs = new GetAsyncTask<JsonResult>(getActivity()) {
             @Override
             protected void onPreExecute() {
@@ -255,11 +264,20 @@ public class FridgeDetailFragment extends TitleFragment {
                 progressBar.setVisibility(View.GONE);
                 if(result == null || result.getValid().equals("false")){
                     deleteMark.setVisibility(View.VISIBLE);
-
                 } else {
                     checkMark.setVisibility(View.VISIBLE);
-                    name.setText(result.getItemname());
-                    notes.setText(result.getAlias()+ "\r" + result.getDescription());
+                    String upcName = result.getItemname();
+                    String upcAlias = result.getAlias();
+                    String upcDescription = result.getDescription();
+                    if(upcName != null && !upcName.isEmpty()){
+                        name.setText(upcName);
+                        notes.setText(upcAlias + "\r" + upcDescription);
+                    }else if(upcAlias != null && !upcAlias.isEmpty()){
+                        name.setText(upcAlias);
+                        notes.setText(upcDescription);
+                    }else{
+                        name.setText(upcDescription);
+                    }
                 }
             }
 
