@@ -1,6 +1,8 @@
 package com.example.student.gefriertruhapp.FridgeList;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
@@ -12,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.student.gefriertruhapp.Helper.Action;
 import com.example.student.gefriertruhapp.Helper.TitleFragment;
 import com.example.student.gefriertruhapp.Helper.TitleFragmentViewPagerAdapter;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
@@ -21,6 +24,7 @@ import com.example.student.gefriertruhapp.Model.Store;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -39,6 +43,10 @@ public class FridgeListViewPagerFragment extends Fragment {
 
     public FridgeListViewPagerFragment() {
         // Required empty public constructor
+        allSorts[Sort.DateAscending.getValue()] = Sort.DateAscending;
+        allSorts[Sort.DateDescending.getValue()] = Sort.DateDescending;
+        allSorts[Sort.NameAscending.getValue()] = Sort.NameAscending;
+        allSorts[Sort.NameDescending.getValue()] = Sort.NameDescending;
     }
 
     @Override
@@ -67,12 +75,65 @@ public class FridgeListViewPagerFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home){
+        if(item.getItemId() == android.R.id.home) {
             setSearchQuery(null);
+            return true;
+        } else if(item.getItemId() == R.id.sort){
+            showSortDialog();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+    int itemPos = 0;
+    public enum Sort{
+        DateAscending(0, "Datum aufsteigend"), DateDescending(1, "Datum absteigend"), NameAscending(2, "Name aufsteigend"), NameDescending(3, "Name absteigend");
+        private final int value;
+        private final String text;
+
+        private Sort(int value, String text) {
+            this.value = value;
+            this.text = text;
+        }
+
+        public String getText(){
+            return text;
+        }
+        public int getValue(){
+            return value;
+        }
+    }
+    Sort currentSort = Sort.DateAscending;
+    Sort[] allSorts = new Sort[4];
+
+    private void showSortDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Sortierung wählen");
+        String[] strings = new String[4];
+        strings[Sort.DateAscending.getValue()] = Sort.DateAscending.getText();
+        strings[Sort.DateDescending.getValue()] = Sort.DateDescending.getText();
+        strings[Sort.NameAscending.getValue()] = Sort.NameAscending.getText();
+        strings[Sort.NameDescending.getValue()] = Sort.NameDescending.getText();
+        itemPos = currentSort.getValue();
+        builder.setSingleChoiceItems(strings, itemPos, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                itemPos = which;
+            }
+        });
+        builder.setNegativeButton("Abbrechen", null);
+        builder.setPositiveButton("Weiter", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                currentSort = allSorts[itemPos];
+                setData();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -151,7 +212,15 @@ public class FridgeListViewPagerFragment extends Fragment {
 
         fridgeItems.removeAll(toDelete);
 
-        Collections.sort(fridgeItems);
+        if(currentSort == Sort.DateAscending){
+            Collections.sort(fridgeItems);
+        } else if(currentSort == Sort.DateDescending){
+            Collections.sort(fridgeItems, Collections.<FridgeItem>reverseOrder());
+        }else if(currentSort == Sort.NameAscending){
+            Collections.sort(fridgeItems, new FridgeItemNameComparator());
+        }else if(currentSort == Sort.NameDescending){
+            Collections.sort(fridgeItems, Collections.reverseOrder(new FridgeItemNameComparator()));
+        }
 
         fragmentList.get(position).setData(fridgeItems, store);
     }

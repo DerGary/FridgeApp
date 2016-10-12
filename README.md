@@ -4,4 +4,3 @@
 
 # TODO:
  - make lists colored
- - Sortfunctions (not only date)

@@ -24,7 +24,7 @@ import java.util.List;
  */
 
 public class StoresListFragment extends RecyclerListFragment implements ItemClickListener {
-    private String title = "Settings";
+    private String title = "Lager verwalten";
     public StoresListFragment(){}
     private List<Store> stores;
 
