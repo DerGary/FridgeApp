@@ -210,7 +210,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         if (action == Action.ADD) {
             builder.setTitle("Artikel wählen (Hinzufügen)");
         } else if(action == Action.DELETE) {
-            builder.setTitle("Artikel wählen (Löschen)");
+            builder.setTitle("Artikel wählen (Herausnehmen)");
         }else if(action == Action.OPEN){
             builder.setTitle("Artikel wählen (Öffnen)");
         }
@@ -254,7 +254,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         if (action == Action.ADD) {
             b.setTitle("Anzahl wählen (Hinzufügen)");
         } else if (action == Action.DELETE) {
-            b.setTitle("Anzahl wählen (Löschen)");
+            b.setTitle("Anzahl wählen (Herausnehmen)");
         }
         b.setNegativeButton("Abbrechen", null);
         b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
