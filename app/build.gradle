@@ -33,5 +33,6 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile 'com.google.code.gson:gson:2.3'
     compile 'joda-time:joda-time:2.7'
+    compile group: 'com.opencsv', name: 'opencsv', version: '3.5'
 //    compile 'com.google.android.gms:play-services:7.5.0'
 }

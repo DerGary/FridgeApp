@@ -21,4 +21,6 @@
         android:orderInCategory="102" app:showAsAction="never"/>
     <item android:id="@+id/history" android:title="Verlauf"
         android:orderInCategory="103" app:showAsAction="never"/>
+    <item android:id="@+id/csv_export" android:title="CSV Export"
+        android:orderInCategory="104" app:showAsAction="never"/>
 </menu>

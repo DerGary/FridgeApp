@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.NumberPicker;
 import android.widget.Toast;
 
+import com.example.student.gefriertruhapp.Helper.CSVHelper;
 import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.History.HistoryViewPagerFragment;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
@@ -113,6 +114,16 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
             return true;
         } else if(id == R.id.history){
             changeFragment(new HistoryViewPagerFragment(), true);
+            return true;
+        } else if(id == R.id.csv_export){
+            for(Store store : DataBaseSingleton.getInstance().getStores()){
+                CSVHelper.writeStore(store);
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Fertig");
+            builder.setMessage("Export wurde erfolgreich fertiggestellt.");
+            builder.setNeutralButton("Ok", null);
+            builder.create().show();
         }
 
         return super.onOptionsItemSelected(item);

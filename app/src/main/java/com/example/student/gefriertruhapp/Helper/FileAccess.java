@@ -2,6 +2,8 @@ package com.example.student.gefriertruhapp.Helper;
 
 import android.os.Environment;
 
+import com.opencsv.CSVWriter;
+
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -9,13 +11,16 @@ import org.joda.time.format.DateTimeFormat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by student on 31.12.15.
@@ -23,9 +28,11 @@ import java.util.Map;
 public abstract class FileAccess {
     private static final String EXTENSION_TXT = "txt";
     private static final String EXTENSION_JSON = "json";
+    private static final String EXTENSION_CSV = "csv";
     private static final String APP_FOLDER = "Gefriertruhen App";
     private static final String HISTORY_FOLDER = "History";
     private static final String LOG_FOLDER = "Log";
+    private static final String EXPORT_FOLDER = "Export";
 
     public static boolean isExternalStorageMounted() {
         String state = Environment.getExternalStorageState();
@@ -44,10 +51,10 @@ public abstract class FileAccess {
         } else {
             appDir = new File(dir, APP_FOLDER);
         }
-        if(!appDir.exists()){
+        if (!appDir.exists()) {
             appDir.mkdirs();
         }
-        if(extension == null){
+        if (extension == null) {
             extension = EXTENSION_JSON;
         }
         appFile = new File(appDir, fileName + "." + extension);
@@ -74,12 +81,12 @@ public abstract class FileAccess {
 
         File appDir = null;
         File appFile = null;
-        if(folder != null){
+        if (folder != null) {
             appDir = new File(dir, APP_FOLDER + "/" + folder);
         } else {
             appDir = new File(dir, APP_FOLDER);
         }
-        if(extension == null) {
+        if (extension == null) {
             extension = EXTENSION_JSON;
         }
         appFile = new File(appDir, fileName + "." + extension);
@@ -167,34 +174,51 @@ public abstract class FileAccess {
         String time = DateTime.now().toString(DateTimeFormat.forPattern("HH:mm:ss:"));
         String prevText = readFromExternalStorage(date, HISTORY_FOLDER, EXTENSION_TXT);
         text = time + "\r\n" + text;
-        if(prevText != null){
+        if (prevText != null) {
             text = text + "\r\n" + prevText;
         }
         writeToExternalStorage(text, date, HISTORY_FOLDER, EXTENSION_TXT);
     }
 
-    public static Map<String,String> readHistory(int dayCount) {
+    public static Map<String, String> readHistory(int dayCount) {
         File dir = Environment.getExternalStorageDirectory();
         File appDir = null;
         appDir = new File(dir, APP_FOLDER + "/" + HISTORY_FOLDER);
         File[] fileList = appDir.listFiles();
         Arrays.sort(fileList, Collections.<File>reverseOrder());
-        if(fileList.length < dayCount){
+        if (fileList.length < dayCount) {
             dayCount = fileList.length;
         }
-        try{
-            Map<String,String> map = new LinkedHashMap<>();
-            for(int i = 0; i < dayCount; i++){
+        try {
+            Map<String, String> map = new LinkedHashMap<>();
+            for (int i = 0; i < dayCount; i++) {
                 File file = fileList[i];
                 FileInputStream fis = new FileInputStream(file);
                 String text = IOUtils.toString(fis);
                 map.put(file.getName().replace("." + EXTENSION_TXT, ""), text);
             }
             return map;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    public static void writeCSV(List<String[]> lines, String fileName) {
+        File dir = Environment.getExternalStorageDirectory();
+        File appDir = null;
+        appDir = new File(dir, APP_FOLDER + "/" + EXPORT_FOLDER);
+        appDir.mkdir();
+        String date = DateTime.now().toString(DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss"));
+        File exportFile = new File(appDir, date + " " + fileName + "." + EXTENSION_CSV);
+
+        try {
+            CSVWriter writer = new CSVWriter(new FileWriter(exportFile.getAbsolutePath()), ',', '"', '"', "\r\n");
+            writer.writeAll(lines);
+            writer.close();
+        } catch (Exception ex) {
+
+        }
     }
 
 }
