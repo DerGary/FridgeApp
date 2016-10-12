@@ -1,13 +1,10 @@
-package com.example.student.gefriertruhapp.Helper;
+package com.example.student.gefriertruhapp.Serialization;
 
 import com.example.student.gefriertruhapp.Model.FridgeItem;
-import com.example.student.gefriertruhapp.Settings.Store;
-import com.opencsv.CSVParser;
-import com.opencsv.CSVWriter;
+import com.example.student.gefriertruhapp.Model.Store;
 
 import org.joda.time.DateTime;
 
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 

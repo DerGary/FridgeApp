@@ -1,6 +1,6 @@
 package com.example.student.gefriertruhapp.History;
 
-import com.example.student.gefriertruhapp.Helper.FileAccess;
+import com.example.student.gefriertruhapp.Serialization.FileAccess;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 
 /**

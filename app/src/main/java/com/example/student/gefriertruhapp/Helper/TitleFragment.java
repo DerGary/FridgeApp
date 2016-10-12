@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.ViewPager;
+package com.example.student.gefriertruhapp.Helper;
 
 
 import android.app.Fragment;

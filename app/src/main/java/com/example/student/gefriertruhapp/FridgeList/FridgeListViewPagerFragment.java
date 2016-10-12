@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.ViewPager;
+package com.example.student.gefriertruhapp.FridgeList;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -12,32 +12,32 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.student.gefriertruhapp.Helper.TitleFragment;
+import com.example.student.gefriertruhapp.Helper.TitleFragmentViewPagerAdapter;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.R;
-import com.example.student.gefriertruhapp.Settings.Store;
-import com.example.student.gefriertruhapp.ShelfRecyclerView.FridgeListFragment;
+import com.example.student.gefriertruhapp.Model.Store;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
 /**
  * Created by Stefan on 21-05-15.
  */
-public class ViewPagerFragment extends Fragment {
+public class FridgeListViewPagerFragment extends Fragment {
     private ViewPager pager;
-    private ViewPagerAdapter pagerAdapter;
+    private TitleFragmentViewPagerAdapter pagerAdapter;
     private View view;
     private List<FridgeListFragment> fragmentList = new ArrayList<FridgeListFragment>();
     private String query;
     private Queue<FridgeListFragment> fragmentQueue = new LinkedList<>();
 
 
-    public ViewPagerFragment() {
+    public FridgeListViewPagerFragment() {
         // Required empty public constructor
     }
 
@@ -169,7 +169,7 @@ public class ViewPagerFragment extends Fragment {
         setData();
 
         if(pagerAdapter == null) {
-            pagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), (List<TitleFragment>) (List<?>) fragmentList);
+            pagerAdapter = new TitleFragmentViewPagerAdapter(getChildFragmentManager(), (List<TitleFragment>) (List<?>) fragmentList);
             pager.setAdapter(pagerAdapter);
         }
         return view;

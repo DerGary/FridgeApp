@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.student.gefriertruhapp.Helper.ExtendedGson;
+import com.example.student.gefriertruhapp.Serialization.ExtendedGson;
 import com.example.student.gefriertruhapp.R;
 import com.google.gson.Gson;
 

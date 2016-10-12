@@ -14,12 +14,13 @@ import android.net.Uri;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 
-import com.example.student.gefriertruhapp.DetailFragments.FridgeDetailFragment;
+import com.example.student.gefriertruhapp.FridgeList.FridgeDetailFragment;
+import com.example.student.gefriertruhapp.Helper.Action;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
-import com.example.student.gefriertruhapp.ViewPager.ViewPagerFragment;
+import com.example.student.gefriertruhapp.FridgeList.FridgeListViewPagerFragment;
 
 public class DashboardBase extends ActionBarActivity {
-    protected ViewPagerFragment _viewPagerFragment;
+    protected FridgeListViewPagerFragment _fridgeListViewPagerFragment;
     protected Menu _menu;
 
     //Actions
@@ -31,21 +32,22 @@ public class DashboardBase extends ActionBarActivity {
     //SCAN / DECODE
     public static final String COMPLETE = "la.droid.qr.complete"; //Default: false
     //ENCODE
-    public static final String CODE =  "la.droid.qr.code"; //Required
+    public static final String CODE = "la.droid.qr.code"; //Required
     public static final String SIZE = "la.droid.qr.size"; //Default: Fit screen
     //ENCODE / DECODE
-    public static final String IMAGE =  "la.droid.qr.image"; //Default for encode: false / Required for decode
+    public static final String IMAGE = "la.droid.qr.image"; //Default for encode: false / Required for decode
 
     //Result
     public static final String RESULT = "la.droid.qr.result";
 
     protected static final int ACTIVITY_RESULT_QRDROID_ADD = 500;
     protected static final int ACTIVITY_RESULT_QRDROID_DEL = 600;
+    protected static final int ACTIVITY_RESULT_QRDROID_OPEN = 700;
 
 
-    protected void openQRDroid(int requestCode){
+    protected void openQRDroid(int requestCode) {
         //Create a new Intent to send to QR Droid
-        Intent qrDroid = new Intent( SCAN ); //Set action "la.droid.qr.scan"
+        Intent qrDroid = new Intent(SCAN); //Set action "la.droid.qr.scan"
 
         //Send intent and wait result
         try {
@@ -57,9 +59,10 @@ public class DashboardBase extends ActionBarActivity {
 
     /**
      * Display a message stating that QR Droid is requiered, and lets the user download it for free
+     *
      * @param activity
      */
-    public static void showQrDroidRequiredAlert(final Activity activity ) {
+    public static void showQrDroidRequiredAlert(final Activity activity) {
         //Apparently, QR Droid is not installed, or it's previous to version 3.5
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("Kein QR Droid")
@@ -81,7 +84,8 @@ public class DashboardBase extends ActionBarActivity {
                 });
         builder.create().show();
     }
-    public static void showNoStoreCreatedAlert(final Activity activity ){
+
+    public static void showNoStoreCreatedAlert(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setMessage("Bisher wurde kein Lager in den Einstellungen erstellt. Ohne Lager können keine Items angelegt oder gelöscht werden!")
                 .setCancelable(true)
@@ -108,7 +112,7 @@ public class DashboardBase extends ActionBarActivity {
     public void onBackPressed() {
         if (getFragmentManager().getBackStackEntryCount() > 0)
             getFragmentManager().popBackStack();
-        else if(!_viewPagerFragment.onBackPressed())
+        else if (!_fridgeListViewPagerFragment.onBackPressed())
             super.onBackPressed();
     }
 
@@ -116,16 +120,17 @@ public class DashboardBase extends ActionBarActivity {
     public Menu get_menu() {
         return _menu;
     }
-    protected void navigateToDetailFragment(FridgeItem item){
+
+    protected void navigateToDetailFragment(FridgeItem item) {
         FridgeDetailFragment fragment = new FridgeDetailFragment();
         fragment.setData(item);
         changeFragment(fragment, true);
     }
 
-    protected void colorDialog(Dialog dialog, boolean add){
-        if(add){
+    protected void colorDialog(Dialog dialog, Action action) {
+        if (action == Action.ADD) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(255, 223, 255, 233)));
-        }else{
+        } else if (action == Action.DELETE) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(255, 255, 200, 200)));
         }
     }

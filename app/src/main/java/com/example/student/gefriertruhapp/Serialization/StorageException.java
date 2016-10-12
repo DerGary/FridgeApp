@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.Helper;
+package com.example.student.gefriertruhapp.Serialization;
 
 /**
  * Created by student on 31.12.15.

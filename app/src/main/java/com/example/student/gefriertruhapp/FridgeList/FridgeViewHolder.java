@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.ShelfRecyclerView;
+package com.example.student.gefriertruhapp.FridgeList;
 
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;

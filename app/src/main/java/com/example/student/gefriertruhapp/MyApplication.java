@@ -1,12 +1,9 @@
 package com.example.student.gefriertruhapp;
 
 import android.app.Application;
-import android.content.Intent;
 import android.util.Log;
 
-import com.example.student.gefriertruhapp.Helper.FileAccess;
-
-import java.io.IOException;
+import com.example.student.gefriertruhapp.Serialization.FileAccess;
 
 /**
  * Created by student on 31.12.15.

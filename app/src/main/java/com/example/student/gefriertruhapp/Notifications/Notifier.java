@@ -17,7 +17,7 @@ import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.R;
-import com.example.student.gefriertruhapp.Settings.Store;
+import com.example.student.gefriertruhapp.Model.Store;
 
 /**
  * Created by student on 25.12.15.

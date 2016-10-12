@@ -3,7 +3,6 @@ package com.example.student.gefriertruhapp.History;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -13,18 +12,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.student.gefriertruhapp.Helper.FileAccess;
-import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
-import com.example.student.gefriertruhapp.Model.FridgeItem;
+import com.example.student.gefriertruhapp.Serialization.FileAccess;
 import com.example.student.gefriertruhapp.R;
-import com.example.student.gefriertruhapp.Settings.Store;
-import com.example.student.gefriertruhapp.ShelfRecyclerView.FridgeListFragment;
-import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
-import com.example.student.gefriertruhapp.ViewPager.ViewPagerAdapter;
+import com.example.student.gefriertruhapp.Helper.TitleFragment;
+import com.example.student.gefriertruhapp.Helper.TitleFragmentViewPagerAdapter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +30,7 @@ import java.util.Queue;
 
 public class HistoryViewPagerFragment extends Fragment {
     private ViewPager pager;
-    private HistoryAdapter pagerAdapter;
+    private TitleFragmentViewPagerAdapter pagerAdapter;
     private View view;
     private List<HistoryFragment> fragmentList = new ArrayList<>();
     private Queue<HistoryFragment> fragmentQueue = new LinkedList<>();
@@ -115,7 +108,7 @@ public class HistoryViewPagerFragment extends Fragment {
         setData();
 
         if(pagerAdapter == null) {
-            pagerAdapter = new HistoryAdapter(getChildFragmentManager(), (List<TitleFragment>) (List<?>) fragmentList);
+            pagerAdapter = new TitleFragmentViewPagerAdapter(getChildFragmentManager(), (List<TitleFragment>) (List<?>) fragmentList);
             pager.setAdapter(pagerAdapter);
         }
         return view;

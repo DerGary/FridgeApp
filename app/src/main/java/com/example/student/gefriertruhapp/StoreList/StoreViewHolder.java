@@ -1,11 +1,10 @@
-package com.example.student.gefriertruhapp.Settings;
+package com.example.student.gefriertruhapp.StoreList;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.student.gefriertruhapp.Model.FridgeItem;
+import com.example.student.gefriertruhapp.Model.Store;
 import com.example.student.gefriertruhapp.R;
 
 /**

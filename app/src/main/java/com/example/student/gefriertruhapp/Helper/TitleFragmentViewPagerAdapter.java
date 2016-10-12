@@ -1,24 +1,20 @@
-package com.example.student.gefriertruhapp.ViewPager;
+package com.example.student.gefriertruhapp.Helper;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v13.app.FragmentStatePagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.view.View;
-import android.view.ViewGroup;
+
+import com.example.student.gefriertruhapp.Helper.TitleFragment;
 
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 /**
  * Created by Stefan on 21-05-15.
  */
-public class ViewPagerAdapter extends FragmentPagerAdapter {
+public class TitleFragmentViewPagerAdapter extends FragmentPagerAdapter {
     private List<TitleFragment> _list;
 
-    public ViewPagerAdapter(FragmentManager fm, List<TitleFragment> list) {
+    public TitleFragmentViewPagerAdapter(FragmentManager fm, List<TitleFragment> list) {
         super(fm);
         this._list = list;
     }

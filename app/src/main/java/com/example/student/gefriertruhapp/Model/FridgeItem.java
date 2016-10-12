@@ -1,9 +1,6 @@
 package com.example.student.gefriertruhapp.Model;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
-
-import com.example.student.gefriertruhapp.Settings.Store;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

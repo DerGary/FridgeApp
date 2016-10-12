@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.Helper;
+package com.example.student.gefriertruhapp.Serialization;
 
 import android.os.Environment;
 
@@ -13,14 +13,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by student on 31.12.15.

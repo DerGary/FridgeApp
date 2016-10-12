@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.Settings;
+package com.example.student.gefriertruhapp.StoreList;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,10 +14,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
+import com.example.student.gefriertruhapp.Model.Store;
 import com.example.student.gefriertruhapp.R;
-import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
+import com.example.student.gefriertruhapp.Helper.TitleFragment;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

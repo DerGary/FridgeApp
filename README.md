@@ -4,5 +4,4 @@
 
 # TODO:
  - make lists colored
- - Excel export
  - Sortfunctions (not only date)

@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.DetailFragments;
+package com.example.student.gefriertruhapp.FridgeList;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -31,11 +31,11 @@ import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.R;
-import com.example.student.gefriertruhapp.Settings.Store;
+import com.example.student.gefriertruhapp.Model.Store;
 import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.example.student.gefriertruhapp.UPC.GetAsyncTask;
 import com.example.student.gefriertruhapp.UPC.JsonResult;
-import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
+import com.example.student.gefriertruhapp.Helper.TitleFragment;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;

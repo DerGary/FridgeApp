@@ -1,4 +1,6 @@
-package com.example.student.gefriertruhapp.Settings;
+package com.example.student.gefriertruhapp.Model;
+
+import com.example.student.gefriertruhapp.Model.Store;
 
 import java.util.List;
 

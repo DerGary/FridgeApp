@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.R;
-import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
 
 /**
  * Created by Stefan on 22-07-16.

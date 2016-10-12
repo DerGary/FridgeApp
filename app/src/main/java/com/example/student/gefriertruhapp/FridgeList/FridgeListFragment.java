@@ -1,21 +1,17 @@
-package com.example.student.gefriertruhapp.ShelfRecyclerView;
+package com.example.student.gefriertruhapp.FridgeList;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.Dashboard;
-import com.example.student.gefriertruhapp.DetailFragments.FridgeDetailFragment;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.R;
-import com.example.student.gefriertruhapp.Settings.Store;
-import com.example.student.gefriertruhapp.ViewPager.TitleFragment;
+import com.example.student.gefriertruhapp.Model.Store;
+import com.example.student.gefriertruhapp.Helper.TitleFragment;
 
 import java.util.List;
 

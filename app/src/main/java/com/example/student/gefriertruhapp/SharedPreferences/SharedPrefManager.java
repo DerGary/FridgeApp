@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-import com.example.student.gefriertruhapp.Helper.ExtendedGson;
+import com.example.student.gefriertruhapp.Serialization.ExtendedGson;
 import com.google.gson.Gson;
 
 import java.lang.reflect.Type;

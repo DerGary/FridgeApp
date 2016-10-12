@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.ShelfRecyclerView;
+package com.example.student.gefriertruhapp.FridgeList;
 
 /**
  * Created by student on 21.12.15.

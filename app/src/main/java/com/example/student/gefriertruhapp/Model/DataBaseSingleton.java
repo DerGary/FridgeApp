@@ -5,22 +5,17 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.SystemClock;
 
-import com.example.student.gefriertruhapp.Helper.ExtendedGson;
-import com.example.student.gefriertruhapp.Helper.FileAccess;
-import com.example.student.gefriertruhapp.Helper.StorageException;
+import com.example.student.gefriertruhapp.Serialization.ExtendedGson;
+import com.example.student.gefriertruhapp.Serialization.FileAccess;
+import com.example.student.gefriertruhapp.Serialization.StorageException;
 import com.example.student.gefriertruhapp.Notifications.NotificationBroadCastReceiver;
-import com.example.student.gefriertruhapp.Settings.Settings;
-import com.example.student.gefriertruhapp.Settings.Store;
 import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 
-import java.io.File;
 import java.lang.reflect.Type;
-import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 

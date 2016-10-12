@@ -1,4 +1,4 @@
-package com.example.student.gefriertruhapp.Helper;
+package com.example.student.gefriertruhapp.Serialization;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
