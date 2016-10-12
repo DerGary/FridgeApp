@@ -40,6 +40,13 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder{
             this.date.setText("");
         }
         this.quantity.setText(data.getQuantity() + " / " + data.getMinQuantity());
+        if(data.getQuantity() == 0){
+            this.quantity.setTextColor(Color.RED);
+        } else if(data.getQuantity() < data.getMinQuantity()){
+            this.quantity.setTextColor(Color.rgb(255,135,0));
+        }else{
+            this.quantity.setTextColor(Color.rgb(49,232,2));
+        }
     }
     public FridgeItem get_data() {
         return _data;

@@ -3,4 +3,3 @@
  - UPC Lookup by http://upcdatabase.org
 
 # TODO:
- - make lists colored

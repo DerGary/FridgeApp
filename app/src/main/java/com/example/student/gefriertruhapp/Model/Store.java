@@ -1,5 +1,7 @@
 package com.example.student.gefriertruhapp.Model;
 
+import android.graphics.Color;
+
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 
 import java.util.ArrayList;
@@ -12,11 +14,17 @@ public class Store {
     private String name;
     private String description;
     private transient List<FridgeItem> items;
+    private int color = Color.rgb(0,0,0);
 
     public Store(String name, String description) {
         this.name = name;
         this.description = description;
         items = new ArrayList<>();
+    }
+
+    public Store(Store store){
+        this(store.getName(), store.getDescription());
+        items = store.getItems();
     }
     public String getName() {
         return name;
@@ -42,4 +50,11 @@ public class Store {
         this.items = items;
     }
 
+    public int getColor() {
+        return color;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 }

@@ -3,8 +3,10 @@ package com.example.student.gefriertruhapp.FridgeList;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
@@ -32,13 +34,14 @@ import java.util.Queue;
 /**
  * Created by Stefan on 21-05-15.
  */
-public class FridgeListViewPagerFragment extends Fragment {
+public class FridgeListViewPagerFragment extends Fragment implements ViewPager.OnPageChangeListener {
     private ViewPager pager;
     private TitleFragmentViewPagerAdapter pagerAdapter;
     private View view;
     private List<FridgeListFragment> fragmentList = new ArrayList<FridgeListFragment>();
     private String query;
     private Queue<FridgeListFragment> fragmentQueue = new LinkedList<>();
+    private PagerTabStrip pagerTabStrip;
 
 
     public FridgeListViewPagerFragment() {
@@ -85,6 +88,24 @@ public class FridgeListViewPagerFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
     int itemPos = 0;
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        int color = fragmentList.get(position).getStore().getColor();
+        pagerTabStrip.setTextColor(color);
+        pagerTabStrip.setTabIndicatorColor(color);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
     public enum Sort{
         DateAscending(0, "Datum aufsteigend"), DateDescending(1, "Datum absteigend"), NameAscending(2, "Name aufsteigend"), NameDescending(3, "Name absteigend");
         private final int value;
@@ -155,6 +176,7 @@ public class FridgeListViewPagerFragment extends Fragment {
     public void setData() {
         ArrayList<Store> stores = new ArrayList<>(DataBaseSingleton.getInstance().getStores());
         Store buyStore = new Store("Einkaufsliste", "");
+        buyStore.setColor(Color.rgb(0,0,0));
 
         while(fragmentList.size() < stores.size() + 1){
             if(fragmentQueue.size() > 0){
@@ -196,6 +218,12 @@ public class FridgeListViewPagerFragment extends Fragment {
               e.printStackTrace();
             }
         }
+        if (pagerTabStrip != null){
+            int position = pager.getCurrentItem();
+            int color = fragmentList.get(position).getStore().getColor();
+            pagerTabStrip.setTextColor(color);
+            pagerTabStrip.setTabIndicatorColor(color);
+        }
     }
 
     public void addStoreFragment(Store store, List<FridgeItem> items, int position){
@@ -225,6 +253,8 @@ public class FridgeListViewPagerFragment extends Fragment {
         fragmentList.get(position).setData(fridgeItems, store);
     }
 
+
+
     @Nullable
     @Override
     @SuppressWarnings("unchecked")
@@ -234,6 +264,8 @@ public class FridgeListViewPagerFragment extends Fragment {
         }
         if(pager == null) {
             pager = (ViewPager) view.findViewById(R.id.pager);
+            pagerTabStrip = (PagerTabStrip) view.findViewById(R.id.pager_header);
+            pager.addOnPageChangeListener(this);
         }
         setData();
 

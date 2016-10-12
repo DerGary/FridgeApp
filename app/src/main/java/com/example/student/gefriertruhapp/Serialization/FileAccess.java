@@ -218,4 +218,12 @@ public abstract class FileAccess {
         }
     }
 
+    public static void renameFile(String oldName, String newName){
+        File dir = Environment.getExternalStorageDirectory();
+        File appDir = new File(dir, APP_FOLDER);
+        File appFile = new File(appDir, oldName + "." + EXTENSION_JSON);
+        File newFile = new File(appDir, newName + "." + EXTENSION_JSON);
+        appFile.renameTo(newFile);
+    }
+
 }

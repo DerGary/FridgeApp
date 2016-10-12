@@ -176,7 +176,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         } else if (list.size() == 1) {
             navigateToDetailFragment(list.get(0));
         } else {
-
+            showChooseArticleDialog(Action.OPEN, list, barCode);
         }
     }
 

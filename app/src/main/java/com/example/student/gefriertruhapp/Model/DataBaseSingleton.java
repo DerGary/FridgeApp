@@ -223,6 +223,11 @@ public class DataBaseSingleton {
     public void saveStore(Store store) {
         settings.getStores().add(store);
     }
+    public void updateStore(Store oldStore, Store newStore){
+        if(!oldStore.getName().equals(newStore.getName())){
+            FileAccess.renameFile(oldStore.getName(), newStore.getName());
+        }
+    }
 
     public void deleteStore(Store store) {
         settings.getStores().remove(store);
