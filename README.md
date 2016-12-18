@@ -4,3 +4,4 @@
 
 # TODO:
  - Fix crash when no history is present and someone presses the history button
+ - Check when - is pressed only show articles with quantity > 0
