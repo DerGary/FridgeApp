@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 12
-        versionName "3.0-beta"
+        versionName "3.1.1"
     }
     buildTypes {
         release {
