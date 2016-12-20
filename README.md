@@ -3,4 +3,3 @@
  - UPC Lookup by http://upcdatabase.org
 
 # TODO:
- - Fix crash when no history is present and someone presses the history button
