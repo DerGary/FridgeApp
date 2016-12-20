@@ -67,7 +67,9 @@ public class HistoryViewPagerFragment extends Fragment {
     @SuppressWarnings("unchecked")
     public void setData() {
         Map<String, String> history = FileAccess.readHistory(7);
-
+        if(history == null){
+            return;
+        }
 
         while(fragmentList.size() < history.size()){
             if(fragmentQueue.size() > 0){

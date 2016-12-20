@@ -182,6 +182,9 @@ public abstract class FileAccess {
         File appDir = null;
         appDir = new File(dir, APP_FOLDER + "/" + HISTORY_FOLDER);
         File[] fileList = appDir.listFiles();
+        if(fileList == null){
+            return null;
+        }
         Arrays.sort(fileList, Collections.<File>reverseOrder());
         if (fileList.length < dayCount) {
             dayCount = fileList.length;
