@@ -298,12 +298,18 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         List<FridgeItem> items;
         int i = _fridgeListViewPagerFragment.currentView();
         items = DataBaseSingleton.getInstance().getFridgeItems(barCode);
+        List<FridgeItem> cleanedItems = new ArrayList<>();
+        for (FridgeItem item: items) {
+            if(item.getQuantity() > 0){
+                cleanedItems.add(item);
+            }
+        }
 
-        if (items != null && items.size() > 0) {
-            if (items.size() == 1) {
-                showChooseQuantityDialog(Action.DELETE, items, 0);
+        if (cleanedItems != null && cleanedItems.size() > 0) {
+            if (cleanedItems.size() == 1) {
+                showChooseQuantityDialog(Action.DELETE, cleanedItems, 0);
             } else {
-                showChooseArticleDialog(Action.DELETE, items, barCode);
+                showChooseArticleDialog(Action.DELETE, cleanedItems, barCode);
             }
         } else {
             Toast.makeText(Dashboard.this, "Artikel nicht gefunden", Toast.LENGTH_SHORT).show();
