@@ -3,3 +3,5 @@
  - UPC Lookup by http://upcdatabase.org
 
 # TODO:
+ - Add Images
+ - Add Shopping List Export
