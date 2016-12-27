@@ -5,3 +5,4 @@
 # TODO:
  - Add Images
  - Add Shopping List Export
+ - Add Setting to change UPC Lookup API Key
