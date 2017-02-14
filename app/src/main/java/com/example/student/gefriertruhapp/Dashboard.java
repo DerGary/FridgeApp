@@ -299,9 +299,11 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         int i = _fridgeListViewPagerFragment.currentView();
         items = DataBaseSingleton.getInstance().getFridgeItems(barCode);
         List<FridgeItem> cleanedItems = new ArrayList<>();
-        for (FridgeItem item: items) {
-            if(item.getQuantity() > 0){
-                cleanedItems.add(item);
+        if(items != null) {
+            for (FridgeItem item : items) {
+                if (item.getQuantity() > 0) {
+                    cleanedItems.add(item);
+                }
             }
         }
 
