@@ -19,6 +19,7 @@ import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Notifications.Notifier;
 import com.example.student.gefriertruhapp.Model.Store;
+import com.example.student.gefriertruhapp.Serialization.FileAccess;
 import com.example.student.gefriertruhapp.StoreList.StoresListFragment;
 import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.example.student.gefriertruhapp.FridgeList.FridgeListViewPagerFragment;
@@ -36,6 +37,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FileAccess.verifyStoragePermissions(this);
         setContentView(R.layout.activity_dashboard);
         createPage();
     }
