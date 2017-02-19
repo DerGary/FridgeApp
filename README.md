@@ -6,3 +6,4 @@
  - Add Images
  - Add Shopping List Export
  - Add Setting to change UPC Lookup API Key
+ - On - Show which Label the Item has
