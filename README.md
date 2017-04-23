@@ -4,6 +4,9 @@
 
 # TODO:
  - Add Images
- - Add Shopping List Export
+ - Add Shopping List Export to google tasks
  - Add Setting to change UPC Lookup API Key
- - On - Show which Label the Item has
+ - On -/+ Show which Label the Item has
+ - = Button to link two or more items together
+ - Smaller Detail page to reduce the need to scroll
+ 
