@@ -9,4 +9,4 @@
  - On -/+ Show which Label the Item has
  - = Button to link two or more items together
  - Smaller Detail page to reduce the need to scroll
- 
+ - Selbe hinzugefügt das aktuell in der Einkaufsliste ist, das aus der Einkaufsliste löschen
