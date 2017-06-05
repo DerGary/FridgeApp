@@ -10,3 +10,4 @@
  - = Button to link two or more items together
  - Smaller Detail page to reduce the need to scroll
  - Selbe hinzugefügt das aktuell in der Einkaufsliste ist, das aus der Einkaufsliste löschen
+ - Beim Auschecken und Einchecken anzeigen wie viel davon noch da sind (bei = dann auch)
