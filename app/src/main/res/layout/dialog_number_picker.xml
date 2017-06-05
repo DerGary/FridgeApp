@@ -2,9 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-<NumberPicker
-    android:id="@+id/dialog_number_picker_picker"
-    style="@style/NumberPickerBase">
+    <TextView
+        android:id="@+id/dialog_number_picker_text"
+        android:paddingLeft="25dp"
+        android:text="test"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <NumberPicker
+        android:id="@+id/dialog_number_picker_picker"
+        style="@style/NumberPickerBase">
 
 </NumberPicker>
 </LinearLayout>

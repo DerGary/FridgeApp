@@ -10,6 +10,7 @@
 
         <TextView
             style="@style/TextViewBaseStyle"
+            android:paddingBottom="0dp"
             android:text="Titel:" />
 
         <LinearLayout
@@ -60,7 +61,7 @@
             android:text="Lager:"/>
 
         <Spinner
-            android:minHeight="60dp"
+            android:minHeight="40dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/fridge_detail_store_spinner" />
@@ -105,23 +106,23 @@
         <TextView
             style="@style/TextViewBaseStyle"
             android:text="Erinnerung:"
-            android:paddingBottom="20dp"/>
+            android:paddingBottom="10dp"/>
 
         <TextView
             style="@style/TextViewBaseStyle"
             android:text="Keine Erinnerung gesetzt"
             android:id="@+id/fridge_detail_notification_date"
             android:paddingLeft="10dp"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:textStyle="normal"
-            android:paddingBottom="20dp"/>
+            android:paddingBottom="10dp"/>
 
         <Button
             style="@style/ButtonBaseStyle"
             android:text="Erinnerung setzen"
             android:background="@drawable/button_shape"
             android:id="@+id/fridge_detail_notification_button"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="10dp"/>
 
         <TextView
             style="@style/TextViewBaseStyle"
@@ -135,6 +136,6 @@
             android:gravity="top"
             android:ems="10"
             android:id="@+id/fridge_detail_note"
-            android:lines="10" />
+            android:lines="4" />
     </LinearLayout>
 </ScrollView>

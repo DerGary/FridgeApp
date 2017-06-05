@@ -9,6 +9,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.student.gefriertruhapp.Helper.Action;
@@ -201,7 +202,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         }
         List<String> strings = new ArrayList<>();
         for (FridgeItem fridgeItem : items) {
-            strings.add(fridgeItem.getNotificationDateString() + " Anzahl: " + fridgeItem.getQuantity());
+            strings.add(fridgeItem.getName() + "\r\n" + fridgeItem.getNotificationDateString() + "\r\nAnzahl: " + fridgeItem.getQuantity());
         }
         if (action == Action.ADD) {
             strings.add("Neu");
@@ -258,6 +259,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                 DataBaseSingleton.getInstance().saveDataBase();
                 HistoryHelper.changeItem(oldItem, item);
                 _fridgeListViewPagerFragment.setData();
+                Toast.makeText(getBaseContext(),item.getName() + "\r\nNeue Anzahl: " + item.getQuantity(), Toast.LENGTH_LONG).show();
             }
         });
         AlertDialog dialog = b.create();
@@ -276,7 +278,11 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
             }
         });
 
+        TextView text = (TextView) dialog.findViewById(R.id.dialog_number_picker_text);
+        FridgeItem item = items.get(itemPosition);
+        text.setText(item.getName() + "\r\n" + item.getNotificationDateString() + "\r\nAktuelle Anzahl: " + item.getQuantity());
     }
+
 
 
     public void delElement(String barCode) {
