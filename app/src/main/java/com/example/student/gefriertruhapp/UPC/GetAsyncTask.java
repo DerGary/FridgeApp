@@ -17,16 +17,18 @@ import java.net.URL;
 public class GetAsyncTask<T> extends AsyncTask<String, Void, T> {
     final static String TAG = "GetAsyncTask";
     private Activity _context;
+    private String _upcKey;
 
-    public GetAsyncTask(Activity context) {
+    public GetAsyncTask(Activity context, String upcKey) {
         this._context = context;
+        this._upcKey = upcKey;
     }
 
     @Override
     protected T doInBackground(String... barCode) {
         HttpURLConnection urlConnection = null;
         try {
-            URL url = new URL("http://api.upcdatabase.org/json/"+ _context.getString(R.string.upc_apikey)+"/"+ barCode[0]);
+            URL url = new URL("http://api.upcdatabase.org/json/"+ _upcKey +"/"+ barCode[0]);
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setConnectTimeout(10 * 1000);

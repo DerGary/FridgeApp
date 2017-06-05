@@ -1,9 +1,12 @@
 package com.example.student.gefriertruhapp.FridgeList;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.text.format.DateFormat;
@@ -266,12 +269,22 @@ public class FridgeDetailFragment extends TitleFragment {
             deleteMark.setVisibility(View.VISIBLE);
             return;
         }
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity().getBaseContext());
+        String upcKey = sharedPref.getString("UPCLOOKUPAPIKEY", "");
+        if(upcKey == null || upcKey.isEmpty()){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
+            builder.setTitle("UPC API Key nicht gefunden");
+            builder.setMessage("Für diese Funktion muss ein UPC API Key in den Einstellungen hinterlegt werden. Dieser kann kostenlos auf www.upcdatabase.org erstellt werden.");
+            builder.setNeutralButton("Ok", null);
+            builder.create().show();
+            return;
+        }
 
         String savedName = DataBaseSingleton.getInstance().getNameByBarcode(item.getBarCode());
         if (savedName != null) {
             name.setText(savedName);
         }
-        GetAsyncTask<JsonResult> loadUPCs = new GetAsyncTask<JsonResult>(getActivity()) {
+        GetAsyncTask<JsonResult> loadUPCs = new GetAsyncTask<JsonResult>(getActivity(), upcKey) {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();

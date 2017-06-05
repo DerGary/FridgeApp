@@ -23,10 +23,6 @@
         android:orderInCategory="104" app:showAsAction="never"/>
     <item android:id="@+id/sort" android:title="Sortieren"
         android:orderInCategory="105" app:showAsAction="never"/>
-    <item android:id="@+id/settings" android:title="Lager verwalten"
-        android:orderInCategory="106" app:showAsAction="never"/>
-    <item android:id="@+id/history" android:title="Verlauf"
-        android:orderInCategory="107" app:showAsAction="never"/>
-    <item android:id="@+id/csv_export" android:title="CSV Export"
-        android:orderInCategory="108" app:showAsAction="never"/>
+    <item android:id="@+id/preferences" android:title="Settings"
+        android:orderInCategory="109" app:showAsAction="never"/>
 </menu>

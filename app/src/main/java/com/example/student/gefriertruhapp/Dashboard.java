@@ -12,6 +12,7 @@ import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.example.student.gefriertruhapp.Helper.Action;
+import com.example.student.gefriertruhapp.Preferences.SettingsFragment;
 import com.example.student.gefriertruhapp.Serialization.CSVHelper;
 import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.History.HistoryViewPagerFragment;
@@ -112,34 +113,16 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         } else if (id == R.id.action_search) {
             mSearchView.setIconified(false);
             return true;
-        } else if (id == R.id.settings) {
-            changeFragment(new StoresListFragment(), true);
-            return true;
-        } else if (id == R.id.history) {
-            changeFragment(new HistoryViewPagerFragment(), true);
-            return true;
-        } else if (id == R.id.csv_export) {
-            saveCSV();
-            return true;
         } else if (id == R.id.open) {
             if (isStoreAvailable()) {
                 openQRDroid(ACTIVITY_RESULT_QRDROID_OPEN);
             }
             return true;
+        } else if (id == R.id.preferences) {
+            changeFragment(new SettingsFragment(), true);
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private void saveCSV() {
-        for (Store store : DataBaseSingleton.getInstance().getStores()) {
-            CSVHelper.writeStore(store);
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Fertig");
-        builder.setMessage("Export wurde erfolgreich fertiggestellt.");
-        builder.setNeutralButton("Ok", null);
-        builder.create().show();
     }
 
 
