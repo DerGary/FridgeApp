@@ -3,6 +3,8 @@ package com.example.student.gefriertruhapp.History;
 import com.example.student.gefriertruhapp.Serialization.FileAccess;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 
+import java.util.List;
+
 /**
  * Created by Stefan on 11-10-16.
  */
@@ -44,6 +46,22 @@ public class HistoryHelper {
             text += "Notizen: " + oldItem.getNotesOrPlaceholderIfEmpty() + " -> " + newItem.getNotesOrPlaceholderIfEmpty() + "\r\n";
         }
 
+        FileAccess.writeHistory(text);
+    }
+    public static void linkedItems(List<FridgeItem> linkedList){
+        String text = "Folgende Einträge wurden verlinkt :\r\n";
+        for(FridgeItem item : linkedList){
+            text+=item.getName() + "\r\n";
+        }
+        FileAccess.writeHistory(text);
+    }
+    public static void removedLinks(FridgeItem item, List<FridgeItem> linkedItems){
+        String text = "Verlinkungen für Eintrag "+item.getName()+" wurden aufgehoben. \r\nFolgende Links wurden entfernt:\r\n";
+        if(linkedItems != null) {
+            for (FridgeItem linkedItem : linkedItems) {
+                text += linkedItem.getName() + "\r\n";
+            }
+        }
         FileAccess.writeHistory(text);
     }
 }

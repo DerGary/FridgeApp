@@ -1,10 +1,12 @@
 package com.example.student.gefriertruhapp.Model;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.SystemClock;
 
+import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.Serialization.ExtendedGson;
 import com.example.student.gefriertruhapp.Serialization.FileAccess;
 import com.example.student.gefriertruhapp.Serialization.StorageException;
@@ -268,5 +270,24 @@ public class DataBaseSingleton {
             item.setLinkedItems(linklist);
         }
         saveDataBase();
+        HistoryHelper.linkedItems(allLinks);
+    }
+    public void removeLinks(FridgeItem item) {
+        List<FridgeItem> linkedItems = item.getLinkedItems();
+        if(linkedItems == null){
+            return;
+        }else{
+            for(FridgeItem linkedItem : linkedItems){
+                List<FridgeItem> subLinkedItems = linkedItem.getLinkedItems();
+                if(subLinkedItems != null){
+                    List<FridgeItem> linklist = new ArrayList<>(subLinkedItems);
+                    linklist.remove(item);
+                    linkedItem.setLinkedItems(linklist);
+                }
+            }
+        }
+        item.setLinkedItems(null);
+        saveDataBase();
+        HistoryHelper.removedLinks(item, linkedItems);
     }
 }

@@ -37,6 +37,7 @@ import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
+import com.example.student.gefriertruhapp.Model.OnPropertyChangedListener;
 import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.Model.Store;
 import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
@@ -55,7 +56,7 @@ import java.util.List;
 /**
  * Created by student on 21.12.15.
  */
-public class FridgeDetailFragment extends TitleFragment implements ItemClickListener {
+public class FridgeDetailFragment extends TitleFragment implements ItemClickListener, OnPropertyChangedListener {
     protected FridgeItem item;
     protected View rootView;
     protected Button notificationButton;
@@ -203,8 +204,15 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         } else if (id == android.R.id.home) {
             getActivity().onBackPressed();
             return true;
+        } else if (id == R.id.menu_item_remove_links) {
+            removeLinks();
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void removeLinks() {
+        DataBaseSingleton.getInstance().removeLinks(this.item);
     }
 
     private void deleteItem() {
@@ -231,7 +239,11 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
     }
 
     public void setData(FridgeItem item) {
+        if(this.item != null){
+            this.item.unsubscribe(this);
+        }
         this.item = item;
+        this.item.subscribe(this);
     }
 
     @Override
@@ -342,5 +354,16 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         FridgeDetailFragment fragment = new FridgeDetailFragment();
         fragment.setData((FridgeItem)data);
         ((Dashboard) getActivity()).changeFragment(fragment, true);
+    }
+
+    @Override
+    public void onPropertyChanged(String name) {
+        setViewData();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        item.unsubscribe(this);
     }
 }

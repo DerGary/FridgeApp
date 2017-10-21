@@ -4,4 +4,5 @@
     xmlns:tools="http://schemas.android.com/tools">
     <item android:id="@+id/menu_item_save" android:icon="@android:drawable/ic_menu_save" android:title="Speichern" app:showAsAction="always"/>
     <item android:id="@+id/menu_item_delete" android:icon="@android:drawable/ic_menu_delete" android:title="Löschen" app:showAsAction="ifRoom"/>
+    <item android:id="@+id/menu_item_remove_links" android:icon="@drawable/clear" android:title="Alle Links entfernen" app:showAsAction="never"/>
 </menu>

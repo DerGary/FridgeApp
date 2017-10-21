@@ -156,8 +156,10 @@ public class FridgeItem extends SupportsChangedEvents implements Comparable<Frid
     public void setLinkedItems(List<FridgeItem> linkedItems) {
         this.linkedItems = linkedItems;
         linkedItemIds = new ArrayList<Integer>();
-        for(FridgeItem item : linkedItems){
-            linkedItemIds.add(item.getId());
+        if(linkedItems != null) {
+            for (FridgeItem item : linkedItems) {
+                linkedItemIds.add(item.getId());
+            }
         }
         OnPropertyChanged("linkedItems");
     }
