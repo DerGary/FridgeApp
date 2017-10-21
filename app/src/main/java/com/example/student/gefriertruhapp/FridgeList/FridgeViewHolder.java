@@ -12,6 +12,8 @@ import com.example.student.gefriertruhapp.R;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.util.List;
+
 /**
  * Created by Stefan on 18-05-15.
  */
@@ -57,7 +59,8 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder implements View.On
             this.date.setText("");
         }
         int quantityOfAllLinkedItems = data.getQuantity();
-        if(data.getLinkedItems()!= null) {
+        List<FridgeItem> linkedItems = data.getLinkedItems();
+        if(linkedItems != null && !linkedItems.isEmpty()) {
             for (FridgeItem linkedItem : data.getLinkedItems()) {
                 quantityOfAllLinkedItems += linkedItem.getQuantity();
             }
