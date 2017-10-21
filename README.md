@@ -5,5 +5,5 @@
 # TODO:
  - Add Images
  - Add Shopping List Export to google tasks
- - = Button to link two or more items together (show on -/+ the count of all)
  - Selbe hinzugefügt das aktuell in der Einkaufsliste ist, das aus der Einkaufsliste löschen
+ - do inventory mode
