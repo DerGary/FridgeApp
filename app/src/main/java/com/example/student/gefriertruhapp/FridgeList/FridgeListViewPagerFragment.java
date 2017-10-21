@@ -2,9 +2,11 @@ package com.example.student.gefriertruhapp.FridgeList;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
@@ -21,6 +23,7 @@ import com.example.student.gefriertruhapp.Helper.TitleFragment;
 import com.example.student.gefriertruhapp.Helper.TitleFragmentViewPagerAdapter;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
+import com.example.student.gefriertruhapp.Model.OnPropertyChangedListener;
 import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.Model.Store;
 
@@ -30,11 +33,13 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Stefan on 21-05-15.
  */
-public class FridgeListViewPagerFragment extends Fragment implements ViewPager.OnPageChangeListener {
+public class FridgeListViewPagerFragment extends Fragment implements ViewPager.OnPageChangeListener, OnPropertyChangedListener {
     private ViewPager pager;
     private TitleFragmentViewPagerAdapter pagerAdapter;
     private View view;
@@ -109,6 +114,33 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
     public void onPageScrollStateChanged(int state) {
 
     }
+    Timer timer;
+    @Override
+    public void onPropertyChanged(String name) {
+        if("linkedItems".equals(name) || "minQuantity".equals(name) || "quantity".equals(name)) {
+            if (timer != null) {
+                timer.cancel();
+                timer.purge();
+            }
+            final Context context = this.getActivity();
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    // Get a handler that can be used to post to the main thread
+                    Handler mainHandler = new Handler(context.getMainLooper());
+
+                    Runnable myRunnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            setData();
+                        } // This is your code
+                    };
+                    mainHandler.post(myRunnable);
+                }
+            }, 10);
+        }
+    }
 
     public enum Sort{
         DateAscending(0, "Datum aufsteigend"), DateDescending(1, "Datum absteigend"), NameAscending(2, "Name aufsteigend"), NameDescending(3, "Name absteigend");
@@ -178,8 +210,13 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
 
     @SuppressWarnings("unchecked")
     public void setData() {
-        this.markedListener = markedListener;
         ArrayList<Store> stores = new ArrayList<>(DataBaseSingleton.getInstance().getStores());
+        for(Store store : stores){
+            for(FridgeItem item : store.getItems()){
+                item.subscribe(this);
+            }
+        }
+
         Store buyStore = new Store("Einkaufsliste", "");
         buyStore.setColor(Color.rgb(0,0,0));
 
@@ -201,10 +238,16 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
 
             List<FridgeItem> toDelete = new ArrayList<>();
             for(FridgeItem item : fridgeItems){
-                if(item.getQuantity() == 0){
+                int quantityOfAllLinkedItems = item.getQuantity();
+                if(item.getLinkedItems() != null){
+                    for(FridgeItem linkedItem : item.getLinkedItems()){
+                        quantityOfAllLinkedItems += linkedItem.getQuantity();
+                    }
+                }
+                if(quantityOfAllLinkedItems == 0){
                     toDelete.add(item);
                 }
-                if(item.getQuantity() < item.getMinQuantity()){
+                if(quantityOfAllLinkedItems < item.getMinQuantity()){
                     buyStore.getItems().add(item);
                 }
             }
@@ -283,5 +326,15 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
 
     public int currentView(){
         return pager.getCurrentItem();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        for(Store store : DataBaseSingleton.getInstance().getStores()){
+            for(FridgeItem item : store.getItems()){
+                item.unsubscribe(this);
+            }
+        }
     }
 }

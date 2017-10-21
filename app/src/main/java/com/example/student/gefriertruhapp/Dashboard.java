@@ -270,11 +270,9 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                     item.setQuantity(item.getQuantity() - numberPickerValue);
                 }
 
-                int i = _fridgeListViewPagerFragment.currentView();
                 DataBaseSingleton.getInstance().saveItem(item);
                 DataBaseSingleton.getInstance().saveDataBase();
                 HistoryHelper.changeItem(oldItem, item);
-                _fridgeListViewPagerFragment.setData();
                 Toast.makeText(getBaseContext(),item.getName() + "\r\nNeue Anzahl: " + item.getQuantity(), Toast.LENGTH_LONG).show();
             }
         });
