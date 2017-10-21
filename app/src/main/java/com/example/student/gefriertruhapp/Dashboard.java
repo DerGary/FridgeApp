@@ -218,7 +218,16 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         }
         List<String> strings = new ArrayList<>();
         for (FridgeItem fridgeItem : items) {
-            strings.add(fridgeItem.getName() + "\r\n" + fridgeItem.getNotificationDateString() + "\r\nAnzahl: " + fridgeItem.getQuantity());
+            String text = fridgeItem.getName() + "\r\n" + fridgeItem.getNotificationDateString() + "\r\nAnzahl: " + fridgeItem.getQuantity() +" / " + fridgeItem.getMinQuantity();
+            List<FridgeItem> linkedItems = fridgeItem.getLinkedItems();
+            if(linkedItems != null && !linkedItems.isEmpty()){
+                int quantityOfAllLinkedItems = fridgeItem.getQuantity();
+                for(FridgeItem linkedItem : linkedItems){
+                    quantityOfAllLinkedItems += linkedItem.getQuantity();
+                }
+                text+= " (" + quantityOfAllLinkedItems + ")";
+            }
+            strings.add(text);
         }
         if (action == Action.ADD) {
             strings.add("Neu");
@@ -294,7 +303,16 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
 
         TextView text = (TextView) dialog.findViewById(R.id.dialog_number_picker_text);
         FridgeItem item = items.get(itemPosition);
-        text.setText(item.getName() + "\r\n" + item.getNotificationDateString() + "\r\nAktuelle Anzahl: " + item.getQuantity());
+        String headerText = item.getName() + "\r\n" + item.getNotificationDateString() + "\r\nAktuelle Anzahl: " + item.getQuantity() + " / " + item.getMinQuantity() ;
+        List<FridgeItem> linkedItems = item.getLinkedItems();
+        if(linkedItems != null && !linkedItems.isEmpty()){
+            int quantityOfAllLinkedItems = item.getQuantity();
+            for(FridgeItem linkedItem : linkedItems){
+                quantityOfAllLinkedItems += linkedItem.getQuantity();
+            }
+            headerText+= " (" + quantityOfAllLinkedItems + ")";
+        }
+        text.setText(headerText);
     }
 
 
