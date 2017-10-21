@@ -70,12 +70,12 @@ public class DataBaseSingleton {
     public void saveItem(FridgeItem item) {
         if(item.getBarCode() != null){
             List<FridgeItem> list = itemsByBarcode.get(item.getBarCode());
-            if(list != null && list.size() > 0){
-                if(item.getQuantity() == 0){
-                    list.remove(item);
+            if(list != null){
+                list.remove(item); // if it is an item that got updated and is the only item with this barcode we have to delete it from the list before checking if there is another item with this barcode
+                if(list.size() > 0 && item.getQuantity() == 0){
                     itemsById.remove(item.getId());
                     item.getStore().getItems().remove(item);
-                    return; // delete current item because another item with the same barcode is present and the current one has no amount
+                    return; // delete current item because another item with the same barcode is present and the current one has no amount left
                 }
             }
         }
