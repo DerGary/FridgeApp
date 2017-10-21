@@ -56,10 +56,19 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder implements View.On
         }else{
             this.date.setText("");
         }
-        this.quantity.setText(data.getQuantity() + " / " + data.getMinQuantity());
-        if(data.getQuantity() == 0){
+        int quantityOfAllLinkedItems = data.getQuantity();
+        if(data.getLinkedItems()!= null) {
+            for (FridgeItem linkedItem : data.getLinkedItems()) {
+                quantityOfAllLinkedItems += linkedItem.getQuantity();
+            }
+            this.quantity.setText(data.getQuantity() + " / " + data.getMinQuantity() + " (" + quantityOfAllLinkedItems + ")");
+        }else{
+            this.quantity.setText(data.getQuantity() + " / " + data.getMinQuantity());
+        }
+
+        if(quantityOfAllLinkedItems == 0){
             this.quantity.setTextColor(Color.RED);
-        } else if(data.getQuantity() < data.getMinQuantity()){
+        } else if(quantityOfAllLinkedItems < data.getMinQuantity()){
             this.quantity.setTextColor(Color.rgb(255,135,0));
         }else{
             this.quantity.setTextColor(Color.rgb(49,232,2));
