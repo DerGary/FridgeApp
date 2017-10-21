@@ -4,25 +4,27 @@
     <!--<item android:id="@+id/action_settings" android:title="@string/action_settings"-->
         <!--android:orderInCategory="100" app:showAsAction="never" />-->
     <item android:id="@+id/add" android:title="Hinzufügen"
-        android:orderInCategory="100" app:showAsAction="ifRoom" android:icon="@drawable/plus"/>
+        android:orderInCategory="0" app:showAsAction="ifRoom" android:icon="@drawable/plus"/>
 
     <item android:id="@+id/delete" android:title="Entnehmen"
-        android:orderInCategory="101" app:showAsAction="ifRoom" android:icon="@drawable/minus"/>
+        android:orderInCategory="10" app:showAsAction="ifRoom" android:icon="@drawable/minus"/>
 
     <item android:id="@+id/open" android:title="Öffnen"
-        android:orderInCategory="102" app:showAsAction="ifRoom" android:icon="@drawable/abc_ic_commit_search_api_mtrl_alpha"/>
+        android:orderInCategory="20" app:showAsAction="ifRoom" android:icon="@drawable/abc_ic_commit_search_api_mtrl_alpha"/>
+
+    <item android:id="@+id/new_item" android:title="Neu"
+        android:orderInCategory="30" app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_search"
         android:title="Suche"
-        android:orderInCategory="103"
+        android:orderInCategory="40"
         android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
-    <item android:id="@+id/new_item" android:title="Neu"
-        android:orderInCategory="104" app:showAsAction="never"/>
+
     <item android:id="@+id/sort" android:title="Sortieren"
-        android:orderInCategory="105" app:showAsAction="never"/>
+        android:orderInCategory="50" app:showAsAction="never"/>
     <item android:id="@+id/preferences" android:title="Settings"
-        android:orderInCategory="109" app:showAsAction="never"/>
+        android:orderInCategory="90" app:showAsAction="never"/>
 </menu>

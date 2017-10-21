@@ -12,6 +12,7 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.student.gefriertruhapp.FridgeList.OnMarkedListener;
 import com.example.student.gefriertruhapp.Helper.Action;
 import com.example.student.gefriertruhapp.Preferences.SettingsFragment;
 import com.example.student.gefriertruhapp.Serialization.CSVHelper;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Dashboard extends DashboardBase implements SearchView.OnQueryTextListener {
+public class Dashboard extends DashboardBase implements SearchView.OnQueryTextListener, OnMarkedListener {
     private SharedPrefManager sharedPrefManager;
 
     private SearchView mSearchView;
@@ -49,6 +50,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         DataBaseSingleton.init(getBaseContext());
         DataBaseSingleton.getInstance().loadDataBase();
         _fridgeListViewPagerFragment = new FridgeListViewPagerFragment();
+        _fridgeListViewPagerFragment.setMarkedListener(this);
         getFragmentManager().beginTransaction().replace(R.id.main_layout, _fridgeListViewPagerFragment).commit();
         checkIntentForID();
     }
@@ -79,16 +81,20 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        _menu = menu;
+
+        getSupportActionBar().setTitle("Gefriertruhen App");
+        setMenuButtons();
+        return true;
+    }
+
+    public void setNormalMenu(Menu menu){
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_dashboard, menu);
-        _menu = menu;
 
         searchItem = menu.findItem(R.id.action_search);
         mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         mSearchView.setOnQueryTextListener(this);
-
-        getSupportActionBar().setTitle("Gefriertruhen App");
-        return true;
     }
 
     @Override
@@ -111,6 +117,15 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         } else if (id == R.id.new_item) {
             addNewItem(null);
             return true;
+        } else if (id == R.id.menu_selection_link) {
+            linkSelectedItems();
+            return true;
+        } else if (id == R.id.menu_selection_clear) {
+            clearSelection();
+            return true;
+        } else if (id == R.id.menu_selection_delete_items) {
+            deleteSelectedItems();
+            return true;
         } else if (id == R.id.action_search) {
             mSearchView.setIconified(false);
             return true;
@@ -125,6 +140,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
 
         return super.onOptionsItemSelected(item);
     }
+
 
 
     private boolean isStoreAvailable() {
@@ -307,5 +323,60 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         } else {
             Toast.makeText(Dashboard.this, "Artikel nicht gefunden", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private List<FridgeItem> markedItems = new ArrayList<>();
+
+    @Override
+    public void setMarked(FridgeItem item) {
+        if(!markedItems.contains(item)) {
+            markedItems.add(item);
+        }
+        setMenuButtons();
+    }
+
+    public void setMenuButtons(){
+        _menu.clear();
+        if(markedItems.isEmpty()){
+            setNormalMenu(_menu);
+        }else{
+            getMenuInflater().inflate(R.menu.menu_selected_items, _menu);
+            MenuItem linkSelectionButton = _menu.findItem(R.id.menu_selection_link);
+            if(markedItems.size() >= 2){
+                //link enabled
+                linkSelectionButton.setVisible(true);
+            }else{
+                //link disabled
+                linkSelectionButton.setVisible(false);
+            }
+        }
+    }
+
+    private void clearSelection() {
+        for(FridgeItem item : markedItems){
+            item.setMarked(false);
+        }
+        markedItems.clear();
+        setMenuButtons();
+    }
+
+    @Override
+    public void setUnmarked(FridgeItem item) {
+        markedItems.remove(item);
+        setMenuButtons();
+    }
+
+    private void linkSelectedItems() {
+        DataBaseSingleton.getInstance().linkItems(markedItems);
+        clearSelection();
+    }
+
+    private void deleteSelectedItems() {
+        for(FridgeItem item : markedItems){
+            DataBaseSingleton.getInstance().deleteItem(item);
+        }
+        DataBaseSingleton.getInstance().saveDataBase();
+        //todo: update view;
+        _fridgeListViewPagerFragment.setData();
     }
 }

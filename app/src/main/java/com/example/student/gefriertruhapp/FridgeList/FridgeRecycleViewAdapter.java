@@ -14,17 +14,20 @@ import java.util.List;
  * Created by Stefan on 18-05-15.
  */
 public class FridgeRecycleViewAdapter extends RecyclerView.Adapter<FridgeViewHolder>{
-    private List<FridgeItem> _list;
-    private ItemClickListener _clickListener;
+    private List<FridgeItem> list;
+    private ItemClickListener clickListener;
+    private OnMarkedListener markedListener;
 
-    public FridgeRecycleViewAdapter(List<FridgeItem> list, ItemClickListener clickListener) {
-        _list = list;
-        this._clickListener = clickListener;
+    public FridgeRecycleViewAdapter(List<FridgeItem> list, ItemClickListener clickListener, OnMarkedListener markedListener) {
+        this.list = list;
+        this.clickListener = clickListener;
+        this.markedListener = markedListener;
     }
 
-    public void setData(List<FridgeItem> list, ItemClickListener clickListener){
-        _list = list;
-        _clickListener = clickListener;
+    public void setData(List<FridgeItem> list, ItemClickListener clickListener, OnMarkedListener markedListener){
+        this.list = list;
+        this.clickListener = clickListener;
+        this.markedListener = markedListener;
     }
 
     @Override
@@ -35,13 +38,14 @@ public class FridgeRecycleViewAdapter extends RecyclerView.Adapter<FridgeViewHol
 
     @Override
     public void onBindViewHolder(final FridgeViewHolder holder, int position) {
-        holder.assignData(_list.get(position));
+        holder.assignData(list.get(position));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                _clickListener.onItemClick(holder.get_data());
+                clickListener.onItemClick(holder.get_data());
             }
         });
+        holder.setMarkedListener(markedListener);
     }
 
     @Override
@@ -51,10 +55,10 @@ public class FridgeRecycleViewAdapter extends RecyclerView.Adapter<FridgeViewHol
 
     @Override
     public int getItemCount() {
-        if(_list == null){
+        if(list == null){
             return 0;
         }
-        return _list.size();
+        return list.size();
     }
 
     @Override

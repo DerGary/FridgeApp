@@ -137,5 +137,14 @@
             android:ems="10"
             android:id="@+id/fridge_detail_note"
             android:lines="4" />
+
+        <TextView
+            style="@style/TextViewBaseStyle"
+            android:text="Verlinkte Elemente:"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/fridge_detail_linked_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"/>
     </LinearLayout>
 </ScrollView>

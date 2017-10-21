@@ -110,6 +110,12 @@ public class DataBaseSingleton {
             }
         }
         this.itemsById.remove(item.getId());
+        List<FridgeItem> linkedItems = item.getLinkedItems();
+        if(linkedItems != null){
+            for(FridgeItem linkedItem : item.getLinkedItems()){
+                linkedItem.getLinkedItems().remove(item);
+            }
+        }
         NotificationBroadCastReceiver.unregisterAlarm(context, item);
     }
 
@@ -200,6 +206,17 @@ public class DataBaseSingleton {
         SharedPrefManager manager = new SharedPrefManager(context);
         manager.saveNewID(biggestID);
 
+        //set linked Items in the FridgeItem
+        for(FridgeItem item : itemsById.values()){
+            if(item.getLinkedItemIds() != null) {
+                List<FridgeItem> linkedItems = new ArrayList<FridgeItem>();
+                for (Integer id : item.getLinkedItemIds()) {
+                    linkedItems.add(itemsById.get(id));
+                }
+                item.setLinkedItems(linkedItems);
+            }
+        }
+
         loaded = true;
     }
 
@@ -231,5 +248,25 @@ public class DataBaseSingleton {
 
     public void deleteStore(Store store) {
         settings.getStores().remove(store);
+    }
+
+    public void linkItems(List<FridgeItem> itemsToLink) {
+        List<FridgeItem> allLinks = new ArrayList<>(itemsToLink);
+        for(FridgeItem item : itemsToLink){
+            List<FridgeItem> alreadyLinkedItems = item.getLinkedItems();
+            if(alreadyLinkedItems != null) {
+                for (FridgeItem alreadyLinked : alreadyLinkedItems) {
+                    if (!allLinks.contains(alreadyLinked)) {
+                        allLinks.add(alreadyLinked);
+                    }
+                }
+            }
+        }
+        for(FridgeItem item : allLinks){
+            List<FridgeItem> linklist = new ArrayList<>(allLinks);
+            linklist.remove(item);
+            item.setLinkedItems(linklist);
+        }
+        saveDataBase();
     }
 }

@@ -10,6 +10,6 @@ import org.joda.time.DateTime;
  */
 public abstract class ExtendedGson {
     public static Gson getInstance() {
-        return new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeSerializer()).create();
+        return new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeSerializer()).excludeFieldsWithoutExposeAnnotation().serializeNulls().setPrettyPrinting().create();
     }
 }

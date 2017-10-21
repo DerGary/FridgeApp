@@ -2,24 +2,39 @@ package com.example.student.gefriertruhapp.Model;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.Expose;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-/**
- * Created by student on 21.12.15.
- */
-public class FridgeItem implements Comparable<FridgeItem> {
+import java.util.ArrayList;
+import java.util.List;
+
+public class FridgeItem extends SupportsChangedEvents implements Comparable<FridgeItem> {
     private static DateTimeFormatter formatter = DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss");
+    @Expose
     private int id;
+    @Expose
     private String name;
+    @Expose
     private int quantity;
+    @Expose
     private DateTime notificationDate;
+    @Expose
     private String barCode;
+    @Expose
     private String notes;
+    @Expose
     private boolean notified = false;
+    @Expose
     private int minQuantity;
     private transient Store store;
+    private transient List<FridgeItem> linkedItems;
+    private transient boolean isMarked;
+    @Expose
+    private List<Integer> linkedItemIds;
+
 
     public FridgeItem(int id, String name, int quantity, DateTime notificationDate, String barCode, String notes, int minQuantity, Store store) {
         this.id = id;
@@ -42,6 +57,7 @@ public class FridgeItem implements Comparable<FridgeItem> {
 
     public void setName(String name) {
         this.name = name;
+        OnPropertyChanged("name");
     }
 
     public int getQuantity() {
@@ -54,6 +70,7 @@ public class FridgeItem implements Comparable<FridgeItem> {
         }else {
             this.quantity = quantity;
         }
+        OnPropertyChanged("quantity");
     }
 
     public DateTime getNotificationDate() {
@@ -62,6 +79,7 @@ public class FridgeItem implements Comparable<FridgeItem> {
 
     public void setNotificationDate(DateTime notificationDate) {
         this.notificationDate = notificationDate;
+        OnPropertyChanged("notificationDate");
     }
 
     public String getBarCode() {
@@ -70,7 +88,106 @@ public class FridgeItem implements Comparable<FridgeItem> {
 
     public void setBarCode(String barCode) {
         this.barCode = barCode;
+        OnPropertyChanged("barCode");
     }
+
+    public String getNotes() {
+        return notes;
+    }
+    public String getNotesOrPlaceholderIfEmpty(){
+        if(notes == null || notes.isEmpty()){
+            return "Keine Notiz";
+        }
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+        OnPropertyChanged("notes");
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+        OnPropertyChanged("id");
+    }
+
+    public boolean isNotified() {
+        return notified;
+    }
+
+    public void setNotified(boolean notified) {
+        this.notified = notified;
+        OnPropertyChanged("notified");
+    }
+
+    public int getMinQuantity() {
+        return minQuantity;
+    }
+
+    public void setMinQuantity(int minQuantity) {
+        this.minQuantity = minQuantity;
+        OnPropertyChanged("minQuantity");
+    }
+
+    public String getNotificationDateString(){
+        if(getNotificationDate() == null){
+            return "Kein Datum";
+        }
+        return formatter.print(getNotificationDate());
+    }
+
+    public Store getStore() {
+        return store;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
+        OnPropertyChanged("store");
+    }
+
+    public List<FridgeItem> getLinkedItems() {
+        return linkedItems;
+    }
+
+    public void setLinkedItems(List<FridgeItem> linkedItems) {
+        this.linkedItems = linkedItems;
+        linkedItemIds = new ArrayList<Integer>();
+        for(FridgeItem item : linkedItems){
+            linkedItemIds.add(item.getId());
+        }
+        OnPropertyChanged("linkedItems");
+    }
+
+
+    public List<Integer> getLinkedItemIds(){
+        if(linkedItems != null){
+            List<Integer> list = new ArrayList<Integer>();
+            for (FridgeItem item : linkedItems) {
+                list.add(item.getId());
+            }
+            return list;
+        }
+        return linkedItemIds;
+    }
+    public void setLinkedItemIds(List<Integer> list){
+        linkedItemIds = list;
+    }
+
+    public void setMarked(boolean isMarked){
+        this.isMarked = isMarked;
+        OnPropertyChanged("isMarked");
+    }
+    public boolean isMarked(){
+        return isMarked;
+    }
+
+
+
+
 
     @Override
     public int compareTo(@NonNull FridgeItem another) {
@@ -91,58 +208,5 @@ public class FridgeItem implements Comparable<FridgeItem> {
         } else {
             return name.compareTo(another.name);
         }
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-    public String getNotesOrPlaceholderIfEmpty(){
-        if(notes == null || notes.isEmpty()){
-            return "Keine Notiz";
-        }
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public boolean isNotified() {
-        return notified;
-    }
-
-    public void setNotified(boolean notified) {
-        this.notified = notified;
-    }
-
-    public int getMinQuantity() {
-        return minQuantity;
-    }
-
-    public void setMinQuantity(int minQuantity) {
-        this.minQuantity = minQuantity;
-    }
-
-    public String getNotificationDateString(){
-        if(getNotificationDate() == null){
-            return "Kein Datum";
-        }
-        return formatter.print(getNotificationDate());
-    }
-
-    public Store getStore() {
-        return store;
-    }
-
-    public void setStore(Store store) {
-        this.store = store;
     }
 }

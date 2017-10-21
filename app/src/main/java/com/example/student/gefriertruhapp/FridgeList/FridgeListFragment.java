@@ -23,6 +23,7 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
     private Store store;
     private FridgeRecycleViewAdapter adapter;
     private RecyclerView listView;
+    private OnMarkedListener markedListener;
 
     public FridgeListFragment() {
         // Required empty public constructor
@@ -34,10 +35,11 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
         setHasOptionsMenu(true);
     }
 
-    public void setData(List<FridgeItem> items, Store store) {
+    public void setData(List<FridgeItem> items, Store store, OnMarkedListener markedListener) {
         fridgeItems = items;
         this.title = store.getName();
         this.store = store;
+        this.markedListener = markedListener;
         if(adapter != null){
             setDataForAdapter();
         }
@@ -51,7 +53,7 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
             listView = (RecyclerView) view.findViewById(R.id.recycler_view);
             listView.setHasFixedSize(true);
             listView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-            adapter = new FridgeRecycleViewAdapter(fridgeItems, this);
+            adapter = new FridgeRecycleViewAdapter(fridgeItems, this, markedListener);
             listView.setAdapter(adapter);
             this.view = view;
         } else {
@@ -61,7 +63,7 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
     }
 
     private void setDataForAdapter(){
-        adapter.setData(fridgeItems, this);
+        adapter.setData(fridgeItems, this, markedListener);
         adapter.notifyDataSetChanged();
     }
 

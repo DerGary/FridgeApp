@@ -42,6 +42,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
     private String query;
     private Queue<FridgeListFragment> fragmentQueue = new LinkedList<>();
     private PagerTabStrip pagerTabStrip;
+    private OnMarkedListener markedListener;
 
 
     public FridgeListViewPagerFragment() {
@@ -50,6 +51,9 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
         allSorts[Sort.DateDescending.getValue()] = Sort.DateDescending;
         allSorts[Sort.NameAscending.getValue()] = Sort.NameAscending;
         allSorts[Sort.NameDescending.getValue()] = Sort.NameDescending;
+    }
+    public void setMarkedListener(OnMarkedListener markedListener){
+        this.markedListener = markedListener;
     }
 
     @Override
@@ -174,6 +178,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
 
     @SuppressWarnings("unchecked")
     public void setData() {
+        this.markedListener = markedListener;
         ArrayList<Store> stores = new ArrayList<>(DataBaseSingleton.getInstance().getStores());
         Store buyStore = new Store("Einkaufsliste", "");
         buyStore.setColor(Color.rgb(0,0,0));
@@ -206,10 +211,10 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
 
             fridgeItems.removeAll(toDelete);
 
-            addStoreFragment(stores.get(i), fridgeItems, i);
+            addStoreFragment(stores.get(i), fridgeItems, i, markedListener);
         }
 
-        addStoreFragment(buyStore, buyStore.getItems(), stores.size());
+        addStoreFragment(buyStore, buyStore.getItems(), stores.size(), markedListener);
 
         if(pagerAdapter != null) {
             try {
@@ -226,7 +231,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
         }
     }
 
-    public void addStoreFragment(Store store, List<FridgeItem> items, int position){
+    public void addStoreFragment(Store store, List<FridgeItem> items, int position, OnMarkedListener markedListener){
         ArrayList<FridgeItem> fridgeItems = new ArrayList<>(items);
 
         List<FridgeItem> toDelete = new ArrayList<>();
@@ -250,7 +255,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
             Collections.sort(fridgeItems, Collections.reverseOrder(new FridgeItemNameComparator()));
         }
 
-        fragmentList.get(position).setData(fridgeItems, store);
+        fragmentList.get(position).setData(fridgeItems, store, markedListener);
     }
 
 

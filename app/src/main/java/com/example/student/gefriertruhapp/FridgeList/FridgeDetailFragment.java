@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,12 +25,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
@@ -51,7 +55,7 @@ import java.util.List;
 /**
  * Created by student on 21.12.15.
  */
-public class FridgeDetailFragment extends TitleFragment {
+public class FridgeDetailFragment extends TitleFragment implements ItemClickListener {
     protected FridgeItem item;
     protected View rootView;
     protected Button notificationButton;
@@ -64,6 +68,7 @@ public class FridgeDetailFragment extends TitleFragment {
     protected ImageView deleteMark, checkMark;
     protected LinearLayout minQuantityLayout;
     protected Spinner storeSpinner;
+    protected RecyclerView linkedItemsListView;
     private DateTime notificationDateTime;
 
     @Override
@@ -125,11 +130,13 @@ public class FridgeDetailFragment extends TitleFragment {
 
         storeSpinner = (Spinner) rootView.findViewById(R.id.fridge_detail_store_spinner);
 
+        linkedItemsListView = (RecyclerView)rootView.findViewById(R.id.fridge_detail_linked_items);
+
         setViewData();
 
         return rootView;
     }
-
+    private FridgeRecycleViewAdapter recycleViewAdapter;
     private void setViewData() {
         name.setText(item.getName());
         if (item.getNotificationDate() != null) {
@@ -155,6 +162,10 @@ public class FridgeDetailFragment extends TitleFragment {
         if (item.getStore() != null) {
             storeSpinner.setSelection(listStores.indexOf(item.getStore().getName()));
         }
+        linkedItemsListView.setHasFixedSize(true);
+        linkedItemsListView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        this.recycleViewAdapter = new FridgeRecycleViewAdapter(item.getLinkedItems(), this, null);
+        linkedItemsListView.setAdapter(this.recycleViewAdapter);
     }
 
     private void getViewData() {
@@ -324,5 +335,12 @@ public class FridgeDetailFragment extends TitleFragment {
             }
         };
         loadUPCs.execute(item.getBarCode());
+    }
+
+    @Override
+    public void onItemClick(Object data) {
+        FridgeDetailFragment fragment = new FridgeDetailFragment();
+        fragment.setData((FridgeItem)data);
+        ((Dashboard) getActivity()).changeFragment(fragment, true);
     }
 }
