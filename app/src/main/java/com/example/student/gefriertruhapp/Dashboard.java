@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.student.gefriertruhapp.FridgeList.OnMarkedListener;
 import com.example.student.gefriertruhapp.Helper.Action;
+import com.example.student.gefriertruhapp.Helper.Collections;
 import com.example.student.gefriertruhapp.Preferences.SettingsFragment;
 import com.example.student.gefriertruhapp.Serialization.CSVHelper;
 import com.example.student.gefriertruhapp.History.HistoryHelper;
@@ -219,8 +220,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         List<String> strings = new ArrayList<>();
         for (FridgeItem fridgeItem : items) {
             String text = fridgeItem.getName() + "\r\n" + fridgeItem.getNotificationDateString() + "\r\nAnzahl: " + fridgeItem.getQuantity() +" / " + fridgeItem.getMinQuantity();
-            List<FridgeItem> linkedItems = fridgeItem.getLinkedItems();
-            if(linkedItems != null && !linkedItems.isEmpty()){
+            Iterable<FridgeItem> linkedItems = fridgeItem.getLinkedItems();
+            if(linkedItems != null && !Collections.isEmpty(linkedItems)){
                 int quantityOfAllLinkedItems = fridgeItem.getQuantity();
                 for(FridgeItem linkedItem : linkedItems){
                     quantityOfAllLinkedItems += linkedItem.getQuantity();
@@ -304,8 +305,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         TextView text = (TextView) dialog.findViewById(R.id.dialog_number_picker_text);
         FridgeItem item = items.get(itemPosition);
         String headerText = item.getName() + "\r\n" + item.getNotificationDateString() + "\r\nAktuelle Anzahl: " + item.getQuantity() + " / " + item.getMinQuantity() ;
-        List<FridgeItem> linkedItems = item.getLinkedItems();
-        if(linkedItems != null && !linkedItems.isEmpty()){
+        Iterable<FridgeItem> linkedItems = item.getLinkedItems();
+        if(linkedItems != null && !Collections.isEmpty(linkedItems)){
             int quantityOfAllLinkedItems = item.getQuantity();
             for(FridgeItem linkedItem : linkedItems){
                 quantityOfAllLinkedItems += linkedItem.getQuantity();
@@ -391,8 +392,9 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         for(FridgeItem item : markedItems){
             DataBaseSingleton.getInstance().deleteItem(item);
         }
+        markedItems.clear();
         DataBaseSingleton.getInstance().saveDataBase();
-        //todo: update view;
         _fridgeListViewPagerFragment.setData();
+        setMenuButtons();
     }
 }

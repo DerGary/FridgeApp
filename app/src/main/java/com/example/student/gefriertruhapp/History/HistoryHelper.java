@@ -48,14 +48,14 @@ public class HistoryHelper {
 
         FileAccess.writeHistory(text);
     }
-    public static void linkedItems(List<FridgeItem> linkedList){
+    public static void linkedItems(Iterable<FridgeItem> linkedList){
         String text = "Folgende Einträge wurden verlinkt :\r\n";
         for(FridgeItem item : linkedList){
             text+=item.getName() + "\r\n";
         }
         FileAccess.writeHistory(text);
     }
-    public static void removedLinks(FridgeItem item, List<FridgeItem> linkedItems){
+    public static void removedLinks(FridgeItem item, Iterable<FridgeItem> linkedItems){
         String text = "Verlinkungen für Eintrag "+item.getName()+" wurden aufgehoben. \r\nFolgende Links wurden entfernt:\r\n";
         if(linkedItems != null) {
             for (FridgeItem linkedItem : linkedItems) {

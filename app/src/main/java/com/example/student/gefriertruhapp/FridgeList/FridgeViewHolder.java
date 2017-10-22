@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.student.gefriertruhapp.Helper.Collections;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.OnPropertyChangedListener;
 import com.example.student.gefriertruhapp.R;
@@ -59,8 +60,8 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder implements View.On
             this.date.setText("");
         }
         int quantityOfAllLinkedItems = data.getQuantity();
-        List<FridgeItem> linkedItems = data.getLinkedItems();
-        if(linkedItems != null && !linkedItems.isEmpty()) {
+        Iterable<FridgeItem> linkedItems = data.getLinkedItems();
+        if(linkedItems != null && !Collections.isEmpty(linkedItems)) {
             for (FridgeItem linkedItem : data.getLinkedItems()) {
                 quantityOfAllLinkedItems += linkedItem.getQuantity();
             }

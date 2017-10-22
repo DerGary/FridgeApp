@@ -33,6 +33,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.example.student.gefriertruhapp.Dashboard;
+import com.example.student.gefriertruhapp.Helper.Collections;
 import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
@@ -165,7 +166,7 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         }
         linkedItemsListView.setHasFixedSize(true);
         linkedItemsListView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        this.recycleViewAdapter = new FridgeRecycleViewAdapter(item.getLinkedItems(), this, null);
+        this.recycleViewAdapter = new FridgeRecycleViewAdapter(Collections.makeList(item.getLinkedItems()), this, null);
         linkedItemsListView.setAdapter(this.recycleViewAdapter);
     }
 
@@ -218,7 +219,6 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
     private void deleteItem() {
         DataBaseSingleton.getInstance().deleteItem(this.item);
         DataBaseSingleton.getInstance().saveDataBase();
-        HistoryHelper.deleteItem(this.item);
     }
 
     private void saveItem() {

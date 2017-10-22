@@ -1,11 +1,11 @@
 package com.example.student.gefriertruhapp.Model;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.SystemClock;
 
+import com.example.student.gefriertruhapp.Helper.Collections;
 import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.Serialization.ExtendedGson;
 import com.example.student.gefriertruhapp.Serialization.FileAccess;
@@ -112,13 +112,16 @@ public class DataBaseSingleton {
             }
         }
         this.itemsById.remove(item.getId());
-        List<FridgeItem> linkedItems = item.getLinkedItems();
+        Iterable<FridgeItem> linkedItems = item.getLinkedItems();
         if(linkedItems != null){
             for(FridgeItem linkedItem : item.getLinkedItems()){
-                linkedItem.getLinkedItems().remove(item);
+                List<FridgeItem> subLinkedItems = Collections.makeList(linkedItem.getLinkedItems());
+                subLinkedItems.remove(item);
+                linkedItem.setLinkedItems(subLinkedItems);
             }
         }
         NotificationBroadCastReceiver.unregisterAlarm(context, item);
+        HistoryHelper.deleteItem(item);
     }
 
     public void saveDataBase() {
@@ -213,7 +216,10 @@ public class DataBaseSingleton {
             if(item.getLinkedItemIds() != null) {
                 List<FridgeItem> linkedItems = new ArrayList<FridgeItem>();
                 for (Integer id : item.getLinkedItemIds()) {
-                    linkedItems.add(itemsById.get(id));
+                    FridgeItem referencedItem = itemsById.get(id);
+                    if(referencedItem != null){
+                        linkedItems.add(referencedItem);
+                    }
                 }
                 item.setLinkedItems(linkedItems);
             }
@@ -255,7 +261,7 @@ public class DataBaseSingleton {
     public void linkItems(List<FridgeItem> itemsToLink) {
         List<FridgeItem> allLinks = new ArrayList<>(itemsToLink);
         for(FridgeItem item : itemsToLink){
-            List<FridgeItem> alreadyLinkedItems = item.getLinkedItems();
+            Iterable<FridgeItem> alreadyLinkedItems = item.getLinkedItems();
             if(alreadyLinkedItems != null) {
                 for (FridgeItem alreadyLinked : alreadyLinkedItems) {
                     if (!allLinks.contains(alreadyLinked)) {
@@ -273,14 +279,14 @@ public class DataBaseSingleton {
         HistoryHelper.linkedItems(allLinks);
     }
     public void removeLinks(FridgeItem item) {
-        List<FridgeItem> linkedItems = item.getLinkedItems();
+        Iterable<FridgeItem> linkedItems = item.getLinkedItems();
         if(linkedItems == null){
             return;
         }else{
             for(FridgeItem linkedItem : linkedItems){
-                List<FridgeItem> subLinkedItems = linkedItem.getLinkedItems();
+                Iterable<FridgeItem> subLinkedItems = linkedItem.getLinkedItems();
                 if(subLinkedItems != null){
-                    List<FridgeItem> linklist = new ArrayList<>(subLinkedItems);
+                    List<FridgeItem> linklist = Collections.makeList(subLinkedItems);
                     linklist.remove(item);
                     linkedItem.setLinkedItems(linklist);
                 }

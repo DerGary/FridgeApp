@@ -9,6 +9,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class FridgeItem extends SupportsChangedEvents implements Comparable<FridgeItem> {
@@ -30,7 +31,7 @@ public class FridgeItem extends SupportsChangedEvents implements Comparable<Frid
     @Expose
     private int minQuantity;
     private transient Store store;
-    private transient List<FridgeItem> linkedItems;
+    private transient Iterable<FridgeItem> linkedItems;
     private transient boolean isMarked;
     @Expose
     private List<Integer> linkedItemIds;
@@ -149,11 +150,11 @@ public class FridgeItem extends SupportsChangedEvents implements Comparable<Frid
         OnPropertyChanged("store");
     }
 
-    public List<FridgeItem> getLinkedItems() {
+    public Iterable<FridgeItem> getLinkedItems() {
         return linkedItems;
     }
 
-    public void setLinkedItems(List<FridgeItem> linkedItems) {
+    public void setLinkedItems(Iterable<FridgeItem> linkedItems) {
         this.linkedItems = linkedItems;
         linkedItemIds = new ArrayList<Integer>();
         if(linkedItems != null) {
