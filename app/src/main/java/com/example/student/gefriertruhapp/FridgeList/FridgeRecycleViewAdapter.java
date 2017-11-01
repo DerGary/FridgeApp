@@ -6,51 +6,48 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.Model.FridgeItem;
-import com.example.student.gefriertruhapp.R;
 
 import java.util.List;
 
 /**
  * Created by Stefan on 18-05-15.
  */
-public class FridgeRecycleViewAdapter extends RecyclerView.Adapter<FridgeViewHolder>{
+public class FridgeRecycleViewAdapter<T extends FridgeItemRecyclerViewHolderBase> extends RecyclerView.Adapter<T>{
     private List<FridgeItem> list;
     private ItemClickListener clickListener;
-    private OnMarkedListener markedListener;
+    private ItemMarkedListener markedListener;
+    private ViewHolderBuilder<T> viewHolderBuilder;
 
-    public FridgeRecycleViewAdapter(List<FridgeItem> list, ItemClickListener clickListener, OnMarkedListener markedListener) {
+    public FridgeRecycleViewAdapter(ViewHolderBuilder<T> viewHolderBuilder, List<FridgeItem> list, ItemClickListener clickListener, ItemMarkedListener markedListener) {
         this.list = list;
         this.clickListener = clickListener;
         this.markedListener = markedListener;
+        this.viewHolderBuilder = viewHolderBuilder;
     }
 
-    public void setData(List<FridgeItem> list, ItemClickListener clickListener, OnMarkedListener markedListener){
+
+    public void setData(List<FridgeItem> list, ItemClickListener clickListener, ItemMarkedListener markedListener){
         this.list = list;
         this.clickListener = clickListener;
         this.markedListener = markedListener;
     }
 
     @Override
-    public FridgeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public T onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        return new FridgeViewHolder(v);
+        return viewHolderBuilder.build(v);
     }
 
     @Override
-    public void onBindViewHolder(final FridgeViewHolder holder, int position) {
+    public void onBindViewHolder(final T holder, int position) {
         holder.assignData(list.get(position));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clickListener.onItemClick(holder.get_data());
-            }
-        });
+        holder.setClickListener(clickListener);
         holder.setMarkedListener(markedListener);
     }
 
     @Override
     public int getItemViewType(int position) {
-        return R.layout.list_item;
+        return viewHolderBuilder.getLayout();
     }
 
     @Override

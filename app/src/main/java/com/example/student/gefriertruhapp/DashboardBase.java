@@ -43,9 +43,10 @@ public class DashboardBase extends ActionBarActivity {
     protected static final int ACTIVITY_RESULT_QRDROID_ADD = 500;
     protected static final int ACTIVITY_RESULT_QRDROID_DEL = 600;
     protected static final int ACTIVITY_RESULT_QRDROID_OPEN = 700;
+    public static final int ACTIVITY_RESULT_QRDROID_DO_INVENTORY = 800;
 
 
-    protected void openQRDroid(int requestCode) {
+    public void openQRDroid(int requestCode) {
         //Create a new Intent to send to QR Droid
         Intent qrDroid = new Intent(SCAN); //Set action "la.droid.qr.scan"
 

@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.student.gefriertruhapp.Helper.Action;
 import com.example.student.gefriertruhapp.Helper.TitleFragment;
 import com.example.student.gefriertruhapp.Helper.TitleFragmentViewPagerAdapter;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
@@ -29,7 +28,6 @@ import com.example.student.gefriertruhapp.Model.Store;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -47,7 +45,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
     private String query;
     private Queue<FridgeListFragment> fragmentQueue = new LinkedList<>();
     private PagerTabStrip pagerTabStrip;
-    private OnMarkedListener markedListener;
+    private ItemMarkedListener markedListener;
 
 
     public FridgeListViewPagerFragment() {
@@ -57,7 +55,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
         allSorts[Sort.NameAscending.getValue()] = Sort.NameAscending;
         allSorts[Sort.NameDescending.getValue()] = Sort.NameDescending;
     }
-    public void setMarkedListener(OnMarkedListener markedListener){
+    public void setMarkedListener(ItemMarkedListener markedListener){
         this.markedListener = markedListener;
     }
 
@@ -274,7 +272,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
         }
     }
 
-    public void addStoreFragment(Store store, List<FridgeItem> items, int position, OnMarkedListener markedListener){
+    public void addStoreFragment(Store store, List<FridgeItem> items, int position, ItemMarkedListener markedListener){
         ArrayList<FridgeItem> fridgeItems = new ArrayList<>(items);
 
         List<FridgeItem> toDelete = new ArrayList<>();

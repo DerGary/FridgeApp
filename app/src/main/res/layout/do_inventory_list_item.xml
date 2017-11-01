@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffff">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp">
+        <TextView
+            android:id="@+id/do_inventory_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name das ist jetzt ein ganz langer name der über mehrere Zeilen geht"
+            android:textSize="16sp"
+            android:paddingBottom="6dp"
+            android:textStyle="bold" />
+
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="fill_horizontal">
+            <TextView
+                android:id="@+id/do_inventory_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15.01.2015"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"/>
+
+            <LinearLayout
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@id/do_inventory_item_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Soll: "/>
+                <TextView
+                    android:id="@+id/do_inventory_item_desired_quantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3" />
+            </LinearLayout>
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/do_inventory_item_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Haben: "/>
+            <TextView
+                android:id="@+id/do_inventory_item_got_quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2" />
+        </LinearLayout>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+</LinearLayout>

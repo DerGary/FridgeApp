@@ -166,7 +166,7 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         }
         linkedItemsListView.setHasFixedSize(true);
         linkedItemsListView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        this.recycleViewAdapter = new FridgeRecycleViewAdapter(Collections.makeList(item.getLinkedItems()), this, null);
+        this.recycleViewAdapter = new FridgeRecycleViewAdapter(new FridgeViewHolderBuilder(), Collections.makeList(item.getLinkedItems()), this, null);
         linkedItemsListView.setAdapter(this.recycleViewAdapter);
     }
 

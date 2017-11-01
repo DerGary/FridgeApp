@@ -13,41 +13,18 @@ import com.example.student.gefriertruhapp.R;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.util.List;
-
-/**
- * Created by Stefan on 18-05-15.
- */
-public class FridgeViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener, OnPropertyChangedListener {
+public class FridgeViewHolder extends FridgeItemRecyclerViewHolderBase {
     public static DateTimeFormatter formatter = DateTimeFormat.forPattern("dd.MM.yyyy");
     protected final TextView name, date, quantity;
-    protected FridgeItem _data;
-    protected View itemView;
-    protected OnMarkedListener markedListener;
 
     public FridgeViewHolder(View itemView) {
         super(itemView);
-        itemView.setOnLongClickListener(this);
         name = ((TextView) itemView.findViewById(R.id.item_name));
         date = ((TextView) itemView.findViewById(R.id.item_date));
         quantity = ((TextView) itemView.findViewById(R.id.item_quantity));
-        this.itemView = itemView;
     }
 
-    public void setMarkedListener(OnMarkedListener listener){
-        markedListener = listener;
-    }
-
-    public void assignData(FridgeItem data) {
-        if(_data != null) {
-            _data.unsubscribe(this);
-        }
-        _data = data;
-        _data.subscribe(this);
-        populateViewWithData(_data);
-    }
-
-    private void populateViewWithData(FridgeItem data){
+    protected void populateViewWithData(FridgeItem data){
         this.name.setText(data.getName());
         if(data.getNotificationDate() != null) {
             if(data.getNotificationDate().isBeforeNow()){
@@ -80,8 +57,9 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder implements View.On
         SetBackgroundColor(itemView);
     }
 
-    public FridgeItem get_data() {
-        return _data;
+    @Override
+    public void onClick(View view) {
+        clickListener.onItemClick(data);
     }
 
     @Override
@@ -96,13 +74,13 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder implements View.On
 
     private void setMarked(View v){
         if(markedListener != null){
-            boolean isMarked = _data.isMarked();
+            boolean isMarked = data.isMarked();
             if(isMarked){
-                _data.setMarked(false);
-                markedListener.setUnmarked(_data);
+                data.setMarked(false);
+                markedListener.setUnmarked(data);
             }else{
-                _data.setMarked(true);
-                markedListener.setMarked(_data);
+                data.setMarked(true);
+                markedListener.setMarked(data);
             }
         }
     }
@@ -111,16 +89,11 @@ public class FridgeViewHolder extends RecyclerView.ViewHolder implements View.On
         if(markedListener == null) {
             v.setBackgroundColor(Color.WHITE);
         }else{
-            if(_data.isMarked()){
+            if(data.isMarked()){
                 v.setBackgroundColor(Color.parseColor("#ff80cbc4"));
             }else{
                 v.setBackgroundColor(Color.WHITE);
             }
         }
-    }
-
-    @Override
-    public void onPropertyChanged(String name) {
-        populateViewWithData(_data);
     }
 }

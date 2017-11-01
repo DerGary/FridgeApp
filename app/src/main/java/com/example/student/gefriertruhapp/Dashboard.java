@@ -12,19 +12,17 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.student.gefriertruhapp.FridgeList.OnMarkedListener;
+import com.example.student.gefriertruhapp.DoInventory.DoInventoryFragment;
+import com.example.student.gefriertruhapp.FridgeList.ItemMarkedListener;
 import com.example.student.gefriertruhapp.Helper.Action;
 import com.example.student.gefriertruhapp.Helper.Collections;
 import com.example.student.gefriertruhapp.Preferences.SettingsFragment;
-import com.example.student.gefriertruhapp.Serialization.CSVHelper;
 import com.example.student.gefriertruhapp.History.HistoryHelper;
-import com.example.student.gefriertruhapp.History.HistoryViewPagerFragment;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Notifications.Notifier;
 import com.example.student.gefriertruhapp.Model.Store;
 import com.example.student.gefriertruhapp.Serialization.FileAccess;
-import com.example.student.gefriertruhapp.StoreList.StoresListFragment;
 import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.example.student.gefriertruhapp.FridgeList.FridgeListViewPagerFragment;
 
@@ -32,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Dashboard extends DashboardBase implements SearchView.OnQueryTextListener, OnMarkedListener {
+public class Dashboard extends DashboardBase implements SearchView.OnQueryTextListener, ItemMarkedListener {
     private SharedPrefManager sharedPrefManager;
 
     private SearchView mSearchView;
@@ -137,11 +135,45 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
             return true;
         } else if (id == R.id.preferences) {
             changeFragment(new SettingsFragment(), true);
+            return true;
+        } else if(id == R.id.doInventory){
+            startDoInventory();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private DoInventoryFragment doInventoryFragment = null;
+
+    private void startDoInventory(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Lager für die Inventur wählen:");
+
+        List<String> strings = new ArrayList<>();
+        for(Store store : DataBaseSingleton.getInstance().getStores()){
+            strings.add(store.getName());
+        }
+        itemPos = 0;
+        builder.setSingleChoiceItems(strings.toArray(new String[strings.size()]), 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                itemPos = which;
+            }
+        });
+        builder.setNegativeButton("Abbrechen", null);
+        builder.setPositiveButton("Weiter", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Store store = DataBaseSingleton.getInstance().getStores().get(itemPos);
+                doInventoryFragment = new DoInventoryFragment();
+                doInventoryFragment.setStore(store);
+                changeFragment(doInventoryFragment, true);
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 
 
     private boolean isStoreAvailable() {
@@ -164,6 +196,10 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                 delElement(barCode);
             } else if (requestCode == ACTIVITY_RESULT_QRDROID_OPEN) {
                 openElement(barCode);
+            } else if (requestCode == ACTIVITY_RESULT_QRDROID_DO_INVENTORY){
+                if(doInventoryFragment != null){
+                    doInventoryFragment.barCodeResult(barCode);
+                }
             }
         }
     }

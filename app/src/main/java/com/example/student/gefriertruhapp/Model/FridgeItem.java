@@ -33,6 +33,7 @@ public class FridgeItem extends SupportsChangedEvents implements Comparable<Frid
     private transient Store store;
     private transient Iterable<FridgeItem> linkedItems;
     private transient boolean isMarked;
+    private transient int gotQuantity;
     @Expose
     private List<Integer> linkedItemIds;
 
@@ -211,5 +212,14 @@ public class FridgeItem extends SupportsChangedEvents implements Comparable<Frid
         } else {
             return name.compareTo(another.name);
         }
+    }
+
+    public int getGotQuantity() {
+        return gotQuantity;
+    }
+
+    public void setGotQuantity(int gotQuantity) {
+        this.gotQuantity = gotQuantity;
+        OnPropertyChanged("gotQuantity");
     }
 }

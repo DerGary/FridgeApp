@@ -1,5 +1,6 @@
 package com.example.student.gefriertruhapp.History;
 
+import com.example.student.gefriertruhapp.Model.Store;
 import com.example.student.gefriertruhapp.Serialization.FileAccess;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 
@@ -48,6 +49,7 @@ public class HistoryHelper {
 
         FileAccess.writeHistory(text);
     }
+
     public static void linkedItems(Iterable<FridgeItem> linkedList){
         String text = "Folgende Einträge wurden verlinkt :\r\n";
         for(FridgeItem item : linkedList){
@@ -63,5 +65,16 @@ public class HistoryHelper {
             }
         }
         FileAccess.writeHistory(text);
+    }
+    public static void doInventory(Store store){
+        StringBuilder builder = new StringBuilder("Inventur für Store: ").append(store.getName()).append(" durchgeführt.\r\n");
+        builder.append("Folgenden Änderungen wurden getättigt: \r\n");
+        for(FridgeItem item : store.getItems()){
+            if(item.getQuantity() != item.getGotQuantity()){
+                builder.append("Eintrag: ").append(item.getName()).append("\r\n");
+                builder.append("Anzahl: ").append(item.getQuantity()).append(" -> ").append(item.getGotQuantity()).append("\r\n");
+            }
+        }
+        FileAccess.writeHistory(builder.toString());
     }
 }
