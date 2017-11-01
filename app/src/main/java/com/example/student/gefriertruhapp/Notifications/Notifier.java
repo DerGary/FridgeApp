@@ -31,6 +31,9 @@ public abstract class Notifier {
 
 
         FridgeItem item = DataBaseSingleton.getInstance().getItemByID(id);
+        if(item == null){
+            return; //item was already deleted;
+        }
         item.setNotified(true);
         DataBaseSingleton.getInstance().saveDataBase();
 
