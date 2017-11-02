@@ -25,7 +25,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -34,14 +33,12 @@ import android.widget.TimePicker;
 
 import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Helper.Collections;
-import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.OnPropertyChangedListener;
 import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.Model.Store;
-import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.example.student.gefriertruhapp.UPC.GetAsyncTask;
 import com.example.student.gefriertruhapp.UPC.JsonResult;
 import com.example.student.gefriertruhapp.Helper.TitleFragment;
@@ -140,6 +137,9 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
     }
     private FridgeRecycleViewAdapter recycleViewAdapter;
     private void setViewData() {
+        if(item == null){
+            return;
+        }
         name.setText(item.getName());
         if (item.getNotificationDate() != null) {
             notificationDateTime = item.getNotificationDate();
