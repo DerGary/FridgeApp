@@ -233,9 +233,9 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
     }
 
     public void addElement(String barCode) {
-        List<FridgeItem> item = DataBaseSingleton.getInstance().getFridgeItems(barCode);
-        if (item != null) {
-            showChooseArticleDialog(Action.ADD, item, barCode);
+        List<FridgeItem> items = DataBaseSingleton.getInstance().getFridgeItems(barCode);
+        if (items != null && !items.isEmpty()) {
+            showChooseArticleDialog(Action.ADD, items, barCode);
         } else {
             addNewItem(barCode);
         }
