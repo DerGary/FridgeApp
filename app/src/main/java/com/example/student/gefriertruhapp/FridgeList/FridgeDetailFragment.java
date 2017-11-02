@@ -171,6 +171,8 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
     }
 
     private void getViewData() {
+        item.unsubscribe(this); // we need to unsubscribe the events otherwise the view gets refreshed with the old data when setName is called and the other properties are set to the old values.
+
         item.setName(name.getText().toString());
         item.setQuantity(quantity.getValue());
         item.setNotificationDate(notificationDateTime);
@@ -222,20 +224,15 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
     }
 
     private void saveItem() {
-        if(item.getId() != -1) {
-            DataBaseSingleton.getInstance().deleteItem(this.item);
+        if(item.getId() == -1){//new item
+            getViewData();
+            DataBaseSingleton.getInstance().updateItem(null, item);
+        }else{ //change item
+            FridgeItem oldItem = new FridgeItem(item);
+            getViewData();
+            DataBaseSingleton.getInstance().updateItem(oldItem, item);
         }
-        FridgeItem oldItem = new FridgeItem(this.item);
-        getViewData();
-        item.setId(new SharedPrefManager(getActivity().getBaseContext()).getNewID());
-        DataBaseSingleton.getInstance().saveItem(this.item);
         DataBaseSingleton.getInstance().saveDataBase();
-        FridgeItem newItem = item;
-        if(oldItem.getId() == -1){
-            HistoryHelper.newItem(newItem);
-        } else {
-            HistoryHelper.changeItem(oldItem, newItem);
-        }
     }
 
     public void setData(FridgeItem item) {

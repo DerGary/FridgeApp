@@ -69,37 +69,56 @@ public class DataBaseSingleton {
         return itemsByBarcode.get(barCode);
     }
 
-    public void saveItem(FridgeItem item) {
-        if(item.getBarCode() != null){
-            List<FridgeItem> list = itemsByBarcode.get(item.getBarCode());
+    public void updateItem(FridgeItem from, FridgeItem to){
+        if(to.getId() == -1){
+            to.setId(new SharedPrefManager(context).getNewID());
+        }
+
+        if(to.getBarCode() != null){
+            List<FridgeItem> list = itemsByBarcode.get(to.getBarCode());
             if(list != null){
-                list.remove(item); // if it is an item that got updated and is the only item with this barcode we have to delete it from the list before checking if there is another item with this barcode
-                if(list.size() > 0 && item.getQuantity() == 0){
-                    itemsById.remove(item.getId());
-                    item.getStore().getItems().remove(item);
-                    return; // delete current item because another item with the same barcode is present and the current one has no amount left
+                list.remove(to);
+                if(list.size() > 0 && to.getQuantity() == 0){
+                    deleteItem(to);
+                    return; // delete current item because another item with the same barcode is present and the current one has no quantity left
                 }
             }
-        }
-        if (!item.getStore().getItems().contains(item)) {
-            item.getStore().getItems().add(item);
-        }
-        if (item.getBarCode() != null) {
-            List<FridgeItem> list = this.itemsByBarcode.get(item.getBarCode());
             if (list == null) {
                 list = new ArrayList<FridgeItem>();
-                this.itemsByBarcode.put(item.getBarCode(), list);
+                this.itemsByBarcode.put(to.getBarCode(), list);
             }
-            if (!list.contains(item)) {
-                list.add(item);
+            if (!list.contains(to)) {
+                list.add(to);
             }
-            namesByBarcode.put(item.getBarCode(), item.getName());
+            namesByBarcode.put(to.getBarCode(), to.getName());
         }
-        this.itemsById.put(item.getId(), item);
-        if (item.getNotificationDate() != null && item.getNotificationDate().getMillis() > SystemClock.elapsedRealtime()) {
-            item.setNotified(false);
+
+        if(from == null || from.getStore() != to.getStore()){ //if the storage point changed we need to remove the item from the one store and add it to the new store
+            if(from != null){
+                from.getStore().getItems().remove(to);
+            }
+            to.getStore().getItems().add(to);
         }
-        NotificationBroadCastReceiver.registerAlarm(context, item);
+
+        if(!itemsById.containsKey(to.getId())){
+            this.itemsById.put(to.getId(), to);
+        }
+
+        if (to.getNotificationDate() != null && to.getNotificationDate().getMillis() > SystemClock.elapsedRealtime()) {
+            to.setNotified(false);
+        }
+
+        if(from != null){
+            NotificationBroadCastReceiver.unregisterAlarm(context, from);
+        }
+        NotificationBroadCastReceiver.registerAlarm(context, to);
+
+
+        if(from == null){
+            HistoryHelper.newItem(to);
+        }else{
+            HistoryHelper.changeItem(from, to);
+        }
     }
 
     public void deleteItem(FridgeItem item) {

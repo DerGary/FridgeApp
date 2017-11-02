@@ -316,9 +316,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                     item.setQuantity(item.getQuantity() - numberPickerValue);
                 }
 
-                DataBaseSingleton.getInstance().saveItem(item);
+                DataBaseSingleton.getInstance().updateItem(oldItem, item);
                 DataBaseSingleton.getInstance().saveDataBase();
-                HistoryHelper.changeItem(oldItem, item);
                 Toast.makeText(getBaseContext(),item.getName() + "\r\nNeue Anzahl: " + item.getQuantity(), Toast.LENGTH_LONG).show();
             }
         });
