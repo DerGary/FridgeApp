@@ -7,3 +7,5 @@
  - Add Shopping List Export to google tasks
  - Selbe hinzugefügt das aktuell in der Einkaufsliste ist, das aus der Einkaufsliste löschen
  - on first start after new install the prompt to allow access for sd card is shown but the data is not read afterwards
+ - add Categories and filter on categories
+ - add upc upload
