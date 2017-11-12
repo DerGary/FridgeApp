@@ -117,8 +117,10 @@ public class DoInventoryFragment extends TitleFragment implements ItemClickListe
             public void onClick(DialogInterface dialog, int which) {
                 HistoryHelper.doInventory(store); //must be done before so we dont need to copy each item.
                 for(FridgeItem item : store.getItems()) {
+                    FridgeItem oldItem = new FridgeItem(item);
                     item.setQuantity(item.getGotQuantity());
                     item.setGotQuantity(0);
+                    DataBaseSingleton.getInstance().updateItem(oldItem, item);
                 }
                 DataBaseSingleton.getInstance().saveDataBase();
                 getActivity().onBackPressed();

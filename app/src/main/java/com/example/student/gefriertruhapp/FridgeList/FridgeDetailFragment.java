@@ -25,7 +25,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -34,14 +33,12 @@ import android.widget.TimePicker;
 
 import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Helper.Collections;
-import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.OnPropertyChangedListener;
 import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.Model.Store;
-import com.example.student.gefriertruhapp.SharedPreferences.SharedPrefManager;
 import com.example.student.gefriertruhapp.UPC.GetAsyncTask;
 import com.example.student.gefriertruhapp.UPC.JsonResult;
 import com.example.student.gefriertruhapp.Helper.TitleFragment;
@@ -140,6 +137,9 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
     }
     private FridgeRecycleViewAdapter recycleViewAdapter;
     private void setViewData() {
+        if(item == null){
+            return;
+        }
         name.setText(item.getName());
         if (item.getNotificationDate() != null) {
             notificationDateTime = item.getNotificationDate();
@@ -171,6 +171,8 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
     }
 
     private void getViewData() {
+        item.unsubscribe(this); // we need to unsubscribe the events otherwise the view gets refreshed with the old data when setName is called and the other properties are set to the old values.
+
         item.setName(name.getText().toString());
         item.setQuantity(quantity.getValue());
         item.setNotificationDate(notificationDateTime);
@@ -222,20 +224,15 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
     }
 
     private void saveItem() {
-        if(item.getId() != -1) {
-            DataBaseSingleton.getInstance().deleteItem(this.item);
+        if(item.getId() == -1){//new item
+            getViewData();
+            DataBaseSingleton.getInstance().updateItem(null, item);
+        }else{ //change item
+            FridgeItem oldItem = new FridgeItem(item);
+            getViewData();
+            DataBaseSingleton.getInstance().updateItem(oldItem, item);
         }
-        FridgeItem oldItem = new FridgeItem(this.item);
-        getViewData();
-        item.setId(new SharedPrefManager(getActivity().getBaseContext()).getNewID());
-        DataBaseSingleton.getInstance().saveItem(this.item);
         DataBaseSingleton.getInstance().saveDataBase();
-        FridgeItem newItem = item;
-        if(oldItem.getId() == -1){
-            HistoryHelper.newItem(newItem);
-        } else {
-            HistoryHelper.changeItem(oldItem, newItem);
-        }
     }
 
     public void setData(FridgeItem item) {
