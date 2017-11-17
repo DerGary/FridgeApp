@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,12 +40,15 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FileAccess.verifyStoragePermissions(this);
-        setContentView(R.layout.activity_dashboard);
-        createPage();
+        boolean permissionGranted = FileAccess.verifyStoragePermissions(this);
+        if(permissionGranted){
+            createPage();
+        }
     }
 
+    @Override
     public void createPage() {
+        setContentView(R.layout.activity_dashboard);
         sharedPrefManager = new SharedPrefManager(getBaseContext());
         DataBaseSingleton.init(getBaseContext());
         DataBaseSingleton.getInstance().loadDataBase();

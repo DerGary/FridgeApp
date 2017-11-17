@@ -8,9 +8,11 @@ import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 
@@ -19,8 +21,9 @@ import com.example.student.gefriertruhapp.Helper.Action;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.FridgeList.FridgeListViewPagerFragment;
+import com.example.student.gefriertruhapp.Serialization.FileAccess;
 
-public class DashboardBase extends ActionBarActivity {
+public abstract class DashboardBase extends ActionBarActivity {
     protected FridgeListViewPagerFragment _fridgeListViewPagerFragment;
     protected Menu _menu;
 
@@ -142,6 +145,41 @@ public class DashboardBase extends ActionBarActivity {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(255, 223, 255, 233)));
         } else if (action == Action.DELETE) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.argb(255, 255, 200, 200)));
+        }
+    }
+
+    public abstract void createPage();
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case FileAccess.REQUEST_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //permission granted
+
+                    createPage();
+                } else {
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                    dialog.setMessage("Diese App kann ohne die Speicher berechtigung nicht funktionieren. Die App wird jetzt geschlossen.");
+                    final Activity activity = this;
+                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            activity.finish();
+                        }
+                    });
+                    dialog.create().show();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
     }
 }
