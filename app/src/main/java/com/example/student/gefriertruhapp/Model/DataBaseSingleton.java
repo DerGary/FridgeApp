@@ -87,6 +87,17 @@ public class DataBaseSingleton {
                 if(list.size() > 0 && to.getQuantity() == 0){
                     deleteItem(to);
                     return; // delete current item because another item with the same barcode is present and the current one has no quantity left
+                }else if(list.size() > 0){
+                    //when we add an item that has the same barcode than other items in the database we need to delete those items if they have a quantity of zero
+                    List<FridgeItem> toDelete = new ArrayList<>();
+                    for(FridgeItem item : list){
+                        if(item.getQuantity() == 0){
+                            toDelete.add(item);
+                        }
+                    }
+                    for(FridgeItem item : toDelete){
+                        deleteItem(item);
+                    }
                 }
             }
             if (list == null) {

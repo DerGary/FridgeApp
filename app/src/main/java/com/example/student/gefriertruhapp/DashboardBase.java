@@ -16,6 +16,7 @@ import android.view.Menu;
 
 import com.example.student.gefriertruhapp.FridgeList.FridgeDetailFragment;
 import com.example.student.gefriertruhapp.Helper.Action;
+import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.FridgeList.FridgeListViewPagerFragment;
 
@@ -120,6 +121,14 @@ public class DashboardBase extends ActionBarActivity {
 
     public Menu get_menu() {
         return _menu;
+    }
+
+    protected void setNameOfFridgeItemAndNavigateToDetail(FridgeItem item){
+        if(item.getBarCode() != null && !item.getBarCode().isEmpty()){
+            String name = DataBaseSingleton.getInstance().getNameByBarcode(item.getBarCode());
+            item.setName(name);
+        }
+        navigateToDetailFragment(item);
     }
 
     protected void navigateToDetailFragment(FridgeItem item) {

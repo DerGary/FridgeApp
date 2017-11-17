@@ -228,7 +228,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                 store = DataBaseSingleton.getInstance().getStores().get(i);
             }
             FridgeItem item = new FridgeItem(-1, barCode, 1, null, barCode, "", 1, store);
-            navigateToDetailFragment(item);
+            setNameOfFridgeItemAndNavigateToDetail(item);
         }
     }
 
