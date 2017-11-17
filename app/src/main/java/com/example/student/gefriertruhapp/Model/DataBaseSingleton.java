@@ -74,6 +74,12 @@ public class DataBaseSingleton {
             to.setId(new SharedPrefManager(context).getNewID());
         }
 
+        if(to.getQuantity() == 0 && to.getLinkedItems() != null && !Collections.isEmpty(to.getLinkedItems())){
+            // when quantity is zero and we have a link to another item we can delete this item because we have another item that is equivalent to this item.
+            deleteItem(to);
+            return;
+        }
+
         if(to.getBarCode() != null){
             List<FridgeItem> list = itemsByBarcode.get(to.getBarCode());
             if(list != null){
@@ -294,6 +300,23 @@ public class DataBaseSingleton {
             linklist.remove(item);
             item.setLinkedItems(linklist);
         }
+
+        // when linking two or more items where one or more items have a quantity of 0 we delete the items that are zero.
+        // if all items have zero quantity we need to preserve one of the items.
+        List<FridgeItem> toDelete = new ArrayList<FridgeItem>();
+        for(FridgeItem item : allLinks){
+            if(item.getQuantity() == 0){
+                toDelete.add(item);
+            }
+        }
+        if(toDelete.size() == allLinks.size() && toDelete.size() > 0){
+            toDelete.remove(0);
+        }
+        for(FridgeItem item : toDelete){
+            deleteItem(item);
+        }
+
+        // save changes
         saveDataBase();
         HistoryHelper.linkedItems(allLinks);
     }
