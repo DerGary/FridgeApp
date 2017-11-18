@@ -17,6 +17,7 @@ import com.example.student.gefriertruhapp.DoInventory.DoInventoryFragment;
 import com.example.student.gefriertruhapp.FridgeList.ItemMarkedListener;
 import com.example.student.gefriertruhapp.Helper.Action;
 import com.example.student.gefriertruhapp.Helper.Collections;
+import com.example.student.gefriertruhapp.Model.Category;
 import com.example.student.gefriertruhapp.Preferences.SettingsFragment;
 import com.example.student.gefriertruhapp.History.HistoryHelper;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
@@ -129,6 +130,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         } else if (id == R.id.menu_selection_delete_items) {
             deleteSelectedItems();
             return true;
+        } else if (id == R.id.action_filter) {
+            showChooseCategoryDialog();
         } else if (id == R.id.action_search) {
             mSearchView.setIconified(false);
             return true;
@@ -146,6 +149,43 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showChooseCategoryDialog() {
+        final List<Category> categories = DataBaseSingleton.getInstance().getCategories();
+
+        if(categories.isEmpty()){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Keine Kategorie");
+            builder.setMessage("Es wurde noch keine Kategorie angelegt.");
+            builder.setNegativeButton("Ok", null);
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Kategorie wählen");
+            List<String> strings = new ArrayList<>();
+            for (Category cat : categories) {
+                strings.add(cat.getName());
+            }
+            itemPos = 0;
+            builder.setSingleChoiceItems(strings.toArray(new String[strings.size()]), 0, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    itemPos = which;
+                }
+            });
+            builder.setNegativeButton("Abbrechen", null);
+            builder.setPositiveButton("Weiter", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Category cat = categories.get(itemPos);
+                    _fridgeListViewPagerFragment.setCategoryQuery(cat);
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 
     private DoInventoryFragment doInventoryFragment = null;

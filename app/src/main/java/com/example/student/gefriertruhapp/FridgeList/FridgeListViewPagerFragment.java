@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 
 import com.example.student.gefriertruhapp.Helper.TitleFragment;
 import com.example.student.gefriertruhapp.Helper.TitleFragmentViewPagerAdapter;
+import com.example.student.gefriertruhapp.Model.Category;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.OnPropertyChangedListener;
@@ -43,6 +44,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
     private View view;
     private List<FridgeListFragment> fragmentList = new ArrayList<FridgeListFragment>();
     private String query;
+    private Category category;
     private Queue<FridgeListFragment> fragmentQueue = new LinkedList<>();
     private PagerTabStrip pagerTabStrip;
     private ItemMarkedListener markedListener;
@@ -75,18 +77,34 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
         setActionBar();
     }
 
+    public void setCategoryQuery(Category category){
+        this.category = category;
+        setData();
+        setActionBar();
+    }
+
     public boolean onBackPressed(){
-        if(query == null){
-            return false;
+        if(query != null){
+            setSearchQuery(null);
+            return true;
         }
-        setSearchQuery(null);
-        return true;
+        if(category != null){
+            setCategoryQuery(null);
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home) {
-            setSearchQuery(null);
+            if(category != null){
+                setCategoryQuery(null);
+            }
+            if(query != null){
+                setSearchQuery(null);
+            }
             return true;
         } else if(item.getItemId() == R.id.sort){
             showSortDialog();
@@ -200,7 +218,10 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
         if(query != null && query.length() > 0) {
             ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("\"" + query + "\"");
-        }else{
+        } else if(category != null) {
+            ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("\"" + category.getName() + "\"");
+        } else {
             ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
             ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("Gefriertruhen App");
         }
@@ -279,6 +300,13 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
         if (query != null && query.length() > 0) {
             for (FridgeItem item : fridgeItems) {
                 if (!item.getName().toLowerCase().contains(query)) {
+                    toDelete.add(item);
+                }
+            }
+        }
+        if(category != null){
+            for(FridgeItem item : fridgeItems){
+                if(item.getCategory() != category){
                     toDelete.add(item);
                 }
             }

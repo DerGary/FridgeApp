@@ -79,6 +79,9 @@ public class DataBaseSingleton {
     public List<FridgeItem> getFridgeItems(String barCode) {
         return itemsByBarcode.get(barCode);
     }
+    public List<FridgeItem> getFridgeItems(Category category) {
+        return itemsByCategory.get(category);
+    }
 
     public void updateItem(FridgeItem from, FridgeItem to){
         if(to.getId() == -1){

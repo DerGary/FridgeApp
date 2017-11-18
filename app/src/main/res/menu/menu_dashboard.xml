@@ -23,6 +23,9 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
 
+    <item android:id="@+id/action_filter" android:title="Filter"
+        android:orderInCategory="41" app:showAsAction="never"/>
+
     <item android:id="@+id/doInventory" android:title="Inventur starten"
         android:orderInCategory="49" app:showAsAction="never"/>
     <item android:id="@+id/sort" android:title="Sortieren"
