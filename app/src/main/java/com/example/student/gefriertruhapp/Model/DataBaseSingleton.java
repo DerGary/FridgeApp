@@ -1,5 +1,6 @@
 package com.example.student.gefriertruhapp.Model;
 
+import android.accounts.AccountAuthenticatorActivity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,14 +27,20 @@ import java.util.List;
  */
 public class DataBaseSingleton {
     private static final String BARCODE_NAME_FILE = "BARCODE_NAMES";
+    private static final String CATEGORY_FILE = "CATEGORIES";
+    private final static String SETTINGS_FILE = "SETTINGS";
+
     private static DataBaseSingleton ourInstance;
+
     private HashMap<String, List<FridgeItem>> itemsByBarcode;
     private HashMap<Integer, FridgeItem> itemsById;
+    private HashMap<String, String> namesByBarcode;
+    private HashMap<Integer, Category> categoryById;
+    private HashMap<Category, List<FridgeItem>> itemsByCategory;
+
     private boolean loaded = false;
     private Context context;
-    private final static String SETTINGS_FILE = "SETTINGS";
     private Settings settings;
-    private HashMap<String, String> namesByBarcode;
 
     public static void init(Context context) {
         if (ourInstance != null) {
@@ -51,6 +58,8 @@ public class DataBaseSingleton {
         this.itemsByBarcode = new HashMap<>();
         this.itemsById = new HashMap<>();
         this.namesByBarcode = new HashMap<>();
+        this.categoryById = new HashMap<>();
+        this.itemsByCategory = new HashMap<>();
     }
 
     public String getNameByBarcode(String barcode){
@@ -64,6 +73,8 @@ public class DataBaseSingleton {
         }
         return item;
     }
+
+    public List<Category> getCategories(){ return Collections.makeList(categoryById.values()); }
 
     public List<FridgeItem> getFridgeItems(String barCode) {
         return itemsByBarcode.get(barCode);
@@ -130,10 +141,33 @@ public class DataBaseSingleton {
         }
         NotificationBroadCastReceiver.registerAlarm(context, to);
 
+        if(to.getCategory() != null){
+            List<FridgeItem> list = null;
+            if(itemsByCategory.containsKey(to.getCategory())){
+                list = itemsByCategory.get(to.getCategory());
+            }else{
+                list = new ArrayList<>();
+                itemsByCategory.put(to.getCategory(), list);
+            }
+            if(!list.contains(to)){
+                list.add(to);
+            }
+        }
 
         if(from == null){
             HistoryHelper.newItem(to);
         }else{
+            if(from.getCategory() != null){
+                if(itemsByCategory.containsKey(from.getCategory())){
+                    List<FridgeItem> items = itemsByCategory.get(from.getCategory());
+                    items.remove(to);
+                    if(items.isEmpty()){
+                        itemsByCategory.remove(from.getCategory());
+                        categoryById.remove(from.getCategory().getId());
+                    }
+                }
+            }
+
             HistoryHelper.changeItem(from, to);
         }
     }
@@ -156,6 +190,16 @@ public class DataBaseSingleton {
                 linkedItem.setLinkedItems(subLinkedItems);
             }
         }
+
+        if(item.getCategory() != null){
+            List<FridgeItem> list = itemsByCategory.get(item.getCategory());
+            list.remove(item);
+            if(list.isEmpty()){
+                itemsByCategory.remove(item.getCategory());
+                categoryById.remove(item.getCategory().getId());
+            }
+        }
+
         NotificationBroadCastReceiver.unregisterAlarm(context, item);
         HistoryHelper.deleteItem(item);
     }
@@ -179,6 +223,13 @@ public class DataBaseSingleton {
         } catch (StorageException ex) {
             showStorageError();
         }
+
+        json = gson.toJson(categoryById.values());
+        try {
+            FileAccess.writeToStorage(json, CATEGORY_FILE);
+        } catch (StorageException ex) {
+            showStorageError();
+        }
     }
 
 
@@ -190,7 +241,26 @@ public class DataBaseSingleton {
 
         this.itemsByBarcode.clear();
         this.itemsById.clear();
+        this.categoryById.clear();
         int biggestID = -1;
+
+        try{
+            String json = FileAccess.readFromStorage(CATEGORY_FILE);
+            Type type = new TypeToken<ArrayList<Category>>() {
+            }.getType();
+            List<Category> categories = gson.fromJson(json, type);
+            if(categories != null){
+                for(Category cat : categories){
+                    categoryById.put(cat.getId(), cat);
+                    if(cat.getId() > biggestID){
+                        biggestID = cat.getId();
+                    }
+                    itemsByCategory.put(cat, new ArrayList<FridgeItem>());
+                }
+            }
+        }catch (StorageException ex){
+            showStorageError();
+        }
 
         try {
             String json = FileAccess.readFromStorage(BARCODE_NAME_FILE);
@@ -232,6 +302,18 @@ public class DataBaseSingleton {
                             this.itemsById.put(item.getId(), item);
                             if (item.getId() > biggestID) {
                                 biggestID = item.getId();
+                            }
+                            if(item.getCategoryId() != 0){
+                                Category cat = categoryById.get(item.getCategoryId());
+                                item.setCategory(cat);
+                                List<FridgeItem> itemsByCat = null;
+                                if(itemsByCategory.containsKey(cat)){
+                                    itemsByCat = itemsByCategory.get(cat);
+                                }else{
+                                    itemsByCat = new ArrayList<>();
+                                }
+                                itemsByCat.add(item);
+                                itemsByCategory.put(cat, itemsByCat);
                             }
                         }
                         store.setItems(items);
@@ -348,5 +430,13 @@ public class DataBaseSingleton {
         item.setLinkedItems(null);
         saveDataBase();
         HistoryHelper.removedLinks(item, linkedItems);
+    }
+
+    public Category createNewCategory(String name){
+        Category cat = new Category();
+        cat.setName(name);
+        cat.setId(new SharedPrefManager(context).getNewID());
+        categoryById.put(cat.getId(), cat);
+        return cat;
     }
 }

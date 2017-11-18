@@ -3,14 +3,17 @@ package com.example.student.gefriertruhapp.FridgeList;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -34,6 +38,7 @@ import android.widget.TimePicker;
 import com.example.student.gefriertruhapp.Dashboard;
 import com.example.student.gefriertruhapp.Helper.Collections;
 import com.example.student.gefriertruhapp.Helper.NumberPickerHelper;
+import com.example.student.gefriertruhapp.Model.Category;
 import com.example.student.gefriertruhapp.Model.DataBaseSingleton;
 import com.example.student.gefriertruhapp.Model.FridgeItem;
 import com.example.student.gefriertruhapp.Model.OnPropertyChangedListener;
@@ -67,8 +72,12 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
     protected ImageView deleteMark, checkMark;
     protected LinearLayout minQuantityLayout;
     protected Spinner storeSpinner;
+    protected Spinner categorySpinner;
     protected RecyclerView linkedItemsListView;
     private DateTime notificationDateTime;
+
+    private List<Category> categories;
+    private List<String> categoryNames;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,8 +137,17 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         checkMark = (ImageView) rootView.findViewById(R.id.fridge_detail_check_mark);
 
         storeSpinner = (Spinner) rootView.findViewById(R.id.fridge_detail_store_spinner);
+        categorySpinner = (Spinner) rootView.findViewById(R.id.fridge_detail_category_spinner);
 
         linkedItemsListView = (RecyclerView)rootView.findViewById(R.id.fridge_detail_linked_items);
+
+        categories = DataBaseSingleton.getInstance().getCategories();
+        categoryNames = new ArrayList<>();
+        categoryNames.add("Keine");
+        categoryNames.add("Neu");
+        for(Category category : categories){
+            categoryNames.add(category.getName());
+        }
 
         setViewData();
 
@@ -164,10 +182,44 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         if (item.getStore() != null) {
             storeSpinner.setSelection(listStores.indexOf(item.getStore().getName()));
         }
+
+        setCategorySpinner();
+        if(item.getCategory() != null){
+            int index = categories.indexOf(item.getCategory());
+            categorySpinner.setSelection(index + 2);
+        }
+
         linkedItemsListView.setHasFixedSize(true);
         linkedItemsListView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         this.recycleViewAdapter = new FridgeRecycleViewAdapter(new FridgeViewHolderBuilder(), Collections.makeList(item.getLinkedItems()), this, null);
         linkedItemsListView.setAdapter(this.recycleViewAdapter);
+    }
+
+    private void setCategorySpinner(){
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        final ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String>(this.getActivity().getBaseContext(), R.layout.spinner_text_item, categoryNames);
+// Specify the layout to use when the list of choices appears
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+        categorySpinner.setAdapter(categoryAdapter);
+        categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if("Neu".equals(categoryNames.get(position))){
+                    //create new category
+                    showTextInput();
+                }else if("Keine".equals(categoryNames.get(position)) && categoryText != null){
+                    categoryNames.remove(categoryText);
+                    categoryText = null;
+                    setCategorySpinner();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     private void getViewData() {
@@ -180,8 +232,58 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         item.setMinQuantity(minQuantity.getValue());
         long storeId = storeSpinner.getSelectedItemId();
         item.setStore(DataBaseSingleton.getInstance().getStores().get((int) storeId));
+        long catpos = categorySpinner.getSelectedItemId();
+        if(catpos == 0) {
+            // no category
+            item.setCategoryId(0);
+            item.setCategory(null);
+        }else if (categoryText != null) {
+            //new category
+            Category cat = DataBaseSingleton.getInstance().createNewCategory(categoryText);
+            item.setCategory(cat);
+            item.setCategoryId(cat.getId());
+        }else {
+            catpos = catpos-2;
+            Category cat = categories.get((int)catpos);
+            item.setCategory(cat);
+            item.setCategoryId(cat.getId());
+        }
     }
 
+    String categoryText;
+
+    private void showTextInput(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Kategorie erstellen");
+
+// Set up the input
+        final EditText input = new EditText(getActivity());
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+// Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(categoryText != null){
+                    categoryNames.remove(categoryNames.size() - 1);
+                }
+                categoryText = input.getText().toString();
+                categoryNames.add(categoryText);
+                setCategorySpinner();
+                categorySpinner.setSelection(categoryNames.size()-1);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -300,10 +402,6 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
             return;
         }
 
-        String savedName = DataBaseSingleton.getInstance().getNameByBarcode(item.getBarCode());
-        if (savedName != null) {
-            name.setText(savedName);
-        }
         GetAsyncTask<JsonResult> loadUPCs = new GetAsyncTask<JsonResult>(getActivity(), upcKey) {
             @Override
             protected void onPreExecute() {

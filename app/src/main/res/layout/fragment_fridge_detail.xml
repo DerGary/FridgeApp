@@ -66,6 +66,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/fridge_detail_store_spinner" />
 
+        <TextView
+            style="@style/TextViewBaseStyle"
+            android:text="Kategorie:"/>
+
+        <Spinner
+            android:minHeight="40dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/fridge_detail_category_spinner" />
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.example.student.gefriertruhapp.Model;
 
+import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
@@ -34,22 +35,30 @@ public class FridgeItem extends SupportsChangedEvents implements Comparable<Frid
     private transient Iterable<FridgeItem> linkedItems;
     private transient boolean isMarked;
     private transient int gotQuantity;
+    private transient Category category;
+    @Expose
+    private int categoryId;
     @Expose
     private List<Integer> linkedItemIds;
 
 
-    public FridgeItem(int id, String name, int quantity, DateTime notificationDate, String barCode, String notes, int minQuantity, Store store) {
+    public FridgeItem(int id, String name, int quantity, DateTime notificationDate, String barCode, String notes, boolean notified, int minQuantity, Store store, Category category, int categoryId, List<Integer> linkedItemIds, Iterable<FridgeItem> linkedItems) {
         this.id = id;
         this.name = name;
         this.quantity = quantity;
         this.notificationDate = notificationDate;
         this.barCode = barCode;
         this.notes = notes;
+        this.notified = notified;
         this.minQuantity = minQuantity;
         this.store = store;
+        this.category = category;
+        this.categoryId = categoryId;
+        this.linkedItemIds = linkedItemIds;
+        this.linkedItems = linkedItems;
     }
     public FridgeItem(FridgeItem item){
-        this(item.id, item.name, item.quantity, item.notificationDate, item.barCode, item.notes, item.minQuantity, item.store);
+        this(item.id, item.name, item.quantity, item.notificationDate, item.barCode, item.notes, item.isNotified(), item.minQuantity, item.store, item.getCategory(), item.getCategoryId(), item.getLinkedItemIds(), item.getLinkedItems());
     }
 
 
@@ -221,5 +230,21 @@ public class FridgeItem extends SupportsChangedEvents implements Comparable<Frid
     public void setGotQuantity(int gotQuantity) {
         this.gotQuantity = gotQuantity;
         OnPropertyChanged("gotQuantity");
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 }
