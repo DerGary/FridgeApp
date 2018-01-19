@@ -129,7 +129,9 @@ public abstract class DashboardBase extends ActionBarActivity {
     protected void setNameOfFridgeItemAndNavigateToDetail(FridgeItem item){
         if(item.getBarCode() != null && !item.getBarCode().isEmpty()){
             String name = DataBaseSingleton.getInstance().getNameByBarcode(item.getBarCode());
-            item.setName(name);
+            if(name != null && !name.isEmpty()){
+                item.setName(name);
+            }
         }
         navigateToDetailFragment(item);
     }
