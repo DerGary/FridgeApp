@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.NumberPicker;
@@ -232,7 +234,25 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null && data.getExtras() != null) {
-            String barCode = data.getExtras().getString(RESULT);
+            String barCode = null;
+
+            Bundle bundle = data.getExtras();
+            if(bundle.containsKey(RESULT)){
+                barCode = bundle.getString(RESULT);
+            }else if(bundle.containsKey(ALTERNATE_RESULT)){
+                barCode = bundle.getString(ALTERNATE_RESULT);
+            }else{
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Fehler aufgetreten");
+                builder.setMessage("QR Droid hat keine Informationen zurückgeliefert.");
+                builder.setNeutralButton("Ok", null);
+                builder.create().show();
+                String possibleKeys = TextUtils.join(", ", bundle.keySet());
+                Log.e("tag", "QR Droid hat keine Information zurückgeliefert. Keys in Keyset of Intent: " + possibleKeys);
+                FileAccess.writeLog();
+                return;
+            }
+
 
             if (requestCode == ACTIVITY_RESULT_QRDROID_ADD) {
                 addElement(barCode);

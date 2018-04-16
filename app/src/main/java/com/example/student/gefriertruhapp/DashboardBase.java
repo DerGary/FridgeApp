@@ -43,6 +43,8 @@ public abstract class DashboardBase extends ActionBarActivity {
 
     //Result
     public static final String RESULT = "la.droid.qr.result";
+    //Alternative Result String
+    public static final String ALTERNATE_RESULT = "SCAN_RESULT";
 
     protected static final int ACTIVITY_RESULT_QRDROID_ADD = 500;
     protected static final int ACTIVITY_RESULT_QRDROID_DEL = 600;
@@ -53,7 +55,7 @@ public abstract class DashboardBase extends ActionBarActivity {
     public void openQRDroid(int requestCode) {
         //Create a new Intent to send to QR Droid
         Intent qrDroid = new Intent(SCAN); //Set action "la.droid.qr.scan"
-
+        qrDroid.putExtra("la.droid.qr.complete" , true);
         //Send intent and wait result
         try {
             startActivityForResult(qrDroid, requestCode);
