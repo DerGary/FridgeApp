@@ -20,7 +20,7 @@
     <string name="upc_key_title">UPC Lookup API Key</string>
     <string name="upc_key_summary">Diese App kann bei einem Artikel der über einen Bar- oder QR-Code angelegt wurde in einer Online Bibliothek den Produktnamen abrufen. Hierzu wird ein persönlicher Zugriffsschlüssel benötigt. Dieser kann unter https://upcdatabase.org kostenlos, nach Erstellung eines Accounts abgerufen werden.</string>
     <string name="manage_stocks_title">Lager verwalten</string>
-    <string name="manage_stocks_summary">Über diese Menü können Lager angelegt oder gelöscht werden</string>
+    <string name="manage_stocks_summary">Über dieses Menü können Lager angelegt oder gelöscht werden</string>
     <string name="open_history_summary">Im Verlauf können alle Änderungen der letzten 7 Tage angezeigt werden.</string>
     <string name="open_history_title">Verlauf öffnen</string>
     <string name="export_csv_title">CSV Export</string>
