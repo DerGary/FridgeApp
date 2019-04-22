@@ -51,7 +51,7 @@ public class StoreDetailFragment extends TitleFragment implements View.OnClickLi
     @Override
     public String getTitle() {
         if(store == null){
-            return "Lager hinzufügen";
+            return getString(R.string.add_stock);
         }
         return store.getName();
     }
@@ -139,9 +139,9 @@ public class StoreDetailFragment extends TitleFragment implements View.OnClickLi
             getViewData();
             if(store.getName() == null || store.getName().isEmpty()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-                builder.setMessage("Es muss ein Name für das Lager eingegeben werden.")
+                builder.setMessage(R.string.no_stock_name_message)
                         .setCancelable(true)
-                        .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                        .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                             }
@@ -154,9 +154,9 @@ public class StoreDetailFragment extends TitleFragment implements View.OnClickLi
             for(Store savedStore : stores){
                 if(savedStore != store && savedStore.getName().toLowerCase().equals(store.getName().toLowerCase())){
                     AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-                    builder.setMessage("Der Name des Lagers wird bereits von einem anderen Lager verwendet. Wählen sie einen anderen Namen.")
+                    builder.setMessage(R.string.duplicate_stock_name_message)
                             .setCancelable(true)
-                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                            .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
                                 }
@@ -186,7 +186,7 @@ public class StoreDetailFragment extends TitleFragment implements View.OnClickLi
     @Override
     public void onClick(View v) {
         SpectrumDialog.Builder builder = new SpectrumDialog.Builder(getActivity());
-        builder.setTitle("Farbe wählen");
+        builder.setTitle(R.string.choose_color);
         int[] colors = new int[]{
                 Color.rgb(255,188,0),
                 Color.rgb(232,143,0),
@@ -212,8 +212,8 @@ public class StoreDetailFragment extends TitleFragment implements View.OnClickLi
                 Color.rgb(232,228,0),
         };
         builder.setColors(colors);
-        builder.setNegativeButtonText("Abbrechen");
-        builder.setPositiveButtonText("Ok");
+        builder.setNegativeButtonText(R.string.cancel);
+        builder.setPositiveButtonText(R.string.ok);
         SpectrumDialog dialog = builder.build();
         dialog.setOnColorSelectedListener(new SpectrumDialog.OnColorSelectedListener() {
             @Override

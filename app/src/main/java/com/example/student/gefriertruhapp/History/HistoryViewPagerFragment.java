@@ -50,7 +50,7 @@ public class HistoryViewPagerFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("Verlauf");
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.history);
         menu.clear();
     }
 

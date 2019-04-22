@@ -37,7 +37,7 @@ public class SettingsFragment extends PreferenceFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("Settings");
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.settings);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
@@ -80,12 +80,12 @@ public class SettingsFragment extends PreferenceFragment {
 
     private void saveCSV() {
         for (Store store : DataBaseSingleton.getInstance().getStores()) {
-            CSVHelper.writeStore(store);
+            CSVHelper.writeStore(this.getActivity(), store);
         }
         AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-        builder.setTitle("Fertig");
-        builder.setMessage("Export wurde erfolgreich fertiggestellt.");
-        builder.setNeutralButton("Ok", null);
+        builder.setTitle(R.string.done);
+        builder.setMessage(R.string.export_done_message);
+        builder.setNeutralButton(R.string.ok, null);
         builder.create().show();
     }
 }

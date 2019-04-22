@@ -52,7 +52,7 @@ public abstract class Notifier {
                 .setSmallIcon(R.drawable.icon_freezer_blue)
                 .setLargeIcon(bm)
                 .setContentTitle(item.getName())
-                .setContentText(shelf + "Erinnerung an: " + item.getName())
+                .setContentText(shelf + context.getString(R.string.reminder_of) + ": " + item.getName())
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)

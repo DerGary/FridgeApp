@@ -24,13 +24,14 @@ import java.util.List;
  */
 
 public class StoresListFragment extends RecyclerListFragment implements ItemClickListener {
-    private String title = "Lager verwalten";
+    private String title;
     public StoresListFragment(){}
     private List<Store> stores;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        title = getString(R.string.manage_stock);
         setHasOptionsMenu(true);
     }
 

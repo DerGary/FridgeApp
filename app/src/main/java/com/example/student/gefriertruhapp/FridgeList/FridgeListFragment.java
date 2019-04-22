@@ -19,7 +19,7 @@ import java.util.List;
 public class FridgeListFragment extends TitleFragment implements ItemClickListener {
     private List<FridgeItem> fridgeItems;
     private View view;
-    private String title = "Lager";
+    private String title;
     private Store store;
     private FridgeRecycleViewAdapter adapter;
     private RecyclerView listView;
@@ -48,6 +48,9 @@ public class FridgeListFragment extends TitleFragment implements ItemClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        if(title == null || title.isEmpty()){
+            title = getString(R.string.stock);
+        }
         if(view == null){
             View view = inflater.inflate(R.layout.fragment_recycler_view, container, false);
             listView = (RecyclerView) view.findViewById(R.id.recycler_view);

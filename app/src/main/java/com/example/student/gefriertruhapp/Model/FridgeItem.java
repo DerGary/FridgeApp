@@ -1,8 +1,10 @@
 package com.example.student.gefriertruhapp.Model;
 
+import android.content.Context;
 import android.support.annotation.IntegerRes;
 import android.support.annotation.NonNull;
 
+import com.example.student.gefriertruhapp.R;
 import com.google.gson.annotations.Expose;
 
 import org.joda.time.DateTime;
@@ -105,9 +107,9 @@ public class FridgeItem extends SupportsChangedEvents implements Comparable<Frid
     public String getNotes() {
         return notes;
     }
-    public String getNotesOrPlaceholderIfEmpty(){
+    public String getNotesOrPlaceholderIfEmpty(Context context){
         if(notes == null || notes.isEmpty()){
-            return "Keine Notiz";
+            return context.getString(R.string.no_notes);
         }
         return notes;
     }
@@ -144,9 +146,9 @@ public class FridgeItem extends SupportsChangedEvents implements Comparable<Frid
         OnPropertyChanged("minQuantity");
     }
 
-    public String getNotificationDateString(){
+    public String getNotificationDateString(Context context){
         if(getNotificationDate() == null){
-            return "Kein Datum";
+            return context.getString(R.string.no_date);
         }
         return formatter.print(getNotificationDate());
     }

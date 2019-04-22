@@ -1,35 +1,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".Dashboard">
-    <!--<item android:id="@+id/action_settings" android:title="@string/action_settings"-->
-        <!--android:orderInCategory="100" app:showAsAction="never" />-->
-    <item android:id="@+id/add" android:title="Hinzufügen"
+    <item android:id="@+id/add" android:title="@string/add"
         android:orderInCategory="0" app:showAsAction="ifRoom" android:icon="@drawable/plus"/>
 
-    <item android:id="@+id/delete" android:title="Entnehmen"
+    <item android:id="@+id/delete" android:title="@string/remove"
         android:orderInCategory="10" app:showAsAction="ifRoom" android:icon="@drawable/minus"/>
 
-    <item android:id="@+id/open" android:title="Öffnen"
+    <item android:id="@+id/open" android:title="@string/open"
         android:orderInCategory="20" app:showAsAction="ifRoom" android:icon="@drawable/abc_ic_commit_search_api_mtrl_alpha"/>
 
-    <item android:id="@+id/new_item" android:title="Neu"
+    <item android:id="@+id/new_item" android:title="@string/new_"
         android:orderInCategory="30" app:showAsAction="never"/>
 
     <item
         android:id="@+id/action_search"
-        android:title="Suche"
+        android:title="@string/search"
         android:orderInCategory="40"
         android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
 
-    <item android:id="@+id/action_filter" android:title="Filter"
+    <item android:id="@+id/action_filter" android:title="@string/filter"
         android:orderInCategory="41" app:showAsAction="never"/>
 
-    <item android:id="@+id/doInventory" android:title="Inventur starten"
+    <item android:id="@+id/doInventory" android:title="@string/start_inventory"
         android:orderInCategory="49" app:showAsAction="never"/>
-    <item android:id="@+id/sort" android:title="Sortieren"
+    <item android:id="@+id/sort" android:title="@string/sort"
         android:orderInCategory="50" app:showAsAction="never"/>
-    <item android:id="@+id/preferences" android:title="Settings"
+    <item android:id="@+id/preferences" android:title="@string/settings"
         android:orderInCategory="90" app:showAsAction="never"/>
 </menu>

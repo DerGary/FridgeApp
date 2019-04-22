@@ -14,6 +14,7 @@ public class MyApplication extends Application {
 
     public void onCreate ()
     {
+        FileAccess.init(this);
         super.onCreate();
         defaultUEH = Thread.getDefaultUncaughtExceptionHandler();
         // Setup handler for uncaught exceptions.

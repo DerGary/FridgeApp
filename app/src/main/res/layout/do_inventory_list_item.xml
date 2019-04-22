@@ -39,7 +39,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Soll: "/>
+                    android:text="@string/debit_title"/>
                 <TextView
                     android:id="@+id/do_inventory_item_desired_quantity"
                     android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Haben: "/>
+                android:text="@string/credit_title"/>
             <TextView
                 android:id="@+id/do_inventory_item_got_quantity"
                 android:layout_width="wrap_content"

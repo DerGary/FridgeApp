@@ -72,19 +72,19 @@ public abstract class DashboardBase extends ActionBarActivity {
     public static void showQrDroidRequiredAlert(final Activity activity) {
         //Apparently, QR Droid is not installed, or it's previous to version 3.5
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage("Kein QR Droid")
+        builder.setMessage(R.string.no_qr_droid_installed)
                 .setCancelable(true)
-                .setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 })
-                .setPositiveButton("Google Play", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.google_play, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://market.android.com/details?id=la.droid.qr")));
                     }
                 })
-                .setNeutralButton("QR Droid Download", new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.qr_droid_download, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://droid.la/apk/qr/")));
                     }
@@ -94,9 +94,9 @@ public abstract class DashboardBase extends ActionBarActivity {
 
     public static void showNoStoreCreatedAlert(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-        builder.setMessage("Bisher wurde kein Lager in den Einstellungen erstellt. Ohne Lager können keine Items angelegt oder gelöscht werden!")
+        builder.setMessage(R.string.no_stock_set_message)
                 .setCancelable(true)
-                .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
@@ -166,9 +166,9 @@ public abstract class DashboardBase extends ActionBarActivity {
                     createPage();
                 } else {
                     AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-                    dialog.setMessage("Diese App kann ohne die Speicher berechtigung nicht funktionieren. Die App wird jetzt geschlossen.");
+                    dialog.setMessage(R.string.no_sd_rights_exit_message);
                     final Activity activity = this;
-                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

@@ -11,7 +11,7 @@
         <TextView
             style="@style/TextViewBaseStyle"
             android:paddingBottom="0dp"
-            android:text="Titel:" />
+            android:text="@string/title_title" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -58,7 +58,7 @@
 
         <TextView
             style="@style/TextViewBaseStyle"
-            android:text="Lager:"/>
+            android:text="@string/stock_title"/>
 
         <Spinner
             android:minHeight="40dp"
@@ -68,7 +68,7 @@
 
         <TextView
             style="@style/TextViewBaseStyle"
-            android:text="Kategorie:"/>
+            android:text="@string/category_title"/>
 
         <Spinner
             android:minHeight="40dp"
@@ -89,7 +89,7 @@
                 android:layout_weight="1">
                 <TextView
                     style="@style/TextViewBaseStyle"
-                    android:text="Anzahl:"/>
+                    android:text="@string/quantity_title"/>
                 <NumberPicker
                     android:id="@+id/fridge_detail_quantity"
                     style="@style/NumberPickerBase"/>
@@ -106,7 +106,7 @@
 
                 <TextView
                     style="@style/TextViewBaseStyle"
-                    android:text="minimale Anzahl:"/>
+                    android:text="@string/min_quantity_title"/>
                 <NumberPicker
                     android:id="@+id/fridge_detail_min_quantity"
                     style="@style/NumberPickerBase"/>
@@ -115,12 +115,12 @@
 
         <TextView
             style="@style/TextViewBaseStyle"
-            android:text="Erinnerung:"
+            android:text="@string/reminder_title"
             android:paddingBottom="10dp"/>
 
         <TextView
             style="@style/TextViewBaseStyle"
-            android:text="Keine Erinnerung gesetzt"
+            android:text="@string/no_reminder_set"
             android:id="@+id/fridge_detail_notification_date"
             android:paddingLeft="10dp"
             android:textSize="20sp"
@@ -129,14 +129,14 @@
 
         <Button
             style="@style/ButtonBaseStyle"
-            android:text="Erinnerung setzen"
+            android:text="@string/set_reminder"
             android:background="@drawable/button_shape"
             android:id="@+id/fridge_detail_notification_button"
             android:layout_marginBottom="10dp"/>
 
         <TextView
             style="@style/TextViewBaseStyle"
-            android:text="Notizen:"/>
+            android:text="@string/notes_title"/>
 
         <EditText
             style="@style/EditTextBaseStyle"
@@ -150,7 +150,7 @@
 
         <TextView
             style="@style/TextViewBaseStyle"
-            android:text="Verlinkte Elemente:"/>
+            android:text="@string/linked_entries_title"/>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/fridge_detail_linked_items"
             android:layout_width="match_parent"

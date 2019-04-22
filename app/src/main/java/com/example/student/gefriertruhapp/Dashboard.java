@@ -89,7 +89,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
     public boolean onCreateOptionsMenu(Menu menu) {
         _menu = menu;
 
-        getSupportActionBar().setTitle("Gefriertruhen App");
+        getSupportActionBar().setTitle(getString(R.string.app_name));
         setMenuButtons();
         return true;
     }
@@ -158,14 +158,14 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
 
         if(categories.isEmpty()){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Keine Kategorie");
-            builder.setMessage("Es wurde noch keine Kategorie angelegt.");
-            builder.setNegativeButton("Ok", null);
+            builder.setTitle(R.string.no_categories);
+            builder.setMessage(R.string.no_categories_set);
+            builder.setNegativeButton(R.string.ok, null);
             AlertDialog dialog = builder.create();
             dialog.show();
         }else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Kategorie wählen");
+            builder.setTitle(R.string.choose_category);
             List<String> strings = new ArrayList<>();
             for (Category cat : categories) {
                 strings.add(cat.getName());
@@ -177,8 +177,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                     itemPos = which;
                 }
             });
-            builder.setNegativeButton("Abbrechen", null);
-            builder.setPositiveButton("Weiter", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.cancel, null);
+            builder.setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Category cat = categories.get(itemPos);
@@ -194,7 +194,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
 
     private void startDoInventory(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Lager für die Inventur wählen:");
+        builder.setTitle(R.string.choose_stock_for_inventory);
 
         List<String> strings = new ArrayList<>();
         for(Store store : DataBaseSingleton.getInstance().getStores()){
@@ -207,8 +207,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                 itemPos = which;
             }
         });
-        builder.setNegativeButton("Abbrechen", null);
-        builder.setPositiveButton("Weiter", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Store store = DataBaseSingleton.getInstance().getStores().get(itemPos);
@@ -243,9 +243,9 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                 barCode = bundle.getString(ALTERNATE_RESULT);
             }else{
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Fehler aufgetreten");
-                builder.setMessage("QR Droid hat keine Informationen zurückgeliefert.");
-                builder.setNeutralButton("Ok", null);
+                builder.setTitle(R.string.error_occured);
+                builder.setMessage(R.string.qr_no_result);
+                builder.setNeutralButton(R.string.ok, null);
                 builder.create().show();
                 String possibleKeys = TextUtils.join(", ", bundle.keySet());
                 Log.e("tag", "QR Droid hat keine Information zurückgeliefert. Keys in Keyset of Intent: " + possibleKeys);
@@ -272,9 +272,9 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         List<FridgeItem> list = DataBaseSingleton.getInstance().getFridgeItems(barCode);
         if (list == null || list.size() == 0) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Nicht gefunden");
-            builder.setMessage("Der gescannte Artikel wurde im aktuellen Bestand nicht gefunden.");
-            builder.setNeutralButton("Ok", null);
+            builder.setTitle(R.string.not_found);
+            builder.setMessage(R.string.article_not_found_message);
+            builder.setNeutralButton(R.string.ok, null);
             builder.create().show();
         } else if (list.size() == 1) {
             navigateToDetailFragment(list.get(0));
@@ -308,18 +308,21 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
 
     int itemPos;
 
+
+
     public void showChooseArticleDialog(final Action action, final List<FridgeItem> items, final String barcode) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (action == Action.ADD) {
-            builder.setTitle("Artikel wählen (Hinzufügen)");
+            builder.setTitle(R.string.choose_article_add);
         } else if(action == Action.DELETE) {
-            builder.setTitle("Artikel wählen (Herausnehmen)");
+            builder.setTitle(R.string.choose_article_remove);
         }else if(action == Action.OPEN){
-            builder.setTitle("Artikel wählen (Öffnen)");
+            builder.setTitle(R.string.choose_article_open);
         }
         List<String> strings = new ArrayList<>();
         for (FridgeItem fridgeItem : items) {
-            String text = fridgeItem.getName() + "\r\n" + fridgeItem.getNotificationDateString() + "\r\nAnzahl: " + fridgeItem.getQuantity() +" / " + fridgeItem.getMinQuantity();
+            String text = fridgeItem.getName() + "\r\n" + fridgeItem.getNotificationDateString(this ) + "\r\n" +
+                    getString(R.string.quantity) + ": " + fridgeItem.getQuantity() +" / " + fridgeItem.getMinQuantity();
             Iterable<FridgeItem> linkedItems = fridgeItem.getLinkedItems();
             if(linkedItems != null && !Collections.isEmpty(linkedItems)){
                 int quantityOfAllLinkedItems = fridgeItem.getQuantity();
@@ -340,8 +343,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                 itemPos = which;
             }
         });
-        builder.setNegativeButton("Abbrechen", null);
-        builder.setPositiveButton("Weiter", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (itemPos >= items.size()) {
@@ -364,12 +367,12 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
         AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setView(R.layout.dialog_number_picker);
         if (action == Action.ADD) {
-            b.setTitle("Anzahl wählen (Hinzufügen)");
+            b.setTitle(R.string.choose_count_add);
         } else if (action == Action.DELETE) {
-            b.setTitle("Anzahl wählen (Herausnehmen)");
+            b.setTitle(R.string.choose_count_remove);
         }
-        b.setNegativeButton("Abbrechen", null);
-        b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        b.setNegativeButton(R.string.cancel, null);
+        b.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FridgeItem item = items.get(itemPosition);
@@ -382,7 +385,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
 
                 DataBaseSingleton.getInstance().updateItem(oldItem, item);
                 DataBaseSingleton.getInstance().saveDataBase();
-                Toast.makeText(getBaseContext(),item.getName() + "\r\nNeue Anzahl: " + item.getQuantity(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(),item.getName() + "\r\n" +
+                        getString(R.string.new_quantity) + ": " + item.getQuantity(), Toast.LENGTH_LONG).show();
             }
         });
         AlertDialog dialog = b.create();
@@ -403,7 +407,8 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
 
         TextView text = (TextView) dialog.findViewById(R.id.dialog_number_picker_text);
         FridgeItem item = items.get(itemPosition);
-        String headerText = item.getName() + "\r\n" + item.getNotificationDateString() + "\r\nAktuelle Anzahl: " + item.getQuantity() + " / " + item.getMinQuantity() ;
+        String headerText = item.getName() + "\r\n" + item.getNotificationDateString(this) + "\r\n" +
+                getString(R.string.current_quantity) + ": " + item.getQuantity() + " / " + item.getMinQuantity() ;
         Iterable<FridgeItem> linkedItems = item.getLinkedItems();
         if(linkedItems != null && !Collections.isEmpty(linkedItems)){
             int quantityOfAllLinkedItems = item.getQuantity();
@@ -437,7 +442,7 @@ public class Dashboard extends DashboardBase implements SearchView.OnQueryTextLi
                 showChooseArticleDialog(Action.DELETE, cleanedItems, barCode);
             }
         } else {
-            Toast.makeText(Dashboard.this, "Artikel nicht gefunden", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Dashboard.this, getString(R.string.article_not_found), Toast.LENGTH_SHORT).show();
         }
     }
 

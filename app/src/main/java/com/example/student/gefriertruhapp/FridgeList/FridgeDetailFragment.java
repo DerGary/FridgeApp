@@ -143,8 +143,8 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
 
         categories = DataBaseSingleton.getInstance().getCategories();
         categoryNames = new ArrayList<>();
-        categoryNames.add("Keine");
-        categoryNames.add("Neu");
+        categoryNames.add(getString(R.string.none));
+        categoryNames.add(getString(R.string.new_));
         for(Category category : categories){
             categoryNames.add(category.getName());
         }
@@ -205,10 +205,10 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         categorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if("Neu".equals(categoryNames.get(position))){
+                if(getString(R.string.new_).equals(categoryNames.get(position))){
                     //create new category
                     showTextInput();
-                }else if("Keine".equals(categoryNames.get(position)) && categoryText != null){
+                }else if(getString(R.string.none).equals(categoryNames.get(position)) && categoryText != null){
                     categoryNames.remove(categoryText);
                     categoryText = null;
                     setCategorySpinner();
@@ -254,7 +254,7 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
 
     private void showTextInput(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Kategorie erstellen");
+        builder.setTitle(R.string.create_category);
 
 // Set up the input
         final EditText input = new EditText(getActivity());
@@ -263,7 +263,7 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         builder.setView(input);
 
 // Set up the buttons
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(categoryText != null){
@@ -275,7 +275,7 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
                 categorySpinner.setSelection(categoryNames.size()-1);
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -347,7 +347,7 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
 
     @Override
     public String getTitle() {
-        return "Details";
+        return getString(R.string.details);
     }
 
     private void onSetNotificationClicked() {
@@ -395,9 +395,9 @@ public class FridgeDetailFragment extends TitleFragment implements ItemClickList
         String upcKey = sharedPref.getString("UPCLOOKUPAPIKEY", "");
         if(upcKey == null || upcKey.isEmpty()){
             AlertDialog.Builder builder = new AlertDialog.Builder(this.getActivity());
-            builder.setTitle("UPC API Key nicht gefunden");
-            builder.setMessage("Für diese Funktion muss ein UPC API Key in den Einstellungen hinterlegt werden. Dieser kann kostenlos auf www.upcdatabase.org erstellt werden.");
-            builder.setNeutralButton("Ok", null);
+            builder.setTitle(R.string.upc_api_key_not_found);
+            builder.setMessage(R.string.upc_api_key_not_found_message);
+            builder.setNeutralButton(R.string.ok, null);
             builder.create().show();
             return;
         }

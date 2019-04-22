@@ -109,13 +109,13 @@ public class DoInventoryFragment extends TitleFragment implements ItemClickListe
 
     private void showSaveMessage(){
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Speichern?");
-        builder.setMessage("Beim Fortfahren werden die gescannten Haben Anzahlen als Soll Anzahl gespeichert. Trotzdem Fortfahren?");
-        builder.setNegativeButton("Abbrechen", null);
-        builder.setPositiveButton("Fortfahren", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.save_question);
+        builder.setMessage(R.string.inventory_save_message);
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                HistoryHelper.doInventory(store); //must be done before so we dont need to copy each item.
+                HistoryHelper.doInventory(getActivity(), store); //must be done before so we dont need to copy each item.
                 for(FridgeItem item : store.getItems()) {
                     FridgeItem oldItem = new FridgeItem(item);
                     item.setQuantity(item.getGotQuantity());
@@ -141,7 +141,7 @@ public class DoInventoryFragment extends TitleFragment implements ItemClickListe
 
     @Override
     public String getTitle() {
-        return "Inventur: " + store.getName();
+        return getString(R.string.inventory)+": " + store.getName();
     }
 
     @Override
@@ -151,7 +151,7 @@ public class DoInventoryFragment extends TitleFragment implements ItemClickListe
 
     public void barCodeResult(String barCode) {
         if(barCode == null || barCode.equals("")){
-            Toast.makeText(getActivity(), "Fehler beim lesen des QR Codes", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), R.string.error_reading_qrcode, Toast.LENGTH_LONG).show();
         }
 
         List<FridgeItem> items = new ArrayList<>();
@@ -164,13 +164,13 @@ public class DoInventoryFragment extends TitleFragment implements ItemClickListe
         if(items.isEmpty()){
             List<FridgeItem> allWithThatBarCode = DataBaseSingleton.getInstance().getFridgeItems(barCode);
             if(allWithThatBarCode == null || allWithThatBarCode.isEmpty()){
-                Toast.makeText(getActivity(), "Kein Eintrag mit diesem Code gefunden.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), R.string.no_entry_for_qr_found, Toast.LENGTH_LONG).show();
             }else{
                 StringBuilder stores = new StringBuilder("");
                 for(FridgeItem item : allWithThatBarCode){
                     stores.append(item.getStore().getName()).append(",");
                 }
-                Toast.makeText(getActivity(), "Eintrag nicht in diesem Lager gefunden. Eintrag wurde in folgenden Lagern gefunden: " + stores.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.no_entry_in_this_stock) + stores.toString(), Toast.LENGTH_LONG).show();
             }
         }else{
             if(items.size() > 1){
@@ -184,17 +184,19 @@ public class DoInventoryFragment extends TitleFragment implements ItemClickListe
 
     private void increaseGotQuantity(FridgeItem item){
         item.setGotQuantity(item.getGotQuantity()+1);
-        Toast.makeText(getActivity(), "Haben Anzahl von Eintrag " + item.getName() + " auf " + item.getGotQuantity() + " erhöht.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), getString(R.string.inventory_changed_for_entry_with_quantity, item.getName(), item.getGotQuantity()), Toast.LENGTH_LONG).show();
     }
 
     int itemPos = 0;
     public void showChooseArticleDialog(final List<FridgeItem> items) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Barcode mehrfach gefunden. Eintrage wählen:");
+        builder.setTitle(R.string.multiple_entries_for_barcode_found);
 
         List<String> strings = new ArrayList<>();
         for (FridgeItem fridgeItem : items) {
-            String text = fridgeItem.getName() + "\r\n" + fridgeItem.getNotificationDateString() + "\r\nSoll: " + fridgeItem.getQuantity() +"\r\nHaben: " + fridgeItem.getGotQuantity();
+            String text = fridgeItem.getName() + "\r\n" + fridgeItem.getNotificationDateString(getActivity()) + "\r\n" +
+                    getString(R.string.debit) + fridgeItem.getQuantity() +"\r\n" +
+                    getString(R.string.credit) + fridgeItem.getGotQuantity();
             strings.add(text);
         }
         itemPos = 0;
@@ -204,8 +206,8 @@ public class DoInventoryFragment extends TitleFragment implements ItemClickListe
                 itemPos = which;
             }
         });
-        builder.setNegativeButton("Abbrechen", null);
-        builder.setPositiveButton("Weiter", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FridgeItem item = items.get(itemPos);
@@ -222,13 +224,13 @@ public class DoInventoryFragment extends TitleFragment implements ItemClickListe
     public void showChooseQuantityDialog(final FridgeItem item) {
         AlertDialog.Builder b = new AlertDialog.Builder(getActivity());
         b.setView(R.layout.dialog_number_picker);
-        b.setTitle("Haben Anzahl direkt wählen");
-        b.setNegativeButton("Abbrechen", null);
-        b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        b.setTitle(R.string.choose_credit_quantity);
+        b.setNegativeButton(R.string.cancel, null);
+        b.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 item.setGotQuantity(numberPickerValue);
-                Toast.makeText(getActivity(), "Haben Anzahl von Eintrag " + item.getName() + " auf " + item.getGotQuantity() + " gesetzt.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), getString(R.string.inventory_set_for_entry_with_quantity, item.getName(), item.getGotQuantity()), Toast.LENGTH_LONG).show();
             }
         });
         AlertDialog dialog = b.create();

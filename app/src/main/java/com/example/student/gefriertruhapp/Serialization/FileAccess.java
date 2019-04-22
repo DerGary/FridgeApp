@@ -2,10 +2,13 @@ package com.example.student.gefriertruhapp.Serialization;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 
+import com.example.student.gefriertruhapp.R;
 import com.opencsv.CSVWriter;
 
 import org.apache.commons.io.IOUtils;
@@ -30,7 +33,7 @@ public abstract class FileAccess {
     private static final String EXTENSION_TXT = "txt";
     private static final String EXTENSION_JSON = "json";
     private static final String EXTENSION_CSV = "csv";
-    private static final String APP_FOLDER = "Gefriertruhen App";
+    private static String APP_FOLDER;
     private static final String HISTORY_FOLDER = "History";
     private static final String LOG_FOLDER = "Log";
     private static final String EXPORT_FOLDER = "Export";
@@ -39,6 +42,17 @@ public abstract class FileAccess {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
+    private static String getAppFolder() {
+        if(APP_FOLDER == null || APP_FOLDER.isEmpty()){
+            return "Gefriertruhen App";
+        }
+        return APP_FOLDER;
+    }
+
+    public static void init(Context context){
+        APP_FOLDER = context.getString(R.string.app_name);
+    }
 
     /**
      * Checks if the app has permission to write to device storage
@@ -77,9 +91,9 @@ public abstract class FileAccess {
         File appDir = null;
         File appFile = null;
         if (folder != null) {
-            appDir = new File(dir, APP_FOLDER + "/" + folder);
+            appDir = new File(dir, getAppFolder() + "/" + folder);
         } else {
-            appDir = new File(dir, APP_FOLDER);
+            appDir = new File(dir, getAppFolder());
         }
         if (!appDir.exists()) {
             appDir.mkdirs();
@@ -112,9 +126,9 @@ public abstract class FileAccess {
         File appDir = null;
         File appFile = null;
         if (folder != null) {
-            appDir = new File(dir, APP_FOLDER + "/" + folder);
+            appDir = new File(dir, getAppFolder() + "/" + folder);
         } else {
-            appDir = new File(dir, APP_FOLDER);
+            appDir = new File(dir, getAppFolder());
         }
         if (extension == null) {
             extension = EXTENSION_JSON;
@@ -181,7 +195,7 @@ public abstract class FileAccess {
             return;
 
         File dir = Environment.getExternalStorageDirectory();
-        File appDir = new File(dir, APP_FOLDER + "/" + LOG_FOLDER);
+        File appDir = new File(dir, getAppFolder() + "/" + LOG_FOLDER);
         appDir.mkdirs();
 
         String date = DateTime.now().toString(DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss"));
@@ -213,7 +227,7 @@ public abstract class FileAccess {
     public static Map<String, String> readHistory(int dayCount) {
         File dir = Environment.getExternalStorageDirectory();
         File appDir = null;
-        appDir = new File(dir, APP_FOLDER + "/" + HISTORY_FOLDER);
+        appDir = new File(dir, getAppFolder() + "/" + HISTORY_FOLDER);
         File[] fileList = appDir.listFiles();
         if(fileList == null){
             return null;
@@ -240,7 +254,7 @@ public abstract class FileAccess {
     public static void writeCSV(List<String[]> lines, String fileName) {
         File dir = Environment.getExternalStorageDirectory();
         File appDir = null;
-        appDir = new File(dir, APP_FOLDER + "/" + EXPORT_FOLDER);
+        appDir = new File(dir, getAppFolder() + "/" + EXPORT_FOLDER);
         appDir.mkdir();
         String date = DateTime.now().toString(DateTimeFormat.forPattern("YYYY-MM-dd HH:mm:ss"));
         File exportFile = new File(appDir, date + " " + fileName + "." + EXTENSION_CSV);
@@ -256,7 +270,7 @@ public abstract class FileAccess {
 
     public static void renameFile(String oldName, String newName){
         File dir = Environment.getExternalStorageDirectory();
-        File appDir = new File(dir, APP_FOLDER);
+        File appDir = new File(dir, getAppFolder());
         File appFile = new File(appDir, oldName + "." + EXTENSION_JSON);
         File newFile = new File(appDir, newName + "." + EXTENSION_JSON);
         appFile.renameTo(newFile);

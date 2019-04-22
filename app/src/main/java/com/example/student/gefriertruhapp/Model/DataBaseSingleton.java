@@ -8,6 +8,7 @@ import android.os.SystemClock;
 
 import com.example.student.gefriertruhapp.Helper.Collections;
 import com.example.student.gefriertruhapp.History.HistoryHelper;
+import com.example.student.gefriertruhapp.R;
 import com.example.student.gefriertruhapp.Serialization.ExtendedGson;
 import com.example.student.gefriertruhapp.Serialization.FileAccess;
 import com.example.student.gefriertruhapp.Serialization.StorageException;
@@ -158,7 +159,7 @@ public class DataBaseSingleton {
         }
 
         if(from == null){
-            HistoryHelper.newItem(to);
+            HistoryHelper.newItem(context, to);
         }else{
             if(from.getCategory() != null){
                 if(itemsByCategory.containsKey(from.getCategory())){
@@ -171,7 +172,7 @@ public class DataBaseSingleton {
                 }
             }
 
-            HistoryHelper.changeItem(from, to);
+            HistoryHelper.changeItem(context, from, to);
         }
     }
 
@@ -204,7 +205,7 @@ public class DataBaseSingleton {
         }
 
         NotificationBroadCastReceiver.unregisterAlarm(context, item);
-        HistoryHelper.deleteItem(item);
+        HistoryHelper.deleteItem(context, item);
     }
 
     public void saveDataBase() {
@@ -351,9 +352,9 @@ public class DataBaseSingleton {
 
     public void showStorageError() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Speicher fehlt");
-        builder.setMessage("Der Speicher konnte nicht gefunden werden. Wenn das Handy an den Computer angesteckt ist, muss es abgesteckt werden, oder eine Speicherkarte eingelegt werden, damit die App auf die gespeicherten Daten zugreifen kann.");
-        builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.no_storage);
+        builder.setMessage(R.string.no_storage_message);
+        builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 System.exit(-1);
@@ -414,7 +415,7 @@ public class DataBaseSingleton {
 
         // save changes
         saveDataBase();
-        HistoryHelper.linkedItems(allLinks);
+        HistoryHelper.linkedItems(context, allLinks);
     }
     public void removeLinks(FridgeItem item) {
         Iterable<FridgeItem> linkedItems = item.getLinkedItems();
@@ -432,7 +433,7 @@ public class DataBaseSingleton {
         }
         item.setLinkedItems(null);
         saveDataBase();
-        HistoryHelper.removedLinks(item, linkedItems);
+        HistoryHelper.removedLinks(context, item, linkedItems);
     }
 
     public Category createNewCategory(String name){

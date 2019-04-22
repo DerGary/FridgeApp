@@ -159,17 +159,24 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
     }
 
     public enum Sort{
-        DateAscending(0, "Datum aufsteigend"), DateDescending(1, "Datum absteigend"), NameAscending(2, "Name aufsteigend"), NameDescending(3, "Name absteigend");
+        DateAscending(0), DateDescending(1), NameAscending(2), NameDescending(3);
         private final int value;
-        private final String text;
 
-        private Sort(int value, String text) {
+        private Sort(int value) {
             this.value = value;
-            this.text = text;
         }
 
-        public String getText(){
-            return text;
+        public String getText(Context context){
+            if(value == DateAscending.value){
+                return context.getString(R.string.date_ascending);
+            }else if(value == DateDescending.value){
+                return context.getString(R.string.date_descending);
+            }else if(value == NameAscending.value){
+                return context.getString(R.string.name_ascending);
+            }else if(value == NameDescending.value){
+                return context.getString(R.string.name_descending);
+            }
+            return "";
         }
         public int getValue(){
             return value;
@@ -180,12 +187,12 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
 
     private void showSortDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Sortierung wählen");
+        builder.setTitle(R.string.choose_sort);
         String[] strings = new String[4];
-        strings[Sort.DateAscending.getValue()] = Sort.DateAscending.getText();
-        strings[Sort.DateDescending.getValue()] = Sort.DateDescending.getText();
-        strings[Sort.NameAscending.getValue()] = Sort.NameAscending.getText();
-        strings[Sort.NameDescending.getValue()] = Sort.NameDescending.getText();
+        strings[Sort.DateAscending.getValue()] = Sort.DateAscending.getText(getActivity());
+        strings[Sort.DateDescending.getValue()] = Sort.DateDescending.getText(getActivity());
+        strings[Sort.NameAscending.getValue()] = Sort.NameAscending.getText(getActivity());
+        strings[Sort.NameDescending.getValue()] = Sort.NameDescending.getText(getActivity());
         itemPos = currentSort.getValue();
         builder.setSingleChoiceItems(strings, itemPos, new DialogInterface.OnClickListener() {
             @Override
@@ -193,8 +200,8 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
                 itemPos = which;
             }
         });
-        builder.setNegativeButton("Abbrechen", null);
-        builder.setPositiveButton("Weiter", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.next, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 currentSort = allSorts[itemPos];
@@ -223,7 +230,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
             ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("\"" + category.getName() + "\"");
         } else {
             ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("Gefriertruhen App");
+            ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
         }
     }
 
@@ -236,7 +243,7 @@ public class FridgeListViewPagerFragment extends Fragment implements ViewPager.O
             }
         }
 
-        Store buyStore = new Store("Einkaufsliste", "");
+        Store buyStore = new Store(getString(R.string.shopping_list), "");
         buyStore.setColor(Color.rgb(0,0,0));
 
         while(fragmentList.size() < stores.size() + 1){

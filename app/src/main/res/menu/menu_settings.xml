@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/menu_settings_add"
         android:icon="@drawable/plus"
-        android:title="Hinzufügen"
+        android:title="@string/add"
         app:showAsAction="always"/>
 
 </menu>
