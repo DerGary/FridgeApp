@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Speisekammer</string>
     <string name="article_not_found">Artikel nicht gefunden</string>
     <string name="debit_title">Soll:</string>
     <string name="credit_title">Haben:</string>

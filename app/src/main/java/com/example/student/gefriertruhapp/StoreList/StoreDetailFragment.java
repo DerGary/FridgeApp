@@ -115,7 +115,7 @@ public class StoreDetailFragment extends TitleFragment implements View.OnClickLi
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
-        getActivity().getMenuInflater().inflate(R.menu.menu_detail, menu);
+        getActivity().getMenuInflater().inflate(R.menu.menu_store_detail, menu);
         ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(getTitle());
         ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
